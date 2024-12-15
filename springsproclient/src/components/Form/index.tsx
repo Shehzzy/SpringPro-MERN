@@ -1,8 +1,28 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Form: React.FC = () => {
+  const navigate = useNavigate();
+  useEffect(() => {
+    const token = localStorage.getItem("jwt_token");
+
+    if (!token) {
+      Swal.fire({
+        title: "Login Required",
+        text: "You need to log in first to place an order.",
+        icon: "warning",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
+  }, [navigate]);
+
+
   const [step, setStep] = useState<number>(1);
   const [formData, setFormData] = useState<{
     name: string;
@@ -240,11 +260,10 @@ const Form: React.FC = () => {
           ].map((label, index) => (
             <div key={index} className="flex items-center">
               <div
-                className={`h-12 w-12 rounded-full flex items-center justify-center ${
-                  step === index + 1
+                className={`h-12 w-12 rounded-full flex items-center justify-center ${step === index + 1
                     ? "bg-[#41FDFE] text-white"
                     : "bg-white text-black border border-gray-800"
-                } transition-all duration-300`}
+                  } transition-all duration-300`}
               >
                 {index + 1}
               </div>
