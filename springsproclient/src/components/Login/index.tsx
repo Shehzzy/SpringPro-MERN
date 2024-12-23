@@ -1,15 +1,24 @@
-import React, { useState, FormEvent , useEffect} from "react";
-import axios from "axios"; // Import Axios
-import { Link , useNavigate} from "react-router-dom";
+import React, { useState, FormEvent, useEffect } from "react";
+import axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
+import {jwtDecode} from "jwt-decode"; // Import jwt-decode
 
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
+  // Effect to check if the user is already logged in and redirect accordingly
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
-    if(token){navigate("/");}
+    if (token) {
+      const decodedToken: any = jwtDecode(token);
+      // Check if the user is already logged in and redirect them based on role
+      if (decodedToken.role === "admin") {
+        navigate("/admin-all-users"); // Redirect to admin dashboard
+      } else {
+        navigate("/"); // Redirect to home page for regular users
+      }
+    }
   }, [navigate]);
-
 
   const [formData, setFormData] = useState({
     email: "",
@@ -19,7 +28,7 @@ const Login: React.FC = () => {
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState<string>("");
 
-  // Update form data state on input change
+  // Handle form input change
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
@@ -28,6 +37,7 @@ const Login: React.FC = () => {
     setErrors([]); // Clear errors on change
   };
 
+  // Validate form before submission
   const validateForm = (): boolean => {
     const missingFields: string[] = [];
     if (!formData.email) missingFields.push("Email");
@@ -41,27 +51,35 @@ const Login: React.FC = () => {
     return true;
   };
 
+  // Submit the login form
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
       try {
-        // Make POST request to login API
-        const response = await axios.post("http://localhost:8000/api/auth/login", {
-          email: formData.email,
-          password: formData.password,
-        });
+        const response = await axios.post(
+          "http://localhost:8000/api/auth/login",
+          {
+            email: formData.email,
+            password: formData.password,
+          }
+        );
 
         if (response.data.token) {
-          // If login is successful, store the token in localStorage
           localStorage.setItem("jwt_token", response.data.token);
 
           setSuccessMessage("Login successful! Redirecting...");
-          setErrors([]); // Clear any previous errors
-          
-          // Optionally, redirect after a brief delay
-          setTimeout(() => {
-            window.location.href = "/"; // Or redirect to another page
-          }, 1500); // Redirect after 1.5 seconds
+
+          // Decode the token to get the user role
+          const decodedToken: any = jwtDecode(response.data.token);
+
+          // Redirect based on the user role
+          if (decodedToken.role === "admin") {
+            setTimeout(() => navigate("/admin-all-users"), 1500); // Redirect to admin dashboard
+          } else {
+            setTimeout(() => navigate("/"), 1500); // Redirect to home page for regular users
+          }
+
+          setErrors([]);
         } else {
           setErrors([response.data.message || "Login failed"]);
         }
@@ -127,7 +145,7 @@ const Login: React.FC = () => {
           <div className="flex justify-start items-center">
             <div>
               <Link
-                to={'/signup/'}
+                to={"/signup/"}
                 className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
               >
                 Don't have an account? Signup

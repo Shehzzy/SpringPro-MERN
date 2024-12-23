@@ -7,11 +7,13 @@ const orderSubmit = async (req, res) => {
       return res.status(400).json({ message: "Order details are missing" });
     }
     const userId = req.user.userId;
-    console.log("UserId",userId);
+    const { status = "Pending", ...orderData } = req.body;
     const order = await orderModel.create({
-      ...req.body,
+      ...orderData,
       userId,
+      status,
     });
+
     return res
       .status(201)
       .json({ message: "Order created successfully", order });
@@ -37,7 +39,7 @@ const getOrders = async (req, res) => {
 
 const getUserOrders = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const orders = await orderModel.find({ userId });
     res.status(200).json({
       message: "Orders retrieved successfully",

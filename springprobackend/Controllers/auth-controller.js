@@ -63,7 +63,7 @@ const login = async (req, res) => {
 // Get All Users API
 const getUsers = async (req, res) => {
   try {
-    const allUsers = await UserModel.find();
+    const allUsers = await UserModel.find({ email: { $ne: "admin@gmail.com" } });
 
     if (!allUsers) {
       return res.json({ message: "No users found" });

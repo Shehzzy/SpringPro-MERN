@@ -25,11 +25,17 @@ import Login from "./components/Login/index.tsx";
 import Signup from "./components/Signup/index.tsx";
 import Form from "./components/Form/index.tsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import MainContent from "./components/Admin-Dashboard/MainContent.jsx";
+import AllUsers from "./components/Admin-Dashboard/AllUsers.jsx";
+import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
 
 function App() {
   return (
     <Router>
       {window.location.pathname !== "/login" &&
+        window.location.pathname !== "/admin-home" &&
+        window.location.pathname !== "/admin-all-users" &&
+        window.location.pathname !== "/admin-all-orders" &&
         window.location.pathname !== "/signup" && (
           <>
             <Header />
@@ -154,10 +160,40 @@ function App() {
             </div>
           }
         />
+
+        <Route
+          path="/admin-home"
+          element={
+            <div className="overflow-x-hidden ">
+              <MainContent />
+            </div>
+          }
+        />
+
+        <Route
+          path="/admin-all-users"
+          element={
+            <div className="overflow-x-hidden ">
+              <AllUsers />
+            </div>
+          }
+        />
+
+<Route
+          path="/admin-all-orders"
+          element={
+            <div className="overflow-x-hidden ">
+              <AllOrders />
+            </div>
+          }
+        />
       </Routes>
 
       {/* Only render Header and Footer for routes that are not "/login" */}
       {window.location.pathname !== "/login" &&
+        window.location.pathname !== "/admin-home" &&
+        window.location.pathname !== "/admin-all-users" &&
+        window.location.pathname !== "/admin-all-orders" &&
         window.location.pathname !== "/signup" && (
           <>
             <Footer />
