@@ -6,22 +6,24 @@ const orderSubmit = async (req, res) => {
     if (!req.body) {
       return res.status(400).json({ message: "Order details are missing" });
     }
-    const userId = req.user.userId;
-    const { status = "Pending", ...orderData } = req.body;
+
+    const userId = req.user.userId; // Assuming userId is in the session or token
+    const { status = "Pending", imeiNumbers, ...orderData } = req.body; // Make sure imeiNumbers are included in the request
+
     const order = await orderModel.create({
       ...orderData,
       userId,
+      imeiNumbers, // Ensure this is passed to the schema
       status,
     });
 
-    return res
-      .status(201)
-      .json({ message: "Order created successfully", order });
+    return res.status(201).json({ message: "Order created successfully", order });
   } catch (error) {
     console.error("Order creation error:", error);
     return res.status(500).json({ message: "Server error", error });
   }
 };
+
 
 // Get All Orders API
 const getOrders = async (req, res) => {

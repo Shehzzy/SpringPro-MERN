@@ -119,6 +119,7 @@ const OrderSchema = new Schema(
     },
     billingstate: {
       type: String,
+      default: "",  // Optional: Use default if it's an optional field.
     },
     billingzip: {
       type: String,
@@ -126,8 +127,13 @@ const OrderSchema = new Schema(
     authorizedname: {
       type: String,
     },
+    imeiNumbers: {
+      type: [String],  // Make sure imeiNumbers is an array of strings
+      required: false, // Optional if the field is not always required
+    },
     status: {
       type: String,
+      default: "Pending", // Default status if not provided
     },
   },
   { timestamps: true }

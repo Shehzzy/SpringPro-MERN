@@ -120,7 +120,7 @@ const Header = () => {
             </div>
             <div className="flex w-[200px] justify-end items-center">
               <div>
-                <Link to={'/login/'}
+                <Link to={'/login'}
                   style={{
                     background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
                   }}

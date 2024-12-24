@@ -145,7 +145,7 @@ const Login: React.FC = () => {
           <div className="flex justify-start items-center">
             <div>
               <Link
-                to={"/signup/"}
+                to={"/signup"}
                 className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
               >
                 Don't have an account? Signup
