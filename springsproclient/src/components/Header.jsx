@@ -64,7 +64,6 @@ const Header = () => {
 
   const logout = () => {
     localStorage.removeItem("jwt_token");
-    window.location.reload();
     navigate("/login")
   }
 

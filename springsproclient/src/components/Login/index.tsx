@@ -63,30 +63,23 @@ const Login: React.FC = () => {
             password: formData.password,
           }
         );
-
+  
         if (response.data.token) {
           localStorage.setItem("jwt_token", response.data.token);
-
+  
           setSuccessMessage("Login successful! Redirecting...");
-
+  
           // Decode the token to get the user role
           const decodedToken: any = jwtDecode(response.data.token);
-
+  
           // Redirect based on the user role
           if (decodedToken.role === "admin") {
-            setTimeout(() => {
-              navigate("/admin-all-users");
-              window.location.reload(); 
-            }, 1500); 
+            navigate("/admin-all-users"); // Redirect to admin dashboard
           } else {
-            setTimeout(() => {
-              navigate("/");
-              window.location.reload(); 
-            }, 1500); 
+            navigate("/"); // Redirect to home page for regular users
           }
-          
-
-          setErrors([]);
+  
+          setErrors([]); // Clear errors after successful login
         } else {
           setErrors([response.data.message || "Login failed"]);
         }
@@ -96,6 +89,7 @@ const Login: React.FC = () => {
       }
     }
   };
+  
 
   return (
     <section className="py-10 mt-[120px] px-8 text-center bg-white">
