@@ -32,43 +32,176 @@ import Orders from "./components/Orders/Orders.jsx";
 function App() {
   return (
     <Router>
-      {window.location.pathname !== "/login" &&
-        window.location.pathname !== "/admin-all-users" &&
-        window.location.pathname !== "/admin-all-orders" &&
-        window.location.pathname !== "/signup" && (
-          <>
-            <Header />
-          </>
-        )}
-      <ScrollTop />
+      {/* Manually adding Header and Footer only for specific routes */}
+      
+      {/* Routes that require Header and Footer */}
       <Routes>
         <Route
           path="/"
           element={
-            <div className="overflow-x-hidden ">
-              <Hero />
-              <Tags />
-              <Network />
-              <BillService />
-              <FeedBack />
-              <Story />
-              <Guide />
-              <Deploys />
-              <Products />
-              <Technology />
-            </div>
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Hero />
+                <Tags />
+                <Network />
+                <BillService />
+                <FeedBack />
+                <Story />
+                <Guide />
+                <Deploys />
+                <Products />
+                <Technology />
+              </div>
+              <Footer />
+            </>
           }
         />
 
         <Route
           path="/your-orders"
           element={
-            <div className="overflow-x-hidden ">
-              <Orders />
-            </div>
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Orders />
+              </div>
+              <Footer />
+            </>
           }
         />
 
+        <Route
+          path="/cellular-service"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Cellular />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/fibre-internet"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Fibre />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/order-form"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Form />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/cloud-solution"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Cloud />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/cyber-security"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Cyber />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/internet-wan"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Internet />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/business-voice"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Business />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/first-net-iot"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Iot />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/first-net-mobility"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Mobility />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        <Route
+          path="/bills-and-services"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <BillsAndServices />
+              </div>
+              <Footer />
+            </>
+          }
+        />
+
+        {/* Routes that should NOT show Header and Footer */}
         <Route
           path="/login"
           element={
@@ -87,87 +220,6 @@ function App() {
           }
         />
 
-        {/* Other Routes */}
-        <Route
-          path="/cellular-service"
-          element={
-            <div className="overflow-x-hidden ">
-              <Cellular />
-            </div>
-          }
-        />
-        <Route
-          path="/fibre-internet"
-          element={
-            <div className="overflow-x-hidden ">
-              <Fibre />
-            </div>
-          }
-        />
-        <Route
-          path="/order-form"
-          element={
-            <div className="overflow-x-hidden ">
-              <Form />
-            </div>
-          }
-        />
-        <Route
-          path="/cloud-solution"
-          element={
-            <div className="overflow-x-hidden ">
-              <Cloud />
-            </div>
-          }
-        />
-        <Route
-          path="/cyber-security"
-          element={
-            <div className="overflow-x-hidden ">
-              <Cyber />
-            </div>
-          }
-        />
-        <Route
-          path="/internet-wan"
-          element={
-            <div className="overflow-x-hidden ">
-              <Internet />
-            </div>
-          }
-        />
-        <Route
-          path="/business-voice"
-          element={
-            <div className="overflow-x-hidden ">
-              <Business />
-            </div>
-          }
-        />
-        <Route
-          path="/first-net-iot"
-          element={
-            <div className="overflow-x-hidden ">
-              <Iot />
-            </div>
-          }
-        />
-        <Route
-          path="/first-net-mobility"
-          element={
-            <div className="overflow-x-hidden ">
-              <Mobility />
-            </div>
-          }
-        />
-        <Route
-          path="/bills-and-services"
-          element={
-            <div className="overflow-x-hidden ">
-              <BillsAndServices />
-            </div>
-          }
-        />
         <Route
           path="/admin-all-users"
           element={
@@ -186,16 +238,6 @@ function App() {
           }
         />
       </Routes>
-
-      {/* Only render Header and Footer for routes that are not "/login" */}
-      {window.location.pathname !== "/login" &&
-        window.location.pathname !== "/admin-all-users" &&
-        window.location.pathname !== "/admin-all-orders" &&
-        window.location.pathname !== "/signup" && (
-          <>
-            <Footer />
-          </>
-        )}
     </Router>
   );
 }
