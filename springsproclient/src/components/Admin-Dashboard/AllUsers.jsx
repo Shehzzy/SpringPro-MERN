@@ -33,7 +33,7 @@ function AllUsers() {
 
     // Fetching the users data if the user is an admin
     axios
-      .get("http://localhost:8000/api/auth/get-users", {
+      .get("https://springprobackend-production.up.railway.app/api/auth/get-users", {
         headers: {
           Authorization: `Bearer ${token}`,
           role: userRole,

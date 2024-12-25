@@ -29,7 +29,7 @@ function AllOrders() {
     }
 
     axios
-      .get("http://localhost:8000/api/order/get-orders", {
+      .get("https://springprobackend-production.up.railway.app/api/order/get-orders", {
         headers: {
           Authorization: `Bearer ${token}`,
           role: userRole,
@@ -51,7 +51,7 @@ function AllOrders() {
 
     axios
       .put(
-        `http://localhost:8000/api/order/update-order-status/${orderId}`,
+        `https://springprobackend-production.up.railway.app/api/order/update-order-status/${orderId}`,
         { status: newStatus },
         {
           headers: {

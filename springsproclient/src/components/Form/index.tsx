@@ -215,7 +215,7 @@
 //           return;
 //         }
 //         const response = await axios.post(
-//           "http://localhost:8000/api/order/create-order",
+//           "https://springprobackend-production.up.railway.app/api/order/create-order",
 //           {
 //             ...formData, // Send form data in the body of the request
 //           },
@@ -878,7 +878,7 @@ const Form: React.FC = () => {
     const fetchIMEINumbers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8000/api/order/imei",
+          "https://springprobackend-production.up.railway.app/api/order/imei",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -1035,7 +1035,7 @@ const Form: React.FC = () => {
         }
 
         const response = await axios.post(
-          "http://localhost:8000/api/order/create-order",
+          "https://springprobackend-production.up.railway.app/api/order/create-order",
           {
             ...formData, // Send other form data
             imeiNumbers: imeiNumbers,

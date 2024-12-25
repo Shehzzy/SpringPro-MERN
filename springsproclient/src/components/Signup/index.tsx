@@ -51,7 +51,7 @@ const Signup: React.FC = () => {
     if (validateForm()) {
       try {
         const response = await axios.post(
-          "http://localhost:8000/api/auth/register",
+          "https://springprobackend-production.up.railway.app/api/auth/register",
           {
             fullName: formData.name,
             email: formData.email,
