@@ -854,7 +854,7 @@
 
 import React, { useState, FormEvent, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -874,8 +874,37 @@ const Form: React.FC = () => {
       });
       return;
     }
+
+    const fetchIMEINumbers = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8000/api/order/imei",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (response.status === 200) {
+          // Extract only the IMEI strings
+          const fetchedIMEINumbers = response.data.imeiNumbers.map(
+            (imei) => imei.imei
+          );
+          setImeiNumbers(fetchedIMEINumbers); // Set the fetched IMEI numbers
+        }
+      } catch (error) {
+        console.error("Error fetching IMEI numbers:", error);
+        setErrors(["An error occurred while fetching IMEI numbers."]);
+      }
+    };
+
+    fetchIMEINumbers();
   }, [navigate]);
 
+  const [imeiInput, setImeiInput] = useState(""); // For the current IMEI input
+  const [imeiNumbers, setImeiNumbers] = useState<string[]>([]); // For the list of IMEI numbers
+  const [showAllImeis, setShowAllImeis] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -914,35 +943,12 @@ const Form: React.FC = () => {
     billingzip: "",
     authorizedname: "",
     companyname: "", // New field for Company Name
-    imeiNumbers: [], // New field for IMEI Numbers
+    imeiNumbers: imeiNumbers, // New field for IMEI Numbers
   });
-
   const [errors, setErrors] = useState<string[]>([]);
   const [state, handleSubmit] = useForm("xanykyav");
   const [isSubmitted, setIsSubmitted] = useState(false);
-
-  const imeiOptions = [
-    { id: 1, value: "IMEI1", label: "IMEI Number 1" },
-    { id: 2, value: "IMEI2", label: "IMEI Number 2" },
-    { id: 3, value: "IMEI3", label: "IMEI Number 3" },
-    { id: 4, value: "IMEI4", label: "IMEI Number 4" },
-    { id: 5, value: "IMEI5", label: "IMEI Number 5" },
-    { id: 6, value: "IMEI6", label: "IMEI Number 6" },
-    { id: 7, value: "IMEI7", label: "IMEI Number 7" },
-    { id: 8, value: "IMEI8", label: "IMEI Number 8" },
-    { id: 9, value: "IMEI9", label: "IMEI Number 9" },
-    { id: 10, value: "IMEI10", label: "IMEI Number 10" },
-    { id: 11, value: "IMEI11", label: "IMEI Number 11" },
-    { id: 12, value: "IMEI12", label: "IMEI Number 12" },
-    { id: 13, value: "IMEI13", label: "IMEI Number 13" },
-    { id: 14, value: "IMEI14", label: "IMEI Number 14" },
-    { id: 15, value: "IMEI15", label: "IMEI Number 15" },
-    { id: 16, value: "IMEI16", label: "IMEI Number 16" },
-    { id: 17, value: "IMEI17", label: "IMEI Number 17" },
-    { id: 18, value: "IMEI18", label: "IMEI Number 18" },
-    { id: 19, value: "IMEI19", label: "IMEI Number 19" },
-    { id: 20, value: "IMEI20", label: "IMEI Number 20" },
-  ];
+  const [isFirstOrder, setIsFirstOrder] = useState(true); // Track if it's the first order
 
   const handleIMEIChange = (e) => {
     const value = e.target.value;
@@ -953,7 +959,6 @@ const Form: React.FC = () => {
       return { ...prev, imeiNumbers: newIMEINumbers };
     });
   };
-  
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -1007,7 +1012,7 @@ const Form: React.FC = () => {
     if (!formData.billingzip) missingFields.push("Billing Zip");
     if (!formData.authorizedname) missingFields.push("Authorized Name");
     if (!formData.companyname) missingFields.push("Company Name");
-    if (formData.imeiNumbers.length === 0) missingFields.push("IMEI Numbers");
+    // if (formData.imeiNumbers.length === 0) missingFields.push("IMEI Numbers");
 
     if (missingFields.length > 0) {
       setErrors([`Missing the following fields: ${missingFields.join(", ")}`]);
@@ -1016,7 +1021,8 @@ const Form: React.FC = () => {
 
     return true;
   };
-
+  console.log("Form Data:", formData);
+  console.log("IMEI Numbers:", imeiNumbers);
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (validateForm()) {
@@ -1027,10 +1033,12 @@ const Form: React.FC = () => {
           setErrors(["Authentication token missing"]);
           return;
         }
+
         const response = await axios.post(
           "http://localhost:8000/api/order/create-order",
           {
-            ...formData, // Send form data in the body of the request
+            ...formData, // Send other form data
+            imeiNumbers: imeiNumbers,
           },
           {
             headers: {
@@ -1464,7 +1472,15 @@ const Form: React.FC = () => {
                 value={formData.accountnumber}
                 onChange={handleChange}
                 className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                disabled={!isFirstOrder && !!formData.accountnumber} // Disable if not first order and account number exists
               />
+              {isFirstOrder && (
+                <div className="d-flex justify-start">
+                  <p className="text-danger text-sm mt-1 text-center">
+                    This will only be filled out once.
+                  </p>
+                </div>
+              )}
             </div>
             <div className="mb-4">
               <h6 className="text-start md:text-center">Pin or Password</h6>
@@ -1488,7 +1504,6 @@ const Form: React.FC = () => {
                 className="border-b focus:outline-none border-gray-300 py-2 w-full"
               />
             </div>
-
             <div className="mb-4">
               <h6 className="text-start md:text-center">Billing Name</h6>
               <input
@@ -1574,11 +1589,8 @@ const Form: React.FC = () => {
                 className="border-b focus:outline-none border-gray-300 py-2 w-full"
               />
             </div>
-
             <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Account Number
-              </h6>
+              <h6 className="text-start md:text-center">Account Number</h6>
               <input
                 type="text"
                 name="accountnumber"
@@ -1586,29 +1598,92 @@ const Form: React.FC = () => {
                 value={formData.accountnumber}
                 onChange={handleChange}
                 className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                disabled={!isFirstOrder && !!formData.accountnumber} // Disable if not first order and account number exists
               />
+              {isFirstOrder && (
+                <div className="d-flex justify-start">
+                  <p className="text-danger text-sm mt-1 text-center">
+                    This will only be filled out once.
+                  </p>
+                </div>
+              )}
             </div>
 
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                IMEI Numbers
-              </h6>
-              <div className="space-y-2" style={{width:'200px',height:'100px', overflowY:'auto'}}>
-                {imeiOptions.map((option) => (
-                  <div key={option.id} className="flex items-center">
-                    <input
-                      type="checkbox"
-                      id={option.value}
-                      value={option.value}
-                      checked={formData.imeiNumbers.includes(option.value)}
-                      onChange={(e) => handleIMEIChange(e)}
-                      className="mr-2"
-                    />
-                    <label htmlFor={option.value}>{option.label}</label>
+            {isFirstOrder && (
+              <div className="mb-4">
+                <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
+                  Add New IMEI Number
+                </h6>
+                <input
+                  type="text"
+                  name="imeiInput"
+                  placeholder="Enter IMEI Number"
+                  value={imeiInput}
+                  onChange={(e) => setImeiInput(e.target.value)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (imeiInput) {
+                      setImeiNumbers((prev) => [...prev, imeiInput]);
+                      setImeiInput(""); // Clear the input field
+                    }
+                  }}
+                  className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded"
+                >
+                  Add IMEI Number
+                </button>
+
+                {imeiNumbers.length > 0 && (
+                  <div className="mt-4">
+                    <p className="w-100 md:text-center text-start font-medium text-gray-700">
+                      Select from Existing IMEI Numbers
+                    </p>
+                    <div className="flex flex-col">
+                      {/* Display the first 4 IMEI numbers or show all if 'showAllImeis' is true */}
+                      {(showAllImeis
+                        ? imeiNumbers
+                        : imeiNumbers.slice(0, 4)
+                      ).map((imei, index) => (
+                        <label key={index} className="flex items-center">
+                          <input
+                            type="checkbox"
+                            value={imei}
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                console.log(`${imei} selected`);
+                              } else {
+                                console.log(`${imei} deselected`);
+                              }
+                            }}
+                            className="mr-2"
+                          />
+                          {imei}
+                        </label>
+                      ))}
+                    </div>
+
+                    {/* Show "See More" or "See Less" based on the current state */}
+                    <div className="d-flex justify-start mt-2 ">
+                      {imeiNumbers.length > 4 && (
+                        <button
+                          type="button"
+                          onClick={() => setShowAllImeis(!showAllImeis)}
+                          style={{
+                            background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                          }}
+                          className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-2 font-semibold rounded-3xl"
+                        
+                        >
+                          {showAllImeis ? "See Less" : "See More"}
+                        </button>
+                      )}
+                    </div>
                   </div>
-                ))}
+                )}
               </div>
-            </div>
+            )}
           </div>
 
           <div className="flex flex-col mt-8">
@@ -1622,6 +1697,17 @@ const Form: React.FC = () => {
             >
               Submit
             </button>
+          </div>
+
+          <div className="flex justify-start items-center">
+            <div>
+              <Link
+                to={"/your-orders"}
+                className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
+              >
+                I want to see my orders
+              </Link>
+            </div>
           </div>
         </form>
 

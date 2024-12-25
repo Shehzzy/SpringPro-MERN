@@ -3,9 +3,12 @@ import { Link, useNavigate } from 'react-router-dom';  // Import useNavigate for
 import logo from "../assets/images/logo.svg";
 
 const Header = () => {
+  const navigate = useNavigate();
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
   const [activeModal, setActiveModal] = useState(null);  // Null means no modal is open
   const Section = useRef(null);
+  const [showLogout, setshowLogout] = useState(false);
+
 
   // Initialize useNavigate hook
 
@@ -41,6 +44,11 @@ const Header = () => {
 
   // Add scroll event listener
   useEffect(() => {
+  const token =  localStorage.getItem("jwt_token");
+  if (token) {
+    setshowLogout(true);
+  }
+    
     window.addEventListener("scroll", SectionScroll);
     return () => {
       window.removeEventListener("scroll", SectionScroll);
@@ -53,6 +61,12 @@ const Header = () => {
     setIsMobileNavOpen(); // Close the modal when the link is clicked
     // Navigate to the clicked link's path
   };
+
+  const logout = () => {
+    localStorage.removeItem("jwt_token");
+    window.location.reload();
+    navigate("/login")
+  }
 
   return (
     <>
@@ -106,6 +120,7 @@ const Header = () => {
                 <i className="fa-solid text-xs fa-chevron-down"></i>
               </a>
             </div>
+            
             <div className="flex w-[200px] justify-end items-center">
               <div>
                 <Link to={'/order-form/'}
@@ -118,7 +133,9 @@ const Header = () => {
                 </Link>
               </div>
             </div>
-            <div className="flex w-[200px] justify-end items-center">
+           {
+            !showLogout ? (
+              <div className="flex w-[200px] justify-end items-center">
               <div>
                 <Link to={'/login'}
                   style={{
@@ -130,6 +147,30 @@ const Header = () => {
                 </Link>
               </div>
             </div>
+            )
+            : (
+              <>
+              <div className="flex w-[180px] justify-end items-center">            
+              <div>
+                <Link onClick={logout}
+                   style={{
+                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                  }}
+                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
+                >
+                  LOGOUT
+                </Link>
+              </div>
+            </div>
+
+
+            
+
+              </>
+
+            
+            )
+           }
           </div>
         </div>
       </div>

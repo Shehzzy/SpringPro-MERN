@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // For decoding JWT
+import { jwtDecode } from "jwt-decode"; // For decoding JWT
 import { useNavigate } from "react-router-dom"; // Add this import
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
-import './styles.css';
+import "./styles.css";
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
@@ -69,26 +69,30 @@ function AllUsers() {
               <h1 className="mt-4">Users List</h1>
               <div className="card mb-4">
                 <div className="card-body">
-                  <table className="table table-bordered">
+                  <table className="table table-striped table-bordered">
                     <thead>
                       <tr>
                         <th>Name</th>
                         <th>Email</th>
                         <th>Role</th>
-                        {/* <th>Actions</th> */}
                       </tr>
                     </thead>
                     <tbody>
-                      {users.map((user) => (
-                        <tr key={user._id}>
-                          <td>{user.fullName}</td>
-                          <td>{user.email}</td>
-                          <td>{user.role}</td>
-                          {/* <td>
-                            Add any actions here, like "Edit" or "Delete"
-                          </td> */}
+                      {users && users.length > 0 ? (
+                        users.map((user) => (
+                          <tr key={user._id}>
+                            <td>{user.fullName}</td>
+                            <td>{user.email}</td>
+                            <td>{user.role}</td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan="3" style={{ textAlign: "center" }}>
+                            No users found.
+                          </td>
                         </tr>
-                      ))}
+                      )}
                     </tbody>
                   </table>
                 </div>

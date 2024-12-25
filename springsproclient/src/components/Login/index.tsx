@@ -74,10 +74,17 @@ const Login: React.FC = () => {
 
           // Redirect based on the user role
           if (decodedToken.role === "admin") {
-            setTimeout(() => navigate("/admin-all-users"), 1500); // Redirect to admin dashboard
+            setTimeout(() => {
+              navigate("/admin-all-users");
+              window.location.reload(); 
+            }, 1500); 
           } else {
-            setTimeout(() => navigate("/"), 1500); // Redirect to home page for regular users
+            setTimeout(() => {
+              navigate("/");
+              window.location.reload(); 
+            }, 1500); 
           }
+          
 
           setErrors([]);
         } else {

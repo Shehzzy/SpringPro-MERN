@@ -27,6 +27,7 @@ import Form from "./components/Form/index.tsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AllUsers from "./components/Admin-Dashboard/AllUsers.jsx";
 import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
+import Orders from "./components/Orders/Orders.jsx";
 
 function App() {
   return (
@@ -55,6 +56,15 @@ function App() {
               <Deploys />
               <Products />
               <Technology />
+            </div>
+          }
+        />
+
+        <Route
+          path="/your-orders"
+          element={
+            <div className="overflow-x-hidden ">
+              <Orders />
             </div>
           }
         />
