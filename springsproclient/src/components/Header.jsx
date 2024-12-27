@@ -64,8 +64,10 @@ const Header = () => {
 
   const logout = () => {
     localStorage.removeItem("jwt_token");
-    navigate("/login")
-  }
+    setshowLogout(false); // Update the state to reflect that the user is logged out
+    navigate("/login"); // Navigate to the login page
+    window.location.reload();
+  };
 
   return (
     <>
