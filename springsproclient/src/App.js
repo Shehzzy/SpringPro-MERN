@@ -1,4 +1,6 @@
 import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/js/bootstrap.bundle.min.js';  
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Tags from "./components/Tag";
@@ -28,12 +30,13 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import AllUsers from "./components/Admin-Dashboard/AllUsers.jsx";
 import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
 import Orders from "./components/Orders/Orders.jsx";
+import MainContent from "./components/Admin-Dashboard/MainContent.jsx";
 
 function App() {
   return (
     <Router>
       {/* Manually adding Header and Footer only for specific routes */}
-      
+
       {/* Routes that require Header and Footer */}
       <Routes>
         <Route
@@ -234,6 +237,17 @@ function App() {
           element={
             <div className="overflow-x-hidden ">
               <AllOrders />
+            </div>
+          }
+        />
+
+
+{/* Main content just for testing  */}
+        <Route
+          path="/main-content"
+          element={
+            <div className="overflow-x-hidden ">
+              <MainContent />
             </div>
           }
         />
