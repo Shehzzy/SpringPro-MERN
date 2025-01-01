@@ -97,76 +97,77 @@ function AllOrders() {
         <Sidebar />
         <div id="layoutSidenav_content">
           <main>
-            <div className="container-fluid px-4">
-              <h1 className="mt-4">Orders List</h1>
+            <div className="container-fluid px-4 md-4"  style={{ marginTop: "50px" }}>
+              <h1 className="mt-4 h3">Orders List</h1>
               <div className="card mb-4">
                 <div className="card-body">
-                  <table className="table table-striped table-bordered">
-                    <thead className="thead-dark">
-                      <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                        <th>IMEI Numbers</th>
-                        <th>Order Date</th>
-                        <th>Shipping Address</th>
-                        <th>Status</th>
-                        <th>Update Status</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {orders && orders.length > 0 ? (
-                        orders.map((order) => (
-                          <tr key={order._id}>
-                            <td>{order.name}</td>
-                            <td>{order.email}</td>
-                            <td>{order.phonenumber}</td>
-                            <td>
-                              {order.imeiNumbers &&
-                              order.imeiNumbers.length > 0 ? (
-                                order.imeiNumbers
-                                  .map((imei) => imei.imei)
-                                  .join(", ") // Extract the imei property and join with a comma
-                              ) : (
-                                <span>No IMEI numbers</span>
-                              )}
-                            </td>
-                            <td>
-                              {new Date(order.createdAt).toLocaleDateString()}
-                            </td>
-                            <td>{order.shippingaddress}</td>
-                            <td>
-                              <span
-                                style={getStatusStyle(order.status)}
-                                className="badge"
-                              >
-                                {order.status}
-                              </span>
-                            </td>
-                            <td>
-                              <select
-                                value={order.status}
-                                onChange={(e) =>
-                                  updateOrderStatus(order._id, e.target.value)
-                                }
-                                className="form-control"
-                              >
-                                <option value="Pending">Pending</option>
-                                <option value="In Progress">In Progress</option>
-                                <option value="Completed">Completed</option>
-                              </select>
+                  <div className="table-responsive">
+                    <table className="table table-striped table-bordered">
+                      <thead className="thead-dark">
+                        <tr>
+                          <th>Name</th>
+                          <th>Email</th>
+                          <th>Phone Number</th>
+                          <th>IMEI Numbers</th>
+                          <th>Order Date</th>
+                          <th>Shipping Address</th>
+                          <th>Status</th>
+                          <th>Update Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {orders && orders.length > 0 ? (
+                          orders.map((order) => (
+                            <tr key={order._id}>
+                              <td>{order.name}</td>
+                              <td>{order.email}</td>
+                              <td>{order.phonenumber}</td>
+                              <td>
+                                {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
+                                  order.imeiNumbers
+                                    .map((imei) => imei.imei)
+                                    .join(", ")
+                                ) : (
+                                  <span>No IMEI numbers</span>
+                                )}
+                              </td>
+                              <td>
+                                {new Date(order.createdAt).toLocaleDateString()}
+                              </td>
+                              <td>{order.shippingaddress}</td>
+                              <td>
+                                <span
+                                  style={getStatusStyle(order.status)}
+                                  className="badge"
+                                >
+                                  {order.status}
+                                </span>
+                              </td>
+                              <td>
+                                <select
+                                  value={order.status}
+                                  onChange={(e) =>
+                                    updateOrderStatus(order._id, e.target.value)
+                                  }
+                                  className="form-control"
+                                >
+                                  <option value="Pending">Pending</option>
+                                  <option value="In Progress">In Progress</option>
+                                  <option value="Completed">Completed</option>
+                                </select>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan="8" style={{ textAlign: "center" }}>
+                              No orders found.
                             </td>
                           </tr>
-                        ))
-                      ) : (
-                        <tr>
-                          <td colSpan="8" style={{ textAlign: "center" }}>
-                            No orders found.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             </div>

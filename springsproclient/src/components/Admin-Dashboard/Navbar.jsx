@@ -1,48 +1,40 @@
-// import React from "react";
-
-// function Navbar() {
-//   return (
-//     <nav className="sb-topnav navbar navbar-expand navbar-dark bg-dark">
-//       <a className="navbar-brand ps-3" href="#">SpringPro</a>
-//     </nav>
-//   );
-// }
-
-// export default Navbar;
-
-
-import React from "react";
+import React, { useState } from "react";
+import "bootstrap/dist/css/bootstrap.min.css"; // Keep the Bootstrap CSS
 
 function Navbar() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleNavbar = () => {
+    setIsOpen(!isOpen);
+  };
+
+  const closeNavbar = () => {
+    setIsOpen(false);
+  };
+
   return (
-    <nav className="sb-topnav navbar navbar-expand-lg navbar-dark bg-dark">
-      <a className="navbar-brand ps-3" href="#">SpringPro</a>
-      <button 
-        className="navbar-toggler" 
-        type="button" 
-        data-bs-toggle="collapse" 
-        data-bs-target="#navbarNav" 
-        aria-controls="navbarNav" 
-        aria-expanded="false" 
-        aria-label="Toggle navigation"
-      >
-        <span className="navbar-toggler-icon"></span>
-      </button>
-      <div className="collapse navbar-collapse" id="navbarNav">
-        <ul className="navbar-nav ms-auto">
-          <li className="nav-item">
-            <a className="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">Features</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">Pricing</a>
-          </li>
-          <li className="nav-item">
-            <a className="nav-link" href="#">About</a>
-          </li>
-        </ul>
+    <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div className="container">
+        <a className="navbar-brand" href="#">
+          Navbar
+        </a>
+        {/* <button
+          className="navbar-toggler"
+          type="button"
+          onClick={toggleNavbar}
+          aria-controls="navbarNav"
+          aria-expanded={isOpen ? "true" : "false"}
+          aria-label="Toggle navigation"
+        >
+          <span className="navbar-toggler-icon"></span>
+        </button> */}
+        {/* Empty navbar (no items inside) */}
+        <div
+          className={`navbar-collapse ${isOpen ? "show" : ""}`} // Toggle the "show" class based on isOpen state
+          id="navbarNav"
+        >
+          {/* No navbar items */}
+        </div>
       </div>
     </nav>
   );

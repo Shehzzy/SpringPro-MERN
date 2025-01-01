@@ -1,0 +1,72 @@
+/* Sidebar styles */
+#layoutSidenav_content {
+    margin-left: 250px !important;
+    width: calc(100% - 250px) !important;
+}
+
+.navbar {
+    width: calc(100vw - 250px);
+    position: relative;
+    left: 250px;
+}
+
+.sb-sidenav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100vh;
+    background-color: #343a40;
+    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    z-index: 1050;
+    transition: transform 0.3s ease;
+}
+
+.sb-sidenav-menu {
+    padding-top: 20px;
+}
+
+.sb-sidenav a.nav-link {
+    color: white;
+    font-size: 18px;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.sb-sidenav a.nav-link:hover {
+    background-color: #555;
+}
+
+.sb-sidenav.open {
+    transform: translateX(0);
+}
+
+.sb-sidenav.d-none {
+    transform: translateX(-250px);
+}
+
+/* Sidebar for small screens */
+@media (max-width: 768px) {
+    #layoutSidenav_content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    .navbar {
+        width: 100%;
+        position: relative;
+        left: 0px;
+    }
+
+    .sb-sidenav {
+        transform: translateX(-250px);
+    }
+
+    .sb-sidenav.open {
+        transform: translateX(0);
+    }
+
+    .btn-dark {
+        z-index: 1060;
+    }
+}

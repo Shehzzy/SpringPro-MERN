@@ -1,6 +1,6 @@
 import "./App.css";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap/dist/js/bootstrap.bundle.min.js';  
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';  
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Tags from "./components/Tag";
