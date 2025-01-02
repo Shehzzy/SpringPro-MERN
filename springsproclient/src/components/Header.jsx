@@ -209,7 +209,8 @@ const Header = () => {
               </div>
               <div className="flex w-fit justify-center items-center gap-4">
                 <a href="" className="font-light inter text-gray-600 text-sm">Contact Us</a>
-                <a href="" className="font-light inter text-gray-600 text-sm">Log In</a>
+                {/* <a href="" className="font-light inter text-gray-600 text-sm">Log In</a> */}
+                <Link to="/login" className="font-light inter text-gray-600 text-sm">Log In</Link>
               </div>
             </div>
 
