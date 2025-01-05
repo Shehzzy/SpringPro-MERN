@@ -1,6 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';  // Import useNavigate for navigation
 import logo from "../assets/images/logo.svg";
+import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
+import { ChevronDownIcon } from '@heroicons/react/20/solid'
 
 const Header = () => {
   const navigate = useNavigate();
@@ -8,6 +10,7 @@ const Header = () => {
   const [activeModal, setActiveModal] = useState(null);  // Null means no modal is open
   const Section = useRef(null);
   const [showLogout, setshowLogout] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
 
   // Initialize useNavigate hook
@@ -44,11 +47,11 @@ const Header = () => {
 
   // Add scroll event listener
   useEffect(() => {
-  const token =  localStorage.getItem("jwt_token");
-  if (token) {
-    setshowLogout(true);
-  }
-    
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      setshowLogout(true);
+    }
+
     window.addEventListener("scroll", SectionScroll);
     return () => {
       window.removeEventListener("scroll", SectionScroll);
@@ -121,57 +124,79 @@ const Header = () => {
                 <i className="fa-solid text-xs fa-chevron-down"></i>
               </a>
             </div>
-            
-            <div className="flex w-[200px] justify-end items-center">
+
+            {/* // Buttons for order now, login, logout */}
+
+            <div className="flex w-[250px] justify-end items-center">
               <div>
-                <Link to={'/order-form/'}
+                <Link
+                  to={'/order-form/'}
                   style={{
                     background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
                   }}
-                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
+                  className="transition-all text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
                 >
                   ORDER NOW
                 </Link>
               </div>
             </div>
-           {
-            !showLogout ? (
-              <div className="flex w-[200px] justify-end items-center">
-              <div>
-                <Link to={'/login'}
-                  style={{
-                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                  }}
-                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
-                >
-                  LOGIN NOW
-                </Link>
-              </div>
-            </div>
-            )
-            : (
-              <>
-              <div className="flex w-[180px] justify-end items-center">            
-              <div>
-                <Link onClick={logout}
-                   style={{
-                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                  }}
-                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
-                >
-                  LOGOUT
-                </Link>
-              </div>
-            </div>
+
+            {
+              !showLogout ? (
+                <div className="flex w-[200px] justify-end items-center">
+                  <Link
+                    to={'/login'}
+                    style={{
+                      background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                    }}
+                    className="transition-all text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
+                  >
+                    LOGIN NOW
+                  </Link>
+                </div>
+              )
+                : (
+                  <Menu as="div" className="relative inline-block text-left ml-2 mt-2">
+                    <div>
+                      <MenuButton
+                        style={{
+                          background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                        }}
+                        className="inline-flex justify-center items-center text-xs font-semibold text-black px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
+                      >
+                        Profile
+                        <ChevronDownIcon aria-hidden="true" className="-mr-1 w-4 h-4 text-gray-400" />
+                      </MenuButton>
+                    </div>
+
+                    <Menu.Items
+                      transition
+                      className="dropdown-profile absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                    >
+                      <div className="py-1">
+                        <MenuItem>
+                          <a
+                            href="/your-orders"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          >
+                            Previous Orders
+                          </a>
+                        </MenuItem>
+                        <MenuItem>
+                          <button
+                            onClick={logout} // Replace with your actual logout function
+                            className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          >
+                            Logout
+                          </button>
+                        </MenuItem>
+                      </div>
+                    </Menu.Items>
+                  </Menu>
+                )
+            }
 
 
-            
-
-              </>
-
-            
-            )
-           }
           </div>
         </div>
       </div>
@@ -180,8 +205,8 @@ const Header = () => {
       <div className='w-full flex bg-white lg:hidden fixed top-0 z-[1200] drop-shadow-lg'>
         <div className=" flex w-full container mx-auto   items-center justify-between tex py-6 px-4">
           <div className="flex  items-center">
-           <Link onClick={() => handleLinkClick("/")}  to={"/"}>
-           <img src={logo} className='w-[125px]' alt="" /></Link>
+            <Link onClick={() => handleLinkClick("/")} to={"/"}>
+              <img src={logo} className='w-[125px]' alt="" /></Link>
           </div>
           <div>
             <button onClick={toggleMobileNav} className="text-gray-600">
@@ -210,7 +235,14 @@ const Header = () => {
               <div className="flex w-fit justify-center items-center gap-4">
                 <a href="" className="font-light inter text-gray-600 text-sm">Contact Us</a>
                 {/* <a href="" className="font-light inter text-gray-600 text-sm">Log In</a> */}
-                <Link to="/login" className="font-light inter text-gray-600 text-sm">Log In</Link>
+                {!showLogout ? (
+                  <Link to="/login" className="font-light inter text-gray-600 text-sm">Log In</Link>
+
+                ) : (
+                  <Link onClick={logout} className="font-light inter text-gray-600 text-sm">Log Out</Link>
+
+                )}
+
               </div>
             </div>
 
@@ -234,15 +266,104 @@ const Header = () => {
 
             {/* "GET A DEMO" Button at the Bottom */}
             <div className="w-fit justify-center items-center mt-4">
-            <Link to={"/order-form/"} onClick={() => handleLinkClick("/order-form/")} 
-                  style={{
-                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                  }}
-                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
-                >
-                  ORDER NOW
-                </Link>
+              <Link to={"/order-form/"} onClick={() => handleLinkClick("/order-form/")}
+                style={{
+                  background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                }}
+                className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl"
+              >
+                ORDER NOW
+              </Link>
             </div>
+
+            {showLogout && (
+              <Menu as="div" className="relative inline-block text-left ml-2 mt-4">
+                <div>
+                  <MenuButton
+                    style={{
+                      background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                    }}
+                    className="inline-flex justify-center items-center text-xs font-semibold text-black px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
+                  >
+                    Profile
+                    <ChevronDownIcon aria-hidden="true" className="-mr-1 w-4 h-4 text-gray-400" />
+                  </MenuButton>
+                </div>
+
+                <Menu.Items
+                  transition
+                  className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none profile-drop"
+                >
+                  <div className="py-1">
+                    <MenuItem>
+                      <a
+                        href="/your-orders"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >
+                        Previous Orders
+                      </a>
+                    </MenuItem>
+                    <MenuItem>
+                      <button
+                        onClick={logout} // Replace with your actual logout function
+                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >
+                        Logout
+                      </button>
+                    </MenuItem>
+                  </div>
+                </Menu.Items>
+
+                <style jsx>{`
+    @media (max-width: 768px) {
+      .profile-drop {
+        position: fixed;
+        left:80px; /* Align to the left edge of the screen on mobile */
+        right: 0; /* Align to the right edge of the screen */
+        top: 710px; /* Adjust depending on the position of your header */
+        z-index: 50; /* Make sure it's on top */
+        width: 70%; /* Ensure it takes the full width on mobile */
+        background-color: white;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow to dropdown */
+      }
+
+      .profile-drop .py-1 {
+        padding: 0.5rem; /* Add some padding for better spacing */
+      }
+
+      .profile-drop .block {
+        display: block;
+      }
+
+      .profile-drop .text-sm {
+        font-size: 14px; /* Make text size slightly smaller for mobile */
+      }
+
+      .profile-drop .hover\:bg-gray-100:hover {
+        background-color: #f7fafc; /* Slightly lighter background */
+      }
+
+      .profile-drop .hover\:text-gray-900:hover {
+        color: #1a202c; /* Darker text on hover */
+      }
+
+      .profile-drop .w-56 {
+        width: 90%; /* Adjust width for better fit */
+      }
+    }
+
+    @media (min-width: 769px) {
+      .profile-drop {
+        position: absolute;
+        right: 0;
+        top: 50px; /* Adjust based on your header height */
+        width: 250px; /* Adjust width for larger screens */
+      }
+    }
+  `}</style>
+              </Menu>
+
+            )}
           </div>
         </div>
       </div>
@@ -275,9 +396,9 @@ const Header = () => {
                         <i className='fa-solid mt-1 text-[#393939] fa-mobile'></i> {/* Mobile phone icon */}
                       </div>
                       <div>
-                      <Link to={"/first-net-mobility"}
-                            className='text-[#393939] text-sm font-semibold tracking-wide'
-                            onClick={() => handleLinkClick("/cellular-service")}>
+                        <Link to={"/first-net-mobility"}
+                          className='text-[#393939] text-sm font-semibold tracking-wide'
+                          onClick={() => handleLinkClick("/cellular-service")}>
                           First Net Mobility
                         </Link>
                         <p className='text-[14px] mt-1 font-light text-[#606060]'>
@@ -293,8 +414,8 @@ const Header = () => {
                       </div>
                       <div>
                         <Link to={"/first-net-iot"}
-                            className='text-[#393939] text-sm font-semibold tracking-wide'
-                            onClick={() => handleLinkClick("/cellular-service")}>
+                          className='text-[#393939] text-sm font-semibold tracking-wide'
+                          onClick={() => handleLinkClick("/cellular-service")}>
                           First Net IoT
                         </Link>
                         <p className='text-[14px] mt-1 font-light text-[#606060]'>
@@ -342,13 +463,13 @@ const Header = () => {
                         <i className='fa-solid mt-1 text-[#393939] fa-file-invoice'></i> {/* Invoice icon */}
                       </div>
                       <div>
-                      <Link
-                            to={"/bills-and-services"}
-                            className='text-[#393939] font-semibold text-sm tracking-normal'
-                            onClick={() => handleLinkClick("/fibre-internet")}
-                          >
-                            Bill And Services
-                          </Link>
+                        <Link
+                          to={"/bills-and-services"}
+                          className='text-[#393939] font-semibold text-sm tracking-normal'
+                          onClick={() => handleLinkClick("/fibre-internet")}
+                        >
+                          Bill And Services
+                        </Link>
                         <p className='text-[14px] mt-1 font-light text-[#606060]'>
                           Comprehensive analysis of your business’s billing and service usage to optimize costs and improve efficiency.
                         </p>
