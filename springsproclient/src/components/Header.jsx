@@ -127,7 +127,7 @@ const Header = () => {
 
             {/* // Buttons for order now, login, logout */}
 
-            <div className="flex w-[250px] justify-end items-center">
+            {/* <div className="flex w-[250px] justify-end items-center">
               <div>
                 <Link
                   to={'/order-form/'}
@@ -139,7 +139,7 @@ const Header = () => {
                   ORDER NOW
                 </Link>
               </div>
-            </div>
+            </div> */}
 
             {
               !showLogout ? (
@@ -227,16 +227,21 @@ const Header = () => {
           <div className="w-fit">
             <div className="flex flex-col justify-start gap-6 mb-6">
               {/* Upper Section in Mobile */}
-              <div className="flex w-fit items-baseline gap-2 justify-center inter font-light text-sm">
+              {/* <div className="flex w-fit items-baseline gap-2 justify-center inter font-light text-sm">
                 <i className="fa-solid text-tron-blue fa-globe"></i>
                 <h4 className="text-gray-600">United States (English)</h4>
                 <i className="fa-solid text-tron-blue fa-caret-down"></i>
-              </div>
+              </div> */}
               <div className="flex w-fit justify-center items-center gap-4">
-                <a href="" className="font-light inter text-gray-600 text-sm">Contact Us</a>
+                {/* <a href="" className="font-light inter text-gray-600 text-sm">Contact Us</a> */}
                 {/* <a href="" className="font-light inter text-gray-600 text-sm">Log In</a> */}
                 {!showLogout ? (
-                  <Link to="/login" className="font-light inter text-gray-600 text-sm">Log In</Link>
+                  <Link to="/login" style={{
+                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                  }}
+                  className="transition-all  text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl">
+                    Log In
+                  </Link>
 
                 ) : (
                   <Link onClick={logout} className="font-light inter text-gray-600 text-sm">Log Out</Link>
@@ -249,7 +254,7 @@ const Header = () => {
             {/* Main Navigation Links for Mobile */}
             <div className="flex w-fit justify-center items-start flex-col gap-6 mb-6">
               <Link onClick={() => handleLinkClick("/internet-wan")} to={"/"} className="text-gray-700 font flex tracking-wide items-center gap-2 inter">Home </Link>
-              <a href="#" className="text-gray-700 font flex tracking-wide items-center gap-2 inter">About   </a>
+              <a href="#" className="text-gray-700 font flex tracking-wide items-center gap-2 inter">About</a>
               <button onClick={() => openModal('agency')} className="text-gray-700 font flex tracking-wide items-center gap-2 inter">
                 First Responder Agency
                 <i className="fa-solid text-xs fa-chevron-down"></i>
@@ -265,7 +270,7 @@ const Header = () => {
             </div>
 
             {/* "GET A DEMO" Button at the Bottom */}
-            <div className="w-fit justify-center items-center mt-4">
+            {/* <div className="w-fit justify-center items-center mt-4">
               <Link to={"/order-form/"} onClick={() => handleLinkClick("/order-form/")}
                 style={{
                   background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
@@ -274,7 +279,7 @@ const Header = () => {
               >
                 ORDER NOW
               </Link>
-            </div>
+            </div> */}
 
             {showLogout && (
               <Menu as="div" className="relative inline-block text-left ml-2 mt-4">

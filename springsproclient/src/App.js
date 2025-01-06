@@ -5,6 +5,7 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Tags from "./components/Tag";
 import BillService from "./components/BillService";
+import Cobec from "./components/Cobec";
 import Internet from "./components/Internet/index.jsx";
 import Network from "./components/Network";
 import Cellular from "./components/Cellular Service";
@@ -240,8 +241,19 @@ function App() {
             </div>
           }
         />
-
-
+        
+        <Route
+          path="/cobec"
+          element={
+            <>
+              <Header />
+              <div className="overflow-x-hidden ">
+                <Cobec />
+              </div>
+              <Footer />
+            </>
+          }
+        />
 {/* Main content just for testing  */}
         <Route
           path="/main-content"
