@@ -176,11 +176,21 @@ const Header = () => {
                       <div className="py-1">
                         <MenuItem>
                           <a
+                            href="/order-form"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                          >
+                            Order Now
+                          </a>
+                          
+                        </MenuItem>
+                        <MenuItem>
+                          <a
                             href="/your-orders"
                             className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
                           >
                             Previous Orders
                           </a>
+                          
                         </MenuItem>
                         <MenuItem>
                           <button
@@ -300,6 +310,14 @@ const Header = () => {
                   className="absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none profile-drop"
                 >
                   <div className="py-1">
+                  <MenuItem>
+                      <a
+                        href="/order-form"
+                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                      >
+                        Order Now
+                      </a>
+                    </MenuItem>
                     <MenuItem>
                       <a
                         href="/your-orders"

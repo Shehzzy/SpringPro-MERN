@@ -183,61 +183,61 @@ function Orders() {
                 </div>
                 <div>
                   <span className="font-semibold">Business Legal Name:</span>{" "}
-                  {selectedOrder.businesslegalname}
+                  {selectedOrder.customerId.businesslegalname}
                 </div>
                 <div>
                   <span className="font-semibold">Business Address:</span>{" "}
-                  {selectedOrder.businessaddress}
+                  {selectedOrder.customerId.businessaddress}
                 </div>
                 <div>
                   <span className="font-semibold">Business City:</span>{" "}
-                  {selectedOrder.businesscity}
+                  {selectedOrder.customerId.businesscity}
                 </div>
                 <div>
                   <span className="font-semibold">Business State:</span>{" "}
-                  {selectedOrder.businessstate}
+                  {selectedOrder.customerId.businessstate}
                 </div>
                 <div>
                   <span className="font-semibold">Business ZIP:</span>{" "}
-                  {selectedOrder.businesszip}
+                  {selectedOrder.customerId.businesszip}
                 </div>
                 <div>
                   <span className="font-semibold">Tax ID:</span>{" "}
-                  {selectedOrder.taxid}
+                  {selectedOrder.customerId.taxid}
                 </div>
                 <div>
                   <span className="font-semibold">Contact Name:</span>{" "}
-                  {selectedOrder.contactname}
+                  {selectedOrder.customerId.contactname}
                 </div>
                 <div>
                   <span className="font-semibold">Contact Phone:</span>{" "}
-                  {selectedOrder.contactphone}
+                  {selectedOrder.customerId.contactphone}
                 </div>
                 <div>
                   <span className="font-semibold">Contact Email:</span>{" "}
-                  {selectedOrder.contactemail}
+                  {selectedOrder.customerId.contactemail}
                 </div>
                 <div>
                   <span className="font-semibold">Location ID:</span>{" "}
-                  {selectedOrder.locationid}
+                  {selectedOrder.customerId.locationid}
                 </div>
                 <div>
                   <span className="font-semibold">Bill to Mobile:</span>{" "}
-                  {selectedOrder.billtomobile}
+                  {selectedOrder.customerId.billtomobile}
                 </div>
                 <div>
                   <span className="font-semibold">Credit Card Payment:</span>{" "}
-                  {selectedOrder.creditcardpayment}
+                  {selectedOrder.customerId.creditcardpayment}
                 </div>
                 <div>
                   <span className="font-semibold">
                     Single or Multi Address Shipment:
                   </span>{" "}
-                  {selectedOrder.singleormultiaddresshipment}
+                  {selectedOrder.customerId.singleormultiaddresshipment}
                 </div>
                 <div>
                   <span className="font-semibold">Attention Name:</span>{" "}
-                  {selectedOrder.attentionname}
+                  {selectedOrder.customerId.attentionname}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping Address:</span>{" "}
@@ -245,15 +245,15 @@ function Orders() {
                 </div>
                 <div>
                   <span className="font-semibold">Shipping City:</span>{" "}
-                  {selectedOrder.shippingcity}
+                  {selectedOrder.customerId.shippingcity}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping State:</span>{" "}
-                  {selectedOrder.shippingstate}
+                  {selectedOrder.customerId.shippingstate}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping ZIP:</span>{" "}
-                  {selectedOrder.shippingzip}
+                  {selectedOrder.customerId.shippingzip}
                 </div>
                 <div>
                   <span className="font-semibold">
