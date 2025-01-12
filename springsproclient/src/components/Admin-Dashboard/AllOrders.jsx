@@ -134,7 +134,9 @@ function AllOrders() {
                               <td>
                                 {new Date(order.createdAt).toLocaleDateString()}
                               </td>
-                              <td>{order.shippingaddress}</td>
+
+                              {order.customerId?.shippingaddress ? ( <td>{order.customerId?.shippingaddress}</td>): (<td>Not Available</td>)}
+                             
                               <td>
                                 <span
                                   style={getStatusStyle(order.status)}

@@ -101,7 +101,9 @@ function Orders() {
                           ? "bg-yellow-200 text-yellow-800"
                           : order.status === "Completed"
                           ? "bg-green-200 text-green-800"
-                          : "bg-red-200 text-red-800"
+                          : order.status === "In Progress"
+                          ? "bg-blue-200 text-blue-800" // New style for In Progress
+                          : "bg-red-200 text-red-800" // Default for other statuses
                       }`}
                     >
                       {order.status}
@@ -167,7 +169,7 @@ function Orders() {
                 </div>
                 <div>
                   <span className="font-semibold">EIP:</span>{" "}
-                  {selectedOrder.eip}
+                  {selectedOrder.eip ? selectedOrder.eip : "N/A"}
                 </div>
                 <div>
                   <span className="font-semibold">Promotion:</span>{" "}
@@ -241,7 +243,7 @@ function Orders() {
                 </div>
                 <div>
                   <span className="font-semibold">Shipping Address:</span>{" "}
-                  {selectedOrder.shippingaddress}
+                  {selectedOrder.customerId?.shippingaddress}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping City:</span>{" "}
@@ -255,48 +257,58 @@ function Orders() {
                   <span className="font-semibold">Shipping ZIP:</span>{" "}
                   {selectedOrder.customerId.shippingzip}
                 </div>
-                <div>
-                  <span className="font-semibold">
-                    Current Wireless Carrier:
-                  </span>{" "}
-                  {selectedOrder.currentwirelesscarrier}
-                </div>
-                <div>
-                  <span className="font-semibold">Account Number:</span>{" "}
-                  {selectedOrder.accountnumber}
-                </div>
-                <div>
-                  <span className="font-semibold">PIN or Password:</span>{" "}
-                  {selectedOrder.pinorpassword}
-                </div>
-                <div>
-                  <span className="font-semibold">SSN or Tax ID:</span>{" "}
-                  {selectedOrder.ssnortaxid}
-                </div>
-                <div>
-                  <span className="font-semibold">Billing Name:</span>{" "}
-                  {selectedOrder.billingname}
-                </div>
-                <div>
-                  <span className="font-semibold">Billing Address:</span>{" "}
-                  {selectedOrder.billingaddress}
-                </div>
-                <div>
-                  <span className="font-semibold">Billing City:</span>{" "}
-                  {selectedOrder.billingcity}
-                </div>
-                <div>
-                  <span className="font-semibold">Billing State:</span>{" "}
-                  {selectedOrder.billingstate || "N/A"}
-                </div>
-                <div>
-                  <span className="font-semibold">Billing ZIP:</span>{" "}
-                  {selectedOrder.billingzip}
-                </div>
-                <div>
-                  <span className="font-semibold">Authorized Name:</span>{" "}
-                  {selectedOrder.authorizedname}
-                </div>
+                {selectedOrder.carrierInfos &&
+                selectedOrder.carrierInfos.length > 0 ? (
+                  selectedOrder.carrierInfos.map((carrierInfo, index) => (
+                    <div key={index}>
+                      <div>
+                        <span className="font-semibold">
+                          Current Wireless Carrier:
+                        </span>{" "}
+                        {carrierInfo.currentwirelesscarrier}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Account Number:</span>{" "}
+                        {carrierInfo.accountnumber}
+                      </div>
+                      <div>
+                        <span className="font-semibold">PIN or Password:</span>{" "}
+                        {carrierInfo.pinorpassword}
+                      </div>
+                      <div>
+                        <span className="font-semibold">SSN or Tax ID:</span>{" "}
+                        {carrierInfo.ssnortaxid}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Billing Name:</span>{" "}
+                        {carrierInfo.billingname}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Billing Address:</span>{" "}
+                        {carrierInfo.billingaddress}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Billing City:</span>{" "}
+                        {carrierInfo.billingcity}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Billing State:</span>{" "}
+                        {carrierInfo.billingstate || "N/A"}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Billing ZIP:</span>{" "}
+                        {carrierInfo.billingzip}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Authorized Name:</span>{" "}
+                        {carrierInfo.authorizedname}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div>No carrier information available.</div>
+                )}
+
                 <div>
                   <span className="font-semibold">IMEI Numbers:</span>{" "}
                   {selectedOrder.imeiNumbers
@@ -311,7 +323,9 @@ function Orders() {
                         ? "bg-yellow-200 text-yellow-800"
                         : selectedOrder.status === "Completed"
                         ? "bg-green-200 text-green-800"
-                        : "bg-red-200 text-red-800"
+                        : selectedOrder.status === "In Progress"
+                        ? "bg-blue-200 text-blue-800"
+                        : "text-black"
                     }`}
                   >
                     {selectedOrder.status}

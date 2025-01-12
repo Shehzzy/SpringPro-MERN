@@ -57,6 +57,8 @@ function OrderAssignment({ token, formData, setFormData }) {
             shippingstate: customer.shippingstate || "",
             shippingzip: customer.shippingzip || "",
             agentId: customer.agentId || null,
+            existingBAN:"",
+            existingFAN:""
           }));
           
       }

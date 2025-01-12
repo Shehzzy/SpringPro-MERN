@@ -6,6 +6,105 @@ import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
 
 const Form: React.FC = () => {
+  // State to manage multiple carrier information entries
+  const carrierOptions = [
+    {
+      label: "T-Mobile (TMO ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      value: "TMO",
+    },
+    {
+      label: "Verizon (VZ ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      value: "VZ",
+    },
+    {
+      label: "MetroPCS (MET ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      value: "MET",
+    },
+    {
+      label: "Spectrum (SPEC ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      value: "SPEC",
+    },
+    {
+      label:
+        "Total Wireless (TTL ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      value: "TTL",
+    },
+  ];
+  const [carrierInfos, setCarrierInfos] = useState([
+    {
+      currentwirelesscarrier: "",
+      accountnumber: "",
+      pinorpassword: "",
+      ssnortaxid: "",
+      billingname: "",
+      billingaddress: "",
+      billingcity: "",
+      billingstate: "",
+      billingzip: "",
+      authorizedname: "",
+      uniqueCode: "",
+    },
+  ]);
+
+  // Function to handle changes in carrier information fields
+  const handleCarrierInfoChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { name, value } = e.target;
+    setCarrierInfos((prev) =>
+      prev.map((info, i) => (i === index ? { ...info, [name]: value } : info))
+    );
+    // Generate unique code whenever a relevant field changes
+    if (
+      name === "currentwirelesscarrier" ||
+      name === "accountnumber" ||
+      name === "pinorpassword"
+    ) {
+      const updatedInfo = { ...carrierInfos[index], [name]: value };
+      const uniqueCode = generateUniqueCode(updatedInfo);
+      setCarrierInfos((prev) =>
+        prev.map((info, i) =>
+          i === index ? { ...updatedInfo, uniqueCode } : info
+        )
+      );
+    }
+  };
+
+  const generateUniqueCode = ({
+    currentwirelesscarrier,
+    accountnumber,
+    pinorpassword,
+  }) => {
+    // Get the last 4 digits of the account number
+    const last4AccountNumber = accountnumber.slice(-4);
+
+    // Get the last 4 characters of the pin/password
+    const last4Pin = pinorpassword.slice(-4);
+
+    return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}`;
+  };
+
+  // Function to add a new carrier information entry
+  const addCarrierInfo = () => {
+    setCarrierInfos((prev) => [
+      ...prev,
+      {
+        currentwirelesscarrier: "",
+        accountnumber: "",
+        pinorpassword: "",
+        ssnortaxid: "",
+        billingname: "",
+        billingaddress: "",
+        billingcity: "",
+        billingstate: "",
+        billingzip: "",
+        authorizedname: "",
+        uniqueCode: "",
+      },
+    ]);
+  };
+
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
   const [showAllImeis, setShowAllImeis] = useState(false);
@@ -36,18 +135,23 @@ const Form: React.FC = () => {
     shippingcity: "",
     shippingstate: "",
     shippingzip: "",
-    currentwirelesscarrier: "",
-    accountnumber: "",
-    pinorpassword: "",
-    ssnortaxid: "",
-    billingname: "",
-    billingaddress: "",
-    billingcity: "",
-    billingstate: "",
-    billingzip: "",
-    authorizedname: "",
+    // currentwirelesscarrier: "",
+    // accountnumber: "",
+    // pinorpassword: "",
+    // ssnortaxid: "",
+    // billingname: "",
+    // billingaddress: "",
+    // billingcity: "",
+    // billingstate: "",
+    // billingzip: "",
+    // authorizedname: "",
     companyname: "",
     imeiNumbers: imeiNumbers,
+    carrierInfos: [],
+    dealerCode: "",
+    agentCode: "",
+    existingFAN: "",
+    existingBAN: "",
   });
 
   const customerData = {
@@ -69,6 +173,8 @@ const Form: React.FC = () => {
     shippingcity: formData.shippingcity,
     shippingstate: formData.shippingstate,
     shippingzip: formData.shippingzip,
+    existingBAN: formData.existingBAN,
+    existingFAN: formData.existingFAN,
   };
 
   const [errors, setErrors] = useState<any>({});
@@ -229,28 +335,34 @@ const Form: React.FC = () => {
       newErrors.shippingstate = "Shipping State is required.";
     if (!formData.shippingzip)
       newErrors.shippingzip = "Shipping Zip is required.";
-    if (!formData.currentwirelesscarrier)
-      newErrors.currentwirelesscarrier =
-        "Current Wireless Carrier is required.";
-    if (!formData.accountnumber)
-      newErrors.accountnumber = "Account Number is required.";
-    if (!formData.pinorpassword)
-      newErrors.pinorpassword = "Pin or Password is required.";
-    if (!formData.ssnortaxid)
-      newErrors.ssnortaxid = "SSN or Tax ID is required.";
-    if (!formData.billingname)
-      newErrors.billingname = "Billing Name is required.";
-    if (!formData.billingaddress)
-      newErrors.billingaddress = "Billing Address is required.";
-    if (!formData.billingcity)
-      newErrors.billingcity = "Billing City is required.";
-    if (!formData.billingstate)
-      newErrors.billingstate = "Billing State is required.";
-    if (!formData.billingzip) newErrors.billingzip = "Billing Zip is required.";
-    if (!formData.authorizedname)
-      newErrors.authorizedname = "Authorized Name is required.";
+    // if (!formData.currentwirelesscarrier)
+    //   newErrors.currentwirelesscarrier =
+    //     "Current Wireless Carrier is required.";
+    // if (!formData.accountnumber)
+    //   newErrors.accountnumber = "Account Number is required.";
+    // if (!formData.pinorpassword)
+    //   newErrors.pinorpassword = "Pin or Password is required.";
+    // if (!formData.ssnortaxid)
+    //   newErrors.ssnortaxid = "SSN or Tax ID is required.";
+    // if (!formData.billingname)
+    //   newErrors.billingname = "Billing Name is required.";
+    // if (!formData.billingaddress)
+    //   newErrors.billingaddress = "Billing Address is required.";
+    // if (!formData.billingcity)
+    //   newErrors.billingcity = "Billing City is required.";
+    // if (!formData.billingstate)
+    //   newErrors.billingstate = "Billing State is required.";
+    // if (!formData.billingzip) newErrors.billingzip = "Billing Zip is required.";
+    // if (!formData.authorizedname)
+    //   newErrors.authorizedname = "Authorized Name is required.";
     if (!formData.companyname)
       newErrors.companyname = "Company Name is required.";
+    if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
+    if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
+    if (!formData.existingBAN)
+      newErrors.existingBAN = "Existing BAN is required.";
+    if (!formData.existingFAN)
+      newErrors.existingFAN = "Existing FAN is required.";
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
@@ -276,6 +388,7 @@ const Form: React.FC = () => {
             ...formData,
             imeiNumbers: imeiNumbers,
             customerData,
+            carrierInfos: carrierInfos,
           },
           {
             headers: {
@@ -363,10 +476,46 @@ const Form: React.FC = () => {
             </div>
           </div>
 
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
+            <div className="w-full">
+              <h6 className="text-[#3C3C3C] sm:text-center text-start">
+                Dealer Code
+              </h6>
+              <input
+                type="text"
+                name="dealerCode"
+                placeholder="Enter Dealer Code"
+                value={formData.dealerCode}
+                onChange={handleChange}
+                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+              />
+              {errors.dealerCode && (
+                <p className=" text-danger text-sm">{errors.dealerCode}</p>
+              )}
+            </div>
+
+            <div>
+              <h6 className="text-[#3C3C3C] sm:text-center text-start">
+                Agent Code
+              </h6>
+              <input
+                type="text"
+                name="agentCode"
+                placeholder="Enter Agent Code"
+                value={formData.agentCode}
+                onChange={handleChange}
+                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+              />
+              {errors.agentCode && (
+                <p className=" text-danger text-sm">{errors.agentCode}</p>
+              )}
+            </div>
+          </div>
+
+          <h3 className="text-xl text-gray-800 font-semibold sm:text-center text-start">
             AT&T Account Option
           </h3>
-          <div className="grid grid-cols-1 items-end mt-10 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-4">
             <div className="w-full">
               {" "}
               {/* Wrap the select in a div */}
@@ -664,6 +813,40 @@ const Form: React.FC = () => {
                 <p className=" text-danger text-sm">{errors.locationid}</p>
               )}
             </div>
+
+            <div className="mb-4">
+              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
+                Existing BAN
+              </h6>
+              <input
+                type="text"
+                name="existingBAN"
+                placeholder="Enter Existing BAN"
+                value={formData.existingBAN}
+                onChange={handleChange}
+                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+              />
+              {errors.existingBAN && (
+                <p className=" text-danger text-sm">{errors.existingBAN}</p>
+              )}
+            </div>
+
+            <div className="mb-4">
+              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
+                Existing FAN
+              </h6>
+              <input
+                type="text"
+                name="existingFAN"
+                placeholder="Enter Existing FAN"
+                value={formData.existingFAN}
+                onChange={handleChange}
+                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+              />
+              {errors.existingFAN && (
+                <p className=" text-danger text-sm">{errors.existingFAN}</p>
+              )}
+            </div>
           </div>
 
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
@@ -828,164 +1011,207 @@ const Form: React.FC = () => {
               )}
             </div>
           </div>
+
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
             Carrier Port Information
           </h3>
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-4">
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">
-                Current Wireless Carrier
-              </h6>
-              <input
-                type="text"
-                name="currentwirelesscarrier"
-                placeholder="Enter Current Wireless Carrier"
-                value={formData.currentwirelesscarrier}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.currentwirelesscarrier && (
-                <p className=" text-danger text-sm">
-                  {errors.currentwirelesscarrier}
-                </p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Account Number</h6>
-              <input
-                type="text"
-                name="accountnumber"
-                placeholder="Enter Account Number"
-                value={formData.accountnumber}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                disabled={!isFirstOrder && !!formData.accountnumber}
-              />
-              {errors.accountnumber && (
-                <p className=" text-danger text-sm">{errors.accountnumber}</p>
-              )}
-              {isFirstOrder && (
-                <div className="d-flex justify-start">
-                  <p className="text-danger text-sm mt-1 text-center">
-                    This will only be filled out once.
-                  </p>
-                </div>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Pin or Password</h6>
-              <input
-                type="text"
-                name="pinorpassword"
-                placeholder="Enter Pin or Password"
-                value={formData.pinorpassword}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.pinorpassword && (
-                <p className=" text-danger text-sm">{errors.pinorpassword}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">SSN or TaxID</h6>
-              <input
-                type="text"
-                name="ssnortaxid"
-                placeholder="Enter SSN or Tax ID"
-                value={formData.ssnortaxid}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.ssnortaxid && (
-                <p className=" text-danger text-sm">{errors.ssnortaxid}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Billing Name</h6>
-              <input
-                type="text"
-                name="billingname"
-                placeholder="Enter Billing Name"
-                value={formData.billingname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.billingname && (
-                <p className=" text-danger text-sm">{errors.billingname}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Billing Address</h6>
-              <input
-                type="text"
-                name="billingaddress"
-                placeholder="Enter Billing Address"
-                value={formData.billingaddress}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.billingaddress && (
-                <p className=" text-danger text-sm">{errors.billingaddress}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Billing City</h6>
-              <input
-                type="text"
-                name="billingcity"
-                placeholder="Enter Billing City"
-                value={formData.billingcity}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.billingcity && (
-                <p className=" text-danger text-sm">{errors.billingcity}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Billing State</h6>
-              <input
-                type="text"
-                name="billingstate"
-                placeholder="Enter Billing State"
-                value={formData.billingstate}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.billingstate && (
-                <p className=" text-danger text-sm">{errors.billingstate}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Billing Zip</h6>
-              <input
-                type="text"
-                name="billingzip"
-                placeholder="Enter Billing Zip"
-                value={formData.billingzip}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.billingzip && (
-                <p className=" text-danger text-sm">{errors.billingzip}</p>
-              )}
-            </div>
-            <div className="mb-4">
-              <h6 className="text-start md:text-center">Authorized Name</h6>
-              <input
-                type="text"
-                name="authorizedname"
-                placeholder="Enter Authorized Name"
-                value={formData.authorizedname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.authorizedname && (
-                <p className=" text-danger text-sm">{errors.authorizedname}</p>
-              )}
-            </div>
-          </div>
+          {carrierInfos.map((info, index) => (
+            <div
+              key={index}
+              className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-4"
+            >
+              <div className="col-span-2 flex justify-between items-center">
+                {index > 0 && (
+                  <h4 className="text-lg font-semibold">
+                    Carrier Port Info {index + 1}
+                  </h4>
+                )}
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCarrierInfos((prev) =>
+                        prev.filter((_, i) => i !== index)
+                      );
+                    }}
+                    className="text-red-500 hover:text-red-700"
+                  >
+                    - Remove
+                  </button>
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Select Carrier</h6>
+                <select
+                  name="currentwirelesscarrier"
+                  value={info.currentwirelesscarrier}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                >
+                  <option value="">Select Current Wireless Carrier</option>
+                  {carrierOptions.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+                {errors.currentwirelesscarrier && (
+                  <p className=" text-danger text-sm">
+                    {errors.currentwirelesscarrier}
+                  </p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Account Number</h6>
+                <input
+                  type="text"
+                  name="accountnumber"
+                  placeholder="Enter Account Number"
+                  value={info.accountnumber}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.accountnumber && (
+                  <p className=" text-danger text-sm">{errors.accountnumber}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Pin or Password</h6>
+                <input
+                  type="text"
+                  name="pinorpassword"
+                  placeholder="Enter Pin or Password"
+                  value={info.pinorpassword}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.pinorpassword && (
+                  <p className=" text-danger text-sm">{errors.pinorpassword}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">SSN or TaxID</h6>
+                <input
+                  type="text"
+                  name="ssnortaxid"
+                  placeholder="Enter SSN or Tax ID"
+                  value={info.ssnortaxid}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.ssnortaxid && (
+                  <p className=" text-danger text-sm">{errors.ssnortaxid}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Billing Name</h6>
+                <input
+                  type="text"
+                  name="billingname"
+                  placeholder="Enter Billing Name"
+                  value={info.billingname}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 ```javascript
+        w-full"
+                />
+                {errors.billingname && (
+                  <p className=" text-danger text-sm">{errors.billingname}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Billing Address</h6>
+                <input
+                  type="text"
+                  name="billingaddress"
+                  placeholder="Enter Billing Address"
+                  value={info.billingaddress}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.billingaddress && (
+                  <p className=" text-danger text-sm">
+                    {errors.billingaddress}
+                  </p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Billing City</h6>
+                <input
+                  type="text"
+                  name="billingcity"
+                  placeholder="Enter Billing City"
+                  value={info.billingcity}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.billingcity && (
+                  <p className=" text-danger text-sm">{errors.billingcity}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Billing State</h6>
+                <input
+                  type="text"
+                  name="billingstate"
+                  placeholder="Enter Billing State"
+                  value={info.billingstate}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.billingstate && (
+                  <p className=" text-danger text-sm">{errors.billingstate}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Billing Zip</h6>
+                <input
+                  type="text"
+                  name="billingzip"
+                  placeholder="Enter Billing Zip"
+                  value={info.billingzip}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.billingzip && (
+                  <p className=" text-danger text-sm">{errors.billingzip}</p> // Error message
+                )}
+              </div>
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Authorized Name</h6>
+                <input
+                  type="text"
+                  name="authorizedname"
+                  placeholder="Enter Authorized Name"
+                  value={info.authorizedname}
+                  onChange={(e) => handleCarrierInfoChange(e, index)}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.authorizedname && (
+                  <p className=" text-danger text-sm">
+                    {errors.authorizedname}
+                  </p> // Error message
+                )}
+              </div>
 
+              <div className="mb-4">
+                <h6 className="text-start md:text-center">Unique Code</h6>
+                <input
+                  type="text"
+                  name="uniqueCode"
+                  value={info.uniqueCode}
+                  readOnly
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
+                />
+              </div>
+            </div>
+          ))}
+          <button
+            type="button"
+            onClick={addCarrierInfo}
+            className="mt-4 bg-[#41FDFE] text-black px-4 py-2 rounded"
+          >
+            + Add Another Carrier Information
+          </button>
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
             Additional Information
           </h3>
