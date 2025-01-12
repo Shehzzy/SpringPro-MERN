@@ -1,7 +1,7 @@
 import React from "react";
 import womenimg from "../assets/images/hero-img.png"; // Make sure the path is correct
 
-const Hero = () => {
+const Cobec = () => {
   return (
     <>
       <div className="relative overflow-hidden">
@@ -296,4 +296,4 @@ const Hero = () => {
   );
 };
 
-export default Hero;
+export default Cobec;

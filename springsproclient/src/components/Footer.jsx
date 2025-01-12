@@ -53,7 +53,7 @@ const Footer = () => {
                     <i className="fa-brands text-gray-600 fa-whatsapp"></i>
                     </div>
                     <div className="w-fit  text-gray-600  inter font-light tracking-wide text-sm">
-                        <h1>© 2024 SpringsAirNS, Inc.</h1>
+                        <h1 className="text-lg">© 2024 Spring Air Network Solutions, Inc. 33 Great Neck Rd., Ste #7 Great Neck Plaza, NY 11021</h1>
                     </div>
                 </div>
             </div>

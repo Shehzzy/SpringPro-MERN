@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Tags from "./components/Tag";
 import BillService from "./components/BillService";
-import Cobec from "./components/Cobec";
+import Cobec from "./components/Cobec.jsx";
 import Internet from "./components/Internet/index.jsx";
 import Network from "./components/Network";
 import Cellular from "./components/Cellular Service";
