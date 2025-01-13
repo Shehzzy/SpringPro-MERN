@@ -3,7 +3,7 @@ import logo from "../assets/images/logo.svg"
 const FeedBack = () => {
   return (
     <>
-      <div className="w-full bg-tron-blue-200  py-10">
+      <div className="w-full bg-tron-blue-200  py-24">
         <div  className=" flex container items-center  px-4 justify-center h-[440px] sm:h-[370px] mx-auto ">
           <div className=" flex-col items-center max-w-[670px] w-full flex justify-start">
             <img src={logo} className="w-[200px] pb-5" alt="" />

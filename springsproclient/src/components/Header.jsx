@@ -596,7 +596,7 @@ const Header = () => {
                             className='text-[#393939] text-sm tracking-normal'
                             onClick={() => handleLinkClick("/cyber-security")}
                           >
-                            Cyber Security AT&T
+                            Cybersecurity AT&T
                           </Link>
                           <p className='text-[13px] mt-1 font-light text-[#393939]'>
                             Advanced security solutions by AT&T to protect your business from cyber threats and ensure data safety.

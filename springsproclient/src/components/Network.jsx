@@ -55,7 +55,7 @@ const Network = () => {
       icon: "shield-alt",
       color: "#f44336",
       style: "solid",
-      title: "Cyber Securitys",
+      title: "Cybersecurity",
       description: "Our expertise in threat intelligence and network security will give your business unrivaled secure connectivity..",
       linkText: "OPTIMIZE YOUR SPACES",
     },
