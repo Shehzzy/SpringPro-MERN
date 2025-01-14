@@ -4,8 +4,49 @@ import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
+import IMEIForm from "./IMEIForm";
 
 const Form: React.FC = () => {
+  const [ratePlan, setRatePlan] = useState("");
+  const [buyNewPhone, setBuyNewPhone] = useState("");
+  const [smartphoneDetails, setSmartphoneDetails] = useState({
+    brand: "",
+    model: "",
+    color: "",
+    size: "",
+  });
+
+  const handleRatePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setRatePlan(value);
+    setFormData((prev) => ({
+      ...prev,
+      ratePlan: value,
+    }));
+  };
+
+  const handleBuyNewPhoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    setBuyNewPhone(value);
+    setFormData((prev) => ({
+      ...prev,
+      buyNewPhone: value,
+    }));
+  };
+
+  const handleSmartphoneDetailsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setSmartphoneDetails((prev) => {
+      const updatedDetails = { ...prev, [name]: value };
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        smartphoneDetails: updatedDetails,
+      }));
+      return updatedDetails;
+    });
+  };
+
+
   // State to manage multiple carrier information entries
   const carrierOptions = [
     {
@@ -109,6 +150,15 @@ const Form: React.FC = () => {
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
   const [showAllImeis, setShowAllImeis] = useState(false);
   const [formData, setFormData] = useState({
+    ratePlan: "",
+    buyNewPhone: "",
+    smartphoneDetails: {
+      brand: "",
+      model: "",
+      color: "",
+      size: "",
+    },
+
     name: "",
     email: "",
     phonenumber: "",
@@ -410,6 +460,9 @@ const Form: React.FC = () => {
       }
     }
   };
+
+  console.log(formData);
+
 
   return (
     <section className="py-24 mt-[120px] px-8 text-center bg-white">
@@ -1255,7 +1308,7 @@ const Form: React.FC = () => {
               )}
             </div>
 
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
                 Add New IMEI Number
               </h6>
@@ -1322,8 +1375,137 @@ const Form: React.FC = () => {
                   )}
                 </div>
               )}
-            </div>
+            </div> */}
+
+            <IMEIForm />
           </div>
+
+          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+            Rate Plan Selection
+          </h3>
+          <div className="mb-4">
+            <select
+              name="ratePlan"
+              value={ratePlan}
+              onChange={handleRatePlanChange}
+              className="border-b h-10 border-gray-300 w-full"
+            >
+              <option value="">Select Rate Plan</option>
+              <option value="basic">Basic Plan</option>
+              <option value="premium">Premium Plan</option>
+              <option value="unlimited">Unlimited Plan</option>
+            </select>
+          </div>
+
+          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+            Smartphone Purchase Options
+          </h3>
+          <div className="mb-4">
+            <select
+              name="buyNewPhone"
+              value={buyNewPhone}
+              onChange={handleBuyNewPhoneChange}
+              className="border-b h-10 border-gray-300 w-full"
+            >
+              <option value="">Do you want to buy a new smartphone?</option>
+              <option value="yes">Yes</option>
+              <option value="no">No</option>
+            </select>
+          </div>
+
+          {buyNewPhone === "yes" && (
+            <div>
+              <div className="mb-4">
+                <select
+                  name="brand"
+                  value={smartphoneDetails.brand}
+                  onChange={handleSmartphoneDetailsChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Select Brand</option>
+                  <option value="apple">Apple</option>
+                  <option value="samsung">Samsung</option>
+                  <option value="google">Google</option>
+                  <option value="motorola">Motorola</option>
+                  <option value="sonim">Sonim</option>
+                  <option value="other">Other</option>
+                </select>
+              </div>
+
+              {smartphoneDetails.brand === "apple" && (
+                <div className="mb-4">
+                  <select
+                    name="model"
+                    value={smartphoneDetails.model}
+                    onChange={handleSmartphoneDetailsChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select Model</option>
+                    <option value="iphone13">iPhone 13</option>
+                    <option value="iphone14">iPhone 14</option>
+                    <option value="iphone15">iPhone 15</option>
+                    {/* Add more models as needed */}
+                  </select>
+                </div>
+              )}
+
+              {smartphoneDetails.brand === "samsung" && (
+                <div className="mb-4">
+                  <select
+                    name="model"
+                    value={smartphoneDetails.model}
+                    onChange={handleSmartphoneDetailsChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select Model</option>
+                    <option value="s24">S24</option>
+                    <option value="s24_fe">S24 FE</option>
+                    <option value="s24_plus">S24 Plus</option>
+                    <option value="s24_ultra">S24 Ultra</option>
+                    <option value="a13">A13</option>
+                    <option value="a23">A23</option>
+                    <option value="a14">A14</option>
+                    <option value="a52">A52</option>
+                    <option value="x_cover_6_pro">X Cover 6 Pro</option>
+                  </select>
+                </div>
+              )}
+
+              <div className="mb-4">
+                <select
+                  name="color"
+                  value={smartphoneDetails.color}
+                  onChange={handleSmartphoneDetailsChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Select Color</option>
+                  <option value="black">Black</option>
+                  <option value="white">White</option>
+                  <option value="blue">Blue</option>
+                  <option value="red">Red</option>
+                  <option value="green">Green</option>
+                </select>
+              </div>
+
+              <div className="mb-4">
+                <select
+                  name="size"
+                  value={smartphoneDetails.size}
+                  onChange={handleSmartphoneDetailsChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Select Size</option>
+                  <option value="64gb">64GB</option>
+                  <option value="128gb">128GB</option>
+                  <option value="256gb">256GB</option>
+                  <option value="512gb">512GB</option>
+                  <option value="1tb">1TB</option>
+                  <option value="2tb">2TB</option>
+                </select>
+              </div>
+            </div>
+          )}
+
 
           <div className="flex flex-col mt-8">
             {Object.keys(errors).length > 0 && (
