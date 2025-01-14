@@ -152,10 +152,9 @@ const Form: React.FC = () => {
   const [accountFields, setAccountFields] = useState([
     {
       accountNumber: "", // Correct name
-      portOutPin: "",    // Correct name
+      portOutPin: "", // Correct name
     },
   ]);
-  
 
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [showAllImeis, setShowAllImeis] = useState(false);
@@ -202,6 +201,9 @@ const Form: React.FC = () => {
     contactemail: "",
     billtomobile: "",
     creditcardpayment: "",
+    cardNumber: "",
+    cardExpiry: "",
+    cardCVC: "",
     singleormultiaddresshipment: "",
     attentionname: "",
     shippingaddress: "",
@@ -395,6 +397,13 @@ const Form: React.FC = () => {
       newErrors.billtomobile = "Bill to Mobile is required.";
     if (!formData.creditcardpayment)
       newErrors.creditcardpayment = "Credit Card Payment is required.";
+    if (formData.creditcardpayment === "yes") {
+      if (!formData.cardNumber)
+        newErrors.cardNumber = "Card number is required";
+      if (!formData.cardExpiry)
+        newErrors.cardExpiry = "Expiry date is required";
+      if (!formData.cardCVC) newErrors.cardCVC = "CVC is required";
+    }
     if (!formData.singleormultiaddresshipment)
       newErrors.singleormultiaddresshipment =
         "Single or Multi Address Shipment is required.";
@@ -436,7 +445,39 @@ const Form: React.FC = () => {
       newErrors.existingBAN = "Existing BAN is required.";
     if (!formData.existingFAN)
       newErrors.existingFAN = "Existing FAN is required.";
-
+    carrierInfos.forEach((info, index) => {
+      if (!info.currentwirelesscarrier) {
+        newErrors[`currentwirelesscarrier_${index}`] =
+          "Current Wireless Carrier is required.";
+      }
+      if (!info.accountnumber) {
+        newErrors[`accountnumber_${index}`] = "Account Number is required.";
+      }
+      if (!info.pinorpassword) {
+        newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
+      }
+      if (!info.ssnortaxid) {
+        newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
+      }
+      if (!info.billingname) {
+        newErrors[`billingname_${index}`] = "Billing Name is required.";
+      }
+      if (!info.billingaddress) {
+        newErrors[`billingaddress_${index}`] = "Billing Address is required.";
+      }
+      if (!info.billingcity) {
+        newErrors[`billingcity_${index}`] = "Billing City is required.";
+      }
+      if (!info.billingstate) {
+        newErrors[`billingstate_${index}`] = "Billing State is required.";
+      }
+      if (!info.billingzip) {
+        newErrors[`billingzip_${index}`] = "Billing Zip is required.";
+      }
+      if (!info.authorizedname) {
+        newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
+      }
+    });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
@@ -929,44 +970,110 @@ const Form: React.FC = () => {
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
             Order Payment Options
           </h3>
-          <div className="grid items-end grid-cols-1 mt-10 md:grid-cols-3 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+            {/* Bill to Mobile */}
             <div className="w-full">
-              {" "}
-              {/* Wrap the first select in a div */}
               <select
                 name="billtomobile"
                 value={formData.billtomobile}
                 onChange={handleChange}
-                className="border-b h-10 border-gray-300 py-2 w-full" // Added w-full for full width
+                className="border-b h-10 border-gray-300 py-2 w-full"
               >
                 <option value="">Bill to Mobile</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
               {errors.billtomobile && (
-                <p className=" text-danger text-sm">{errors.billtomobile}</p> // Error message
+                <p className="text-danger text-sm">{errors.billtomobile}</p>
               )}
             </div>
 
+            {/* Credit Card Payment */}
             <div className="w-full">
-              {" "}
-              {/* Wrap the second select in a div */}
               <select
                 name="creditcardpayment"
                 value={formData.creditcardpayment}
                 onChange={handleChange}
-                className="border-b h-10 border-gray-300 py-2 w-full" // Added w-full for full width
+                className="border-b h-10 border-gray-300 py-2 w-full"
               >
                 <option value="">Credit Card Payment?</option>
                 <option value="yes">Yes</option>
                 <option value="no">No</option>
               </select>
               {errors.creditcardpayment && (
-                <p className=" text-danger text-sm">
+                <p className="text-danger text-sm">
                   {errors.creditcardpayment}
-                </p> // Error message
+                </p>
               )}
             </div>
+
+            {/* Credit Card Information (only shown if 'Yes' is selected) */}
+            {formData.creditcardpayment === "yes" && (
+              <div className="w-full md:col-span-3 mt-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="w-full">
+                    <label
+                      className="block text-sm font-medium mb-2"
+                      htmlFor="cardNumber"
+                    >
+                      Card Number
+                    </label>
+                    <input
+                      type="text"
+                      name="cardNumber"
+                      value={formData.cardNumber}
+                      onChange={handleChange}
+                      className="border-b h-10 border-gray-300 py-2 w-full"
+                      placeholder="Enter your card number"
+                    />
+                    {errors.cardNumber && (
+                      <p className="text-danger text-sm">{errors.cardNumber}</p>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <label
+                      className="block text-sm font-medium mb-2"
+                      htmlFor="cardExpiry"
+                    >
+                      Expiry Date (MM/YY)
+                    </label>
+                    <input
+                      type="text"
+                      name="cardExpiry"
+                      value={formData.cardExpiry}
+                      onChange={handleChange}
+                      className="border-b h-10 border-gray-300 py-2 w-full"
+                      placeholder="MM/YY"
+                    />
+                    {errors.cardExpiry && (
+                      <p className="text-danger text-sm">{errors.cardExpiry}</p>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <label
+                      className="block text-sm font-medium mb-2"
+                      htmlFor="cardCVC"
+                    >
+                      CVC
+                    </label>
+                    <input
+                      type="text"
+                      name="cardCVC"
+                      value={formData.cardCVC}
+                      onChange={handleChange}
+                      className="border-b h-10 border-gray-300 py-2 w-full"
+                      placeholder="CVC"
+                    />
+                    {errors.cardCVC && (
+                      <p className="text-danger text-sm">{errors.cardCVC}</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
@@ -1132,10 +1239,10 @@ const Form: React.FC = () => {
                     </option>
                   ))}
                 </select>
-                {errors.currentwirelesscarrier && (
-                  <p className=" text-danger text-sm">
-                    {errors.currentwirelesscarrier}
-                  </p> // Error message
+                {errors[`currentwirelesscarrier_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`currentwirelesscarrier_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1151,6 +1258,11 @@ const Form: React.FC = () => {
                 {errors.accountnumber && (
                   <p className=" text-danger text-sm">{errors.accountnumber}</p> // Error message
                 )}
+                {errors[`accountnumber_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`accountnumber_${index}`]}
+                  </p>
+                )}
               </div>
               <div className="mb-4">
                 <h6 className="text-start md:text-center">Pin or Password</h6>
@@ -1162,8 +1274,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.pinorpassword && (
-                  <p className=" text-danger text-sm">{errors.pinorpassword}</p> // Error message
+                {errors[`pinorpassword_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`pinorpassword_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1176,8 +1290,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.ssnortaxid && (
-                  <p className=" text-danger text-sm">{errors.ssnortaxid}</p> // Error message
+                {errors[`ssnortaxid_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`ssnortaxid_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1191,8 +1307,10 @@ const Form: React.FC = () => {
                   className="border-b focus:outline-none border-gray-300 py-2 ```javascript
         w-full"
                 />
-                {errors.billingname && (
-                  <p className=" text-danger text-sm">{errors.billingname}</p> // Error message
+                {errors[`billingname_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`billingname_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1205,10 +1323,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.billingaddress && (
-                  <p className=" text-danger text-sm">
-                    {errors.billingaddress}
-                  </p> // Error message
+                {errors[`billingaddress_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`billingaddress_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1221,8 +1339,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.billingcity && (
-                  <p className=" text-danger text-sm">{errors.billingcity}</p> // Error message
+                {errors[`billingcity_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`billingcity_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1235,8 +1355,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.billingstate && (
-                  <p className=" text-danger text-sm">{errors.billingstate}</p> // Error message
+                {errors[`billingstate_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`billingstate_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1249,8 +1371,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.billingzip && (
-                  <p className=" text-danger text-sm">{errors.billingzip}</p> // Error message
+                {errors[`billingzip_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`billingzip_${index}`]}
+                  </p>
                 )}
               </div>
               <div className="mb-4">
@@ -1263,10 +1387,10 @@ const Form: React.FC = () => {
                   onChange={(e) => handleCarrierInfoChange(e, index)}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                {errors.authorizedname && (
-                  <p className=" text-danger text-sm">
-                    {errors.authorizedname}
-                  </p> // Error message
+                {errors[`authorizedname_${index}`] && (
+                  <p className="text-danger text-sm">
+                    {errors[`authorizedname_${index}`]}
+                  </p>
                 )}
               </div>
 
