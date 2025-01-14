@@ -111,6 +111,10 @@ const OrderSchema = new Schema(
       type: String,
       default: "Pending", // Default status if not provided
     },
+    statusUpdatedAt: {
+      type: Date,
+      default: Date.now, // Set to current time initially
+    },
   },
   { timestamps: true }
 );

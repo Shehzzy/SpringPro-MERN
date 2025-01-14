@@ -226,7 +226,11 @@ const orderSubmit = async (req, res) => {
     const { imeiNumbers, customerData, carrierInfos, ...orderData } = req.body; // Destructure carrierInfos
 
     // Validate IMEI numbers
-    if (!imeiNumbers || !Array.isArray(imeiNumbers) || imeiNumbers.length === 0) {
+    if (
+      !imeiNumbers ||
+      !Array.isArray(imeiNumbers) ||
+      imeiNumbers.length === 0
+    ) {
       return res.status(400).json({ message: "IMEI numbers are required" });
     }
 
@@ -238,7 +242,10 @@ const orderSubmit = async (req, res) => {
 
       if (!customer) {
         // Create new customer if it doesn't exist
-        customer = await customerModel.create({ ...customerData, agentId: userId });
+        customer = await customerModel.create({
+          ...customerData,
+          agentId: userId,
+        });
       }
     }
 
@@ -273,7 +280,9 @@ const orderSubmit = async (req, res) => {
       carrierInfos: carrierInfos, // Store the carrier information
     });
 
-    return res.status(201).json({ message: "Order created successfully", order });
+    return res
+      .status(201)
+      .json({ message: "Order created successfully", order });
   } catch (error) {
     console.error("Order creation error:", error);
     return res.status(500).json({ message: "Server error", error });
@@ -347,19 +356,34 @@ const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    const order = await orderModel.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    );
-
+    // Find the order by ID
+    const order = await orderModel.findById(id);
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
+    // Check if 30 days have passed since the status was updated
+    const currentTime = new Date();
+    const statusUpdatedTime = new Date(order.statusUpdatedAt);
+    const daysDifference = Math.floor(
+      (currentTime - statusUpdatedTime) / (1000 * 60 * 60 * 24)
+    );
+
+    if (daysDifference >= 30 && order.status !== "Pending") {
+      // If 30 days have passed and status is not "Pending", reset status to "Pending"
+      order.status = "Pending";
+    } else {
+      // If status is updated, set the timestamp
+      order.status = status;
+      order.statusUpdatedAt = currentTime;
+    }
+
+    // Save the updated order
+    const updatedOrder = await order.save();
+
     res.status(200).json({
       message: "Order status updated successfully",
-      order,
+      order: updatedOrder,
     });
   } catch (error) {
     console.error("Error updating order status:", error);
@@ -368,9 +392,9 @@ const updateOrderStatus = async (req, res) => {
 };
 
 const getCustomers = async (req, res) => {
-  const customers = await CustomerModel.find({agentId:req.user.userId});
-  return res.json({message:"Here are customers", customers});
-}
+  const customers = await CustomerModel.find({ agentId: req.user.userId });
+  return res.json({ message: "Here are customers", customers });
+};
 
 const checkAgentAlreadyExists = async (req, res) => {};
 
@@ -381,5 +405,5 @@ module.exports = {
   getOrders,
   updateOrderStatus,
   getIMEINumbers,
-  getCustomers
+  getCustomers,
 };
