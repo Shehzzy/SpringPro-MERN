@@ -1,22 +1,35 @@
 import React, { useState } from "react";
 
-function IMEIForm() {
+function IMEIForm({
+  onImeiNumbersChange,
+  onAccountFieldsChange,
+  onPhoneNumbersChange,
+}) {
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState([]);
-  const [accountFields, setAccountFields] = useState([{ account: "", pin: "" }]);
-  const [phoneNumbers, setPhoneNumbers] = useState([{ phoneNumber: "", carrier: "" }]);
+  const [accountFields, setAccountFields] = useState([
+    {
+      accountNumber: "", // Correct name
+      portOutPin: "", // Correct name
+    },
+  ]);
+  const [phoneNumbers, setPhoneNumbers] = useState([
+    { phoneNumber: "", carrier: "" },
+  ]);
   const [showModal, setShowModal] = useState(false);
 
   const handleAccountChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
     updatedAccounts[index][field] = value;
     setAccountFields(updatedAccounts);
+    onAccountFieldsChange(updatedAccounts); // Pass updates to the parent
   };
 
   const handlePhoneNumberChange = (index, field, value) => {
     const updatedPhoneNumbers = [...phoneNumbers];
     updatedPhoneNumbers[index][field] = value;
     setPhoneNumbers(updatedPhoneNumbers);
+    onPhoneNumbersChange(updatedPhoneNumbers); // Pass updates to the parent
   };
 
   const addAccountField = () => {
@@ -28,7 +41,7 @@ function IMEIForm() {
   };
 
   return (
-    <div className="">
+    <div>
       <button
         onClick={() => setShowModal(true)}
         className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-4 py-2 rounded-3xl"
@@ -36,11 +49,9 @@ function IMEIForm() {
         Open IMEI Form
       </button>
 
-      {/* Modal */}
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-3/4 lg:w-3/5 xl:w-2/3 2xl:w-1/2 p-6 relative z-60">
-            {/* Close Button */}
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-black z-10"
               onClick={() => setShowModal(false)}
@@ -48,35 +59,42 @@ function IMEIForm() {
               ✕
             </button>
 
-            <h2 className="text-2xl font-bold text-center mb-6">Add IMEI and Account Information</h2>
+            <h2 className="text-2xl font-bold text-center mb-6">
+              Add IMEI and Account Information
+            </h2>
 
-            {/* Modal Content with Fixed Height and Scrollable Area */}
             <div className="overflow-y-auto max-h-[400px]">
-              {/* Row Layout for Accounts, Phone Numbers, and IMEI Numbers */}
               <div className="flex gap-6 mb-6 flex-wrap justify-between">
                 {/* Accounts Ported In */}
                 <div className="w-full md:w-1/3 lg:w-1/3 xl:w-1/4">
-                  <h6 className="text-sm font-medium text-gray-700 mb-2">Accounts Ported In</h6>
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Accounts Ported In
+                  </h6>
                   <div className="flex flex-col gap-4">
                     {accountFields.map((account, index) => (
                       <div key={index} className="flex gap-2 mb-2">
                         <input
                           type="text"
                           placeholder="Account Number"
-                          value={account.account}
+                          value={account.accountNumber}
                           onChange={(e) =>
-                            handleAccountChange(index, "account", e.target.value)
+                            handleAccountChange(
+                              index,
+                              "accountNumber",
+                              e.target.value
+                            )
                           }
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         />
                         <input
                           type="text"
                           placeholder="Port Out PIN"
-                          value={account.pin}
+                          value={account.portOutPin}
                           onChange={(e) =>
-                            handleAccountChange(index, "pin", e.target.value)
+                            handleAccountChange(index, "portOutPin", e.target.value)
                           }
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          className="border-b focus:outline-none border-gray-300 py ```javascript
+                          2 w-full"
                         />
                       </div>
                     ))}
@@ -92,7 +110,9 @@ function IMEIForm() {
 
                 {/* Phone Numbers Porting In */}
                 <div className="w-full md:w-1/3 lg:w-1/3 xl:w-1/4">
-                  <h6 className="text-sm font-medium text-gray-700 mb-2">Phone Numbers Porting In</h6>
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Phone Numbers Porting In
+                  </h6>
                   <div className="flex flex-col gap-4">
                     {phoneNumbers.map((phone, index) => (
                       <div key={index} className="flex gap-2 mb-2">
@@ -101,14 +121,22 @@ function IMEIForm() {
                           placeholder="Phone Number"
                           value={phone.phoneNumber}
                           onChange={(e) =>
-                            handlePhoneNumberChange(index, "phoneNumber", e.target.value)
+                            handlePhoneNumberChange(
+                              index,
+                              "phoneNumber",
+                              e.target.value
+                            )
                           }
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         />
                         <select
                           value={phone.carrier}
                           onChange={(e) =>
-                            handlePhoneNumberChange(index, "carrier", e.target.value)
+                            handlePhoneNumberChange(
+                              index,
+                              "carrier",
+                              e.target.value
+                            )
                           }
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
@@ -142,7 +170,9 @@ function IMEIForm() {
 
                 {/* Add New IMEI Number */}
                 <div className="w-full md:w-1/3 lg:w-1/3 xl:w-1/4">
-                  <h6 className="text-sm font-medium text-gray-700 mb-2">Add New IMEI Number</h6>
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Add New IMEI Number
+                  </h6>
                   <div className="flex flex-col gap-4">
                     <input
                       type="text"
@@ -158,6 +188,7 @@ function IMEIForm() {
                         if (imeiInput) {
                           setImeiNumbers((prev) => [...prev, imeiInput]);
                           setImeiInput(""); // Clear the input field
+                          onImeiNumbersChange([...imeiNumbers, imeiInput]); // Update parent state
                         }
                       }}
                       className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded"
@@ -188,10 +219,9 @@ function IMEIForm() {
               </div>
             </div>
 
-            {/* Modal Actions */}
             <div className="text-center mt-4">
               <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                className="bg-[#41FDFE] px-4 py-2 rounded hover:bg-red -600"
                 onClick={() => setShowModal(false)}
               >
                 Close

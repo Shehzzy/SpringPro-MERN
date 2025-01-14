@@ -34,7 +34,9 @@ const Form: React.FC = () => {
     }));
   };
 
-  const handleSmartphoneDetailsChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleSmartphoneDetailsChange = (
+    e: React.ChangeEvent<HTMLSelectElement>
+  ) => {
     const { name, value } = e.target;
     setSmartphoneDetails((prev) => {
       const updatedDetails = { ...prev, [name]: value };
@@ -45,7 +47,6 @@ const Form: React.FC = () => {
       return updatedDetails;
     });
   };
-
 
   // State to manage multiple carrier information entries
   const carrierOptions = [
@@ -148,7 +149,29 @@ const Form: React.FC = () => {
 
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
+  const [accountFields, setAccountFields] = useState([
+    {
+      accountNumber: "", // Correct name
+      portOutPin: "",    // Correct name
+    },
+  ]);
+  
+
+  const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [showAllImeis, setShowAllImeis] = useState(false);
+
+  const handleImeiNumbersChange = (newImeiNumbers) => {
+    setImeiNumbers(newImeiNumbers);
+  };
+
+  const handleAccountFieldsChange = (newAccountFields) => {
+    setAccountFields(newAccountFields);
+  };
+
+  const handlePhoneNumbersChange = (newPhoneNumbers) => {
+    setPhoneNumbers(newPhoneNumbers);
+  };
+
   const [formData, setFormData] = useState({
     ratePlan: "",
     buyNewPhone: "",
@@ -439,6 +462,8 @@ const Form: React.FC = () => {
             imeiNumbers: imeiNumbers,
             customerData,
             carrierInfos: carrierInfos,
+            accountFields: accountFields, // Account fields from the IMEI modal
+            phoneNumbers: phoneNumbers, // Phone numbers from the IMEI modal
           },
           {
             headers: {
@@ -462,7 +487,6 @@ const Form: React.FC = () => {
   };
 
   console.log(formData);
-
 
   return (
     <section className="py-24 mt-[120px] px-8 text-center bg-white">
@@ -1377,7 +1401,11 @@ const Form: React.FC = () => {
               )}
             </div> */}
 
-            <IMEIForm />
+            <IMEIForm
+              onImeiNumbersChange={handleImeiNumbersChange}
+              onAccountFieldsChange={handleAccountFieldsChange}
+              onPhoneNumbersChange={handlePhoneNumbersChange}
+            />
           </div>
 
           <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
@@ -1505,7 +1533,6 @@ const Form: React.FC = () => {
               </div>
             </div>
           )}
-
 
           <div className="flex flex-col mt-8">
             {Object.keys(errors).length > 0 && (
