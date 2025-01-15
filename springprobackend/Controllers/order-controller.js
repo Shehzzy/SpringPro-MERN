@@ -215,7 +215,71 @@ const CustomerModel = require("../Models/CustomerModel");
 //   }
 // };
 
-// ORDER CREATION API - Post
+// ORDER CREATION API - Post 2
+// const orderSubmit = async (req, res) => {
+//   try {
+//     if (!req.body) {
+//       return res.status(400).json({ message: "Order details are missing" });
+//     }
+
+//     const userId = req.user.userId; // Assuming user ID is available in req.user
+//     const { imeiNumbers, customerData, carrierInfos, ...orderData } = req.body; // Destructure carrierInfos
+
+//     // Validate IMEI numbers
+//     if (!imeiNumbers || !Array.isArray(imeiNumbers) || imeiNumbers.length === 0) {
+//       return res.status(400).json({ message: "IMEI numbers are required" });
+//     }
+
+//     // Validate and create or reference customer data
+//     let customer = null; // Start with null for customer
+
+//     if (customerData) {
+//       customer = await customerModel.findOne({ taxid: customerData.taxid });
+
+//       if (!customer) {
+//         // Create new customer if it doesn't exist
+//         customer = await customerModel.create({ ...customerData, agentId: userId });
+//       }
+//     }
+
+//     // Create or reference IMEI numbers
+//     const existingIMEIs = await imeiModel.find({
+//       imei: { $in: imeiNumbers },
+//       userId,
+//     });
+
+//     const existingIMEIIds = existingIMEIs.map((imei) => imei._id);
+
+//     // Create new IMEI numbers if they don't exist
+//     const newIMEIs = imeiNumbers.filter(
+//       (imei) => !existingIMEIs.some((existing) => existing.imei === imei)
+//     );
+//     const createdIMEIs = await imeiModel.insertMany(
+//       newIMEIs.map((imei) => ({ userId, imei }))
+//     );
+
+//     // Combine existing and newly created IMEI IDs
+//     const allIMEIIds = [
+//       ...existingIMEIIds,
+//       ...createdIMEIs.map((imei) => imei._id),
+//     ];
+
+//     // Create the order
+//     const order = await orderModel.create({
+//       ...orderData,
+//       userId,
+//       customerId: customer ? customer._id : null, // Ensure valid customerId or null
+//       imeiNumbers: allIMEIIds, // Store the IMEI IDs in the order
+//       carrierInfos: carrierInfos, // Store the carrier information
+//     });
+
+//     return res.status(201).json({ message: "Order created successfully", order });
+//   } catch (error) {
+//     console.error("Order creation error:", error);
+//     return res.status(500).json({ message: "Server error", error });
+//   }
+// };
+// ,akinf changes
 const orderSubmit = async (req, res) => {
   try {
     if (!req.body) {
@@ -223,8 +287,17 @@ const orderSubmit = async (req, res) => {
     }
 
     const userId = req.user.userId; // Assuming user ID is available in req.user
-    const { imeiNumbers, customerData, carrierInfos, ...orderData } = req.body; // Destructure carrierInfos
+    const {
+      imeiNumbers,
+      customerData,
+      carrierInfos,
+      accountFields,
+      phoneNumbers,
+      shippingAddresses,
+      ...orderData
+    } = req.body;
 
+    console.log(accountFields, "Accoutn fieds are here");
     // Validate IMEI numbers
     if (
       !imeiNumbers ||
@@ -235,7 +308,7 @@ const orderSubmit = async (req, res) => {
     }
 
     // Validate and create or reference customer data
-    let customer = null; // Start with null for customer
+    let customer = null;
 
     if (customerData) {
       customer = await customerModel.findOne({ taxid: customerData.taxid });
@@ -261,6 +334,7 @@ const orderSubmit = async (req, res) => {
     const newIMEIs = imeiNumbers.filter(
       (imei) => !existingIMEIs.some((existing) => existing.imei === imei)
     );
+
     const createdIMEIs = await imeiModel.insertMany(
       newIMEIs.map((imei) => ({ userId, imei }))
     );
@@ -278,6 +352,8 @@ const orderSubmit = async (req, res) => {
       customerId: customer ? customer._id : null, // Ensure valid customerId or null
       imeiNumbers: allIMEIIds, // Store the IMEI IDs in the order
       carrierInfos: carrierInfos, // Store the carrier information
+      accounts: accountFields,
+      phoneNumbers,
     });
 
     return res
@@ -288,7 +364,6 @@ const orderSubmit = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
-
 // Get All Orders API
 const getOrders = async (req, res) => {
   try {
@@ -356,34 +431,19 @@ const updateOrderStatus = async (req, res) => {
       return res.status(400).json({ message: "Invalid status value" });
     }
 
-    // Find the order by ID
-    const order = await orderModel.findById(id);
+    const order = await orderModel.findByIdAndUpdate(
+      id,
+      { status },
+      { new: true }
+    );
+
     if (!order) {
       return res.status(404).json({ message: "Order not found" });
     }
 
-    // Check if 30 days have passed since the status was updated
-    const currentTime = new Date();
-    const statusUpdatedTime = new Date(order.statusUpdatedAt);
-    const daysDifference = Math.floor(
-      (currentTime - statusUpdatedTime) / (1000 * 60 * 60 * 24)
-    );
-
-    if (daysDifference >= 30 && order.status !== "Pending") {
-      // If 30 days have passed and status is not "Pending", reset status to "Pending"
-      order.status = "Pending";
-    } else {
-      // If status is updated, set the timestamp
-      order.status = status;
-      order.statusUpdatedAt = currentTime;
-    }
-
-    // Save the updated order
-    const updatedOrder = await order.save();
-
     res.status(200).json({
       message: "Order status updated successfully",
-      order: updatedOrder,
+      order,
     });
   } catch (error) {
     console.error("Error updating order status:", error);

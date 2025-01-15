@@ -41,7 +41,6 @@ const OrderSchema = new Schema(
       type: String,
       required: true,
     },
-
     agreementtype: {
       type: String,
       enum: ["amb", "acda"],
@@ -59,6 +58,16 @@ const OrderSchema = new Schema(
     },
     specialinstruction: {
       type: String,
+    },
+    ratePlan: {
+      type: String,
+      enum: ["basic", "premium", "unlimited"],
+    },
+    smartphoneDetails: {
+      brand: { type: String },
+      model: { type: String },
+      color: { type: String },
+      size: { type: String },
     },
     currentwirelesscarrier: {
       type: String,
@@ -83,7 +92,7 @@ const OrderSchema = new Schema(
     },
     billingstate: {
       type: String,
-      default: "", // Optional: Use default if it's an optional field.
+      default: "",
     },
     billingzip: {
       type: String,
@@ -91,7 +100,7 @@ const OrderSchema = new Schema(
     authorizedname: {
       type: String,
     },
-    imeiNumbers: [{ type: Schema.Types.ObjectId, ref: "IMEI" }], // Reference to IMEI numbers
+    imeiNumbers: [{ type: Schema.Types.ObjectId, ref: "IMEI" }],
     carrierInfos: [
       {
         currentwirelesscarrier: { type: String },
@@ -107,14 +116,24 @@ const OrderSchema = new Schema(
         uniqueCode: { type: String },
       },
     ],
+    // New fields for IMEI modal
+    accounts: [
+      {
+        accountNumber: { type: String, required: true },
+        portOutPin: { type: String, required: true },
+      },
+    ],
+    phoneNumbers: [
+      {
+        phoneNumber: { type: String, required: true },
+        carrier: { type: String, required: true },
+      },
+    ],
     status: {
       type: String,
-      default: "Pending", // Default status if not provided
+      default: "Pending",
     },
-    statusUpdatedAt: {
-      type: Date,
-      default: Date.now, // Set to current time initially
-    },
+    shippingAddresses: { type: Map, of: String }, // Map of IMEI to shipping address
   },
   { timestamps: true }
 );

@@ -155,10 +155,14 @@ const Form: React.FC = () => {
       portOutPin: "", // Correct name
     },
   ]);
+  const [shippingAddresses, setShippingAddresses] = useState({}); // State to hold shipping addresses
 
   const [phoneNumbers, setPhoneNumbers] = useState([]);
   const [showAllImeis, setShowAllImeis] = useState(false);
 
+  const handleShippingAddressesChange = (newShippingAddresses) => {
+    setShippingAddresses(newShippingAddresses);
+  };
   const handleImeiNumbersChange = (newImeiNumbers) => {
     setImeiNumbers(newImeiNumbers);
   };
@@ -505,6 +509,7 @@ const Form: React.FC = () => {
             carrierInfos: carrierInfos,
             accountFields: accountFields, // Account fields from the IMEI modal
             phoneNumbers: phoneNumbers, // Phone numbers from the IMEI modal
+            shippingAddresses: shippingAddresses,
           },
           {
             headers: {
@@ -1526,9 +1531,11 @@ const Form: React.FC = () => {
             </div> */}
 
             <IMEIForm
+              imeiNumbers={imeiNumbers} // Pass fetched IMEIs here
               onImeiNumbersChange={handleImeiNumbersChange}
               onAccountFieldsChange={handleAccountFieldsChange}
               onPhoneNumbersChange={handlePhoneNumbersChange}
+              onShippingAddressesChange={handleShippingAddressesChange}
             />
           </div>
 
