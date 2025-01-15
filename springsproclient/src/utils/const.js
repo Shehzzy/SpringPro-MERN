@@ -1,4 +1,4 @@
-export const EMAIL = "savings@getbetterbills.com";
+export const EMAIL = "savings@springairns.com";
 export const HOME = "#home";
 export const ABOUT = "#about";
 export const SERVICES = "#services";

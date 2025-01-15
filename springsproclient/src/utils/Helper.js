@@ -20,7 +20,7 @@ export const CONTACT_US_CARD_DATA = [
   {
     icon: "email",
     title: "Email",
-    description: ["savings@getbetterbills.com"],
+    description: ["savings@springairns.com"],
     url: EMAIL,
   },
 ];
