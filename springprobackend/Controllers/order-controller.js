@@ -297,7 +297,9 @@ const orderSubmit = async (req, res) => {
       ...orderData
     } = req.body;
 
-    console.log(accountFields, "Accoutn fieds are here");
+    console.log(accountFields, "Account fields are here");
+    console.log(customerData, "Customer Data is here");
+
     // Validate IMEI numbers
     if (
       !imeiNumbers ||
@@ -307,18 +309,70 @@ const orderSubmit = async (req, res) => {
       return res.status(400).json({ message: "IMEI numbers are required" });
     }
 
-    // Validate and create or reference customer data
+    // Check if customerData is provided
     let customer = null;
-
     if (customerData) {
+      // Find the existing customer by taxid
       customer = await customerModel.findOne({ taxid: customerData.taxid });
 
-      if (!customer) {
-        // Create new customer if it doesn't exist
+      if (customer) {
+        // If the customer exists, compare the relevant fields (e.g., business address, contact info, etc.)
+        const fieldsToUpdate = {};
+
+        // Compare fields and prepare for update if necessary
+        if (customer.businesslegalname !== customerData.businesslegalname) {
+          fieldsToUpdate.businesslegalname = customerData.businesslegalname;
+        }
+        if (customer.businessaddress !== customerData.businessaddress) {
+          fieldsToUpdate.businessaddress = customerData.businessaddress;
+        }
+        if (customer.businesscity !== customerData.businesscity) {
+          fieldsToUpdate.businesscity = customerData.businesscity;
+        }
+        if (customer.businessstate !== customerData.businessstate) {
+          fieldsToUpdate.businessstate = customerData.businessstate;
+        }
+        if (customer.businesszip !== customerData.businesszip) {
+          fieldsToUpdate.businesszip = customerData.businesszip;
+        }
+        if (customer.contactname !== customerData.contactname) {
+          fieldsToUpdate.contactname = customerData.contactname;
+        }
+        if (customer.contactphone !== customerData.contactphone) {
+          fieldsToUpdate.contactphone = customerData.contactphone;
+        }
+        if (customer.contactemail !== customerData.contactemail) {
+          fieldsToUpdate.contactemail = customerData.contactemail;
+        }
+        if (customer.shippingaddress !== customerData.shippingaddress) {
+          fieldsToUpdate.shippingaddress = customerData.shippingaddress;
+        }
+        if (customer.shippingcity !== customerData.shippingcity) {
+          fieldsToUpdate.shippingcity = customerData.shippingcity;
+        }
+        if (customer.shippingstate !== customerData.shippingstate) {
+          fieldsToUpdate.shippingstate = customerData.shippingstate;
+        }
+        if (customer.shippingzip !== customerData.shippingzip) {
+          fieldsToUpdate.shippingzip = customerData.shippingzip;
+        }
+
+        // If there are fields to update, update the customer
+        if (Object.keys(fieldsToUpdate).length > 0) {
+          customer = await customerModel.findByIdAndUpdate(
+            customer._id,
+            { $set: fieldsToUpdate },
+            { new: true } // Return the updated customer
+          );
+          console.log("Customer updated:", customer);
+        }
+      } else {
+        // If no customer exists with the given taxid, create a new customer
         customer = await customerModel.create({
           ...customerData,
-          agentId: userId,
+          agentId: userId, // Associate with the user
         });
+        console.log("Customer created:", customer);
       }
     }
 
@@ -328,16 +382,19 @@ const orderSubmit = async (req, res) => {
       userId,
     });
 
+    // Collect existing IMEI IDs
     const existingIMEIIds = existingIMEIs.map((imei) => imei._id);
 
-    // Create new IMEI numbers if they don't exist
+    // Filter for new IMEIs (not already in the database)
     const newIMEIs = imeiNumbers.filter(
       (imei) => !existingIMEIs.some((existing) => existing.imei === imei)
     );
 
+    // Insert new IMEIs into the database
     const createdIMEIs = await imeiModel.insertMany(
       newIMEIs.map((imei) => ({ userId, imei }))
     );
+    console.log("Created IMEIs:", createdIMEIs);
 
     // Combine existing and newly created IMEI IDs
     const allIMEIIds = [
@@ -351,10 +408,10 @@ const orderSubmit = async (req, res) => {
       userId,
       customerId: customer ? customer._id : null, // Ensure valid customerId or null
       imeiNumbers: allIMEIIds, // Store the IMEI IDs in the order
-      carrierInfos: carrierInfos, // Store the carrier information
-      accounts: accountFields,
-      shippingAddresses:shippingAddresses,
-      phoneNumbers,
+      carrierInfos, // Store the carrier information
+      accounts: accountFields, // Store account fields
+      shippingAddresses, // Store shipping addresses
+      phoneNumbers, // Store phone numbers
     });
 
     return res
@@ -365,6 +422,8 @@ const orderSubmit = async (req, res) => {
     return res.status(500).json({ message: "Server error", error });
   }
 };
+
+
 // Get All Orders API
 const getOrders = async (req, res) => {
   try {

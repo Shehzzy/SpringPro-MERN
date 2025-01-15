@@ -5,7 +5,7 @@ function IMEIForm({
   onImeiNumbersChange, // This function will be used to update IMEI numbers in the parent
   onAccountFieldsChange, // This function will handle changes in account fields
   onPhoneNumbersChange, // This function will handle changes in phone numbers
-  onShippingAddressesChange
+  onShippingAddressesChange,
 }) {
   const [showAllImeis, setShowAllImeis] = useState(false);
   const [imeiInput, setImeiInput] = useState(""); // To store the new IMEI being added
@@ -53,6 +53,8 @@ function IMEIForm({
   const addPhoneNumberField = () => {
     setPhoneNumbers([...phoneNumbers, { phoneNumber: "", carrier: "" }]);
   };
+
+  const [selectedImeis, setSelectedImeis] = useState(new Set());
 
   return (
     <div>
@@ -230,6 +232,15 @@ function IMEIForm({
                               type="checkbox"
                               value={imei}
                               className="mr-2"
+                              onChange={(e) => {
+                                const newSelectedImeis = new Set(selectedImeis);
+                                if (e.target.checked) {
+                                  newSelectedImeis.add(imei);
+                                } else {
+                                  newSelectedImeis.delete(imei);
+                                }
+                                setSelectedImeis(newSelectedImeis);
+                              }}
                             />
                             {imei}
                           </label>
@@ -266,6 +277,7 @@ function IMEIForm({
                 </div>
               )}
             </div>
+
             <div className="text-center mt-4">
               <button
                 className="bg-[#41FDFE] px-4 py-2 rounded-full hover:bg-teal-600 transition duration-200"

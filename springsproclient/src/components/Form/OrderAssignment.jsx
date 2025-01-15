@@ -50,6 +50,9 @@ function OrderAssignment({ token, formData, setFormData }) {
             locationid: customer.locationid || "",
             billtomobile: customer.billtomobile || "",
             creditcardpayment: customer.creditcardpayment || "",
+            cardNumber:customer.cardNumber || null,
+            cardExpiry: customer.cardExpiry || null,
+            cardCVC: customer.cardCVC || null,
             singleormultiaddresshipment: customer.singleormultiaddresshipment || "",
             attentionname: customer.attentionname || "",
             shippingaddress: customer.shippingaddress || "",
@@ -57,8 +60,8 @@ function OrderAssignment({ token, formData, setFormData }) {
             shippingstate: customer.shippingstate || "",
             shippingzip: customer.shippingzip || "",
             agentId: customer.agentId || null,
-            existingBAN:"",
-            existingFAN:""
+            existingBAN:customer.existingBAN || null,
+            existingFAN: customer.existingFAN || null,
           }));
           
       }

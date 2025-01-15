@@ -315,7 +315,7 @@ const Form: React.FC = () => {
 
         if (response.status === 200) {
           const userData = response.data.orders;
-
+          console.log(userData, "User Data");
           if (userData[0]) {
             // Destructure and pick only the desired fields
             const {
@@ -328,6 +328,11 @@ const Form: React.FC = () => {
               paperless,
               specialinstruction,
               accountnumber,
+              cardNumber, // Add this
+              cardExpiry, // Add this
+              cardCVC, // Add this
+              dealerCode, // Add this
+              agentCode, // Add this
             } = userData[0];
 
             // Update only the specified fields
@@ -342,6 +347,11 @@ const Form: React.FC = () => {
               paperless: paperless || "",
               specialinstruction: specialinstruction || "",
               accountnumber: accountnumber,
+              cardNumber: cardNumber || "", // Add this
+              cardExpiry: cardExpiry || "", // Add this
+              cardCVC: cardCVC || "", // Add this
+              dealerCode: dealerCode || "", // Add this
+              agentCode: agentCode || "", // Add this
             }));
           }
 
