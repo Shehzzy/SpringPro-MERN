@@ -51,24 +51,28 @@ const Form: React.FC = () => {
   // State to manage multiple carrier information entries
   const carrierOptions = [
     {
-      label: "T-Mobile (TMO ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      // label: "T-Mobile (TMO ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "T-Mobile",
       value: "TMO",
     },
     {
-      label: "Verizon (VZ ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      // label: "Verizon (VZ ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "Verizon",
       value: "VZ",
     },
     {
-      label: "MetroPCS (MET ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      // label: "MetroPCS (MET ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "MetroPCS",
       value: "MET",
     },
     {
-      label: "Spectrum (SPEC ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      // label: "Spectrum (SPEC ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "Spectrum",
       value: "SPEC",
     },
     {
-      label:
-        "Total Wireless (TTL ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      // label: "Total Wireless (TTL ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "Total Wireless",
       value: "TTL",
     },
   ];
