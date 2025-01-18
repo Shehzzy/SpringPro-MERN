@@ -4,6 +4,7 @@ import axios from "axios";
 import Navbar from "./Navbar";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
+import { jwtDecode } from "jwt-decode";
 
 function OrderDetails() {
   const { orderId } = useParams(); // Get the order ID from the URL
@@ -48,184 +49,210 @@ function OrderDetails() {
       });
   }, [orderId, token, navigate]);
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
+  if (loading)
+    return <div className="text-center mt-20 text-lg">Loading...</div>;
+  if (error)
+    return <div className="text-center mt-20 text-red-500">{error}</div>;
 
   return (
     <>
       <Navbar />
-      <div id="layoutSidenav">
+      <div id="layoutSidenav" className="flex">
         <Sidebar />
-        <div id="layoutSidenav_content">
-          <main>
-            <div className="container-fluid px-4" style={{ marginTop: "50px" }}>
-              <h1 className="mt-4 h3">Order Details</h1>
-              <div className="card mb-4">
-                <div className="card-body">
-                  <h5>
-                    <strong>Name:</strong> {order.name}
-                  </h5>
-                  <h5>
-                    <strong>Email:</strong> {order.email}
-                  </h5>
-                  <h5>
-                    <strong>Phone Number:</strong> {order.phonenumber}
-                  </h5>
-                  <h5>
-                    <strong>Agent Code:</strong> {order.agentCode}
-                  </h5>
-                  <h5>
-                    <strong>Dealer Code:</strong> {order.dealerCode}
-                  </h5>
-                  <h5>
-                    <strong>Existing BAN:</strong> {order.existingBAN}
-                  </h5>
-                  <h5>
-                    <strong>Existing FAN:</strong> {order.existingFAN}
-                  </h5>
-                  <h5>
+        <div id="layoutSidenav_content" className="flex-1">
+          <main className="p-6 bg-gray-100 min-h-screen">
+            <div className="container mx-auto">
+              <h1 className="text-2xl font-bold text-gray-700 mb-6">
+                Order Details
+              </h1>
+              <div className="bg-white rounded-lg shadow-md p-6">
+                <h2 className="text-xl font-semibold mb-4 text-purple-700">
+                  Customer Information
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
+                    <strong>Name:</strong> {order.name || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Email:</strong> {order.email || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Phone Number:</strong> {order.phonenumber || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Agent Code:</strong> {order.agentCode || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Dealer Code:</strong> {order.dealerCode || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Existing BAN:</strong> {order.existingBAN || "N/A"}
+                  </div>
+                  <div>
+                    <strong>Existing FAN:</strong> {order.existingFAN || "N/A"}
+                  </div>
+                </div>
+
+                <h2 className="text-xl font-semibold my-6 text-purple-700">
+                  Order Information
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  <div>
                     <strong>Agreement Type:</strong>{" "}
                     {order.agreementtype || "N/A"}
-                  </h5>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>EIP:</strong> {order.eip || "N/A"}
-                  </h5>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>Promotion:</strong> {order.promotion || "N/A"}
-                  </h5>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>Paperless:</strong> {order.paperless || "N/A"}
-                  </h5>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>Special Instruction:</strong>{" "}
                     {order.specialinstruction || "N/A"}
-                  </h5>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>Rate Plan:</strong> {order.ratePlan || "N/A"}
-                  </h5>
-                  <h5>
-                    <strong>Smartphone Details:</strong>
-                  </h5>
-                  {order.smartphoneDetails ? (
-                    <ul>
-                      <li>
-                        <strong>Brand:</strong>{" "}
-                        {order.smartphoneDetails.brand || "N/A"}
-                      </li>
-                      <li>
-                        <strong>Model:</strong>{" "}
-                        {order.smartphoneDetails.model || "N/A"}
-                      </li>
-                      <li>
-                        <strong>Color:</strong>{" "}
-                        {order.smartphoneDetails.color || "N/A"}
-                      </li>
-                      <li>
-                        <strong>Size:</strong>{" "}
-                        {order.smartphoneDetails.size || "N/A"}
-                      </li>
-                    </ul>
-                  ) : (
-                    <p>No smartphone details available.</p>
-                  )}
-                  <h5>
-                    <strong>IMEI Numbers:</strong>
-                  </h5>
-                  <ul>
-                    {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
-                      order.imeiNumbers.map((imei, index) => (
-                        <li key={index}>{imei.imei}</li>
-                      ))
-                    ) : (
-                      <li>No IMEI numbers</li>
-                    )}
-                  </ul>
-                  <h5>
+                  </div>
+                  <div>
                     <strong>Order Date:</strong>{" "}
                     {new Date(order.createdAt).toLocaleDateString()}
-                  </h5>
-                  <h5>
-                    <strong>Shipping Address:</strong>{" "}
-                    {order.customerId?.shippingaddress || "Not Available"}
-                  </h5>
-                  <h5>
-                    <strong>Billing Information:</strong>
-                  </h5>
-                  <ul>
+                  </div>
+                  <div>
+                      <strong>Status:</strong>{" "}
+                      <span
+                        className={`px-3 py-1 rounded-lg text-sm font-semibold ${
+                          order.status === "Pending"
+                            ? "bg-yellow-200 text-yellow-800"
+                            : order.status === "Completed"
+                            ? "bg-green-200 text-green-800"
+                            : "bg-gray-200 text-gray-800"
+                        }`}
+                      >
+                        {order.status}
+                      </span>
+                  </div>
+                </div>
+
+                <h2 className="text-xl font-semibold my-6 text-purple-700">
+                  Smartphone Details
+                </h2>
+                {order.smartphoneDetails ? (
+                  <ul className="list-disc pl-6">
                     <li>
-                      <strong>Name:</strong> {order.billingname || "N/A"}
+                      <strong>Brand:</strong>{" "}
+                      {order.smartphoneDetails.brand || "N/A"}
                     </li>
                     <li>
-                      <strong>Address:</strong> {order.billingaddress || "N/A"}
+                      <strong>Model:</strong>{" "}
+                      {order.smartphoneDetails.model || "N/A"}
                     </li>
                     <li>
-                      <strong>City:</strong> {order.billingcity || "N/A"}
+                      <strong>Color:</strong>{" "}
+                      {order.smartphoneDetails.color || "N/A"}
                     </li>
                     <li>
-                      <strong>State:</strong> {order.billingstate || "N/A"}
-                    </li>
-                    <li>
-                      <strong>Zip:</strong> {order.billingzip || "N/A"}
+                      <strong>Size:</strong>{" "}
+                      {order.smartphoneDetails.size || "N/A"}
                     </li>
                   </ul>
-                  <h5>
-                    <strong>Carrier Information:</strong>
-                  </h5>
-                  {order.carrierInfos && order.carrierInfos.length > 0 ? (
-                    order.carrierInfos.map((carrier, index) => (
-                      <div key={index} style={{ marginBottom: "1rem" }}>
-                        <h6>
-                          <strong>Carrier #{index + 1}</strong>
-                        </h6>
-                        <ul>
-                          <li>
-                            <strong>Carrier:</strong>{" "}
-                            {carrier.currentwirelesscarrier}
-                          </li>
-                          <li>
-                            <strong>Account Number:</strong>{" "}
-                            {carrier.accountnumber}
-                          </li>
-                          <li>
-                            <strong>PIN/Password:</strong>{" "}
-                            {carrier.pinorpassword}
-                          </li>
-                          <li>
-                            <strong>SSN/Tax ID:</strong> {carrier.ssnortaxid}
-                          </li>
-                          <li>
-                            <strong>Billing Name:</strong> {carrier.billingname}
-                          </li>
-                          <li>
-                            <strong>Billing Address:</strong>{" "}
-                            {carrier.billingaddress}
-                          </li>
-                          <li>
-                            <strong>City:</strong> {carrier.billingcity}
-                          </li>
-                          <li>
-                            <strong>State:</strong> {carrier.billingstate}
-                          </li>
-                          <li>
-                            <strong>Zip:</strong> {carrier.billingzip}
-                          </li>
-                          <li>
-                            <strong>Authorized Name:</strong>{" "}
-                            {carrier.authorizedname}
-                          </li>
-                          <li>
-                            <strong>Unique Code:</strong> {carrier.uniqueCode}
-                          </li>
-                        </ul>
-                      </div>
+                ) : (
+                  <p>No smartphone details available.</p>
+                )}
+
+                <h2 className="text-xl font-semibold my-6 text-purple-700">
+                  IMEI Numbers
+                </h2>
+                <ul className="list-disc pl-6">
+                  {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
+                    order.imeiNumbers.map((imei, index) => (
+                      <li key={index}>{imei.imei}</li>
                     ))
                   ) : (
-                    <p>No carrier information available.</p>
+                    <li>No IMEI numbers</li>
                   )}
-                  <h5>
-                    <strong>Status:</strong> {order.status}
-                  </h5>
-                </div>
+                </ul>
+
+                <h2 className="text-xl font-semibold my-6 text-purple-700">
+                  Billing Information
+                </h2>
+                <ul className="list-disc pl-6">
+                  <li>
+                    <strong>Name:</strong> {order.billingname || "N/A"}
+                  </li>
+                  <li>
+                    <strong>Address:</strong> {order.billingaddress || "N/A"}
+                  </li>
+                  <li>
+                    <strong>City:</strong> {order.billingcity || "N/A"}
+                  </li>
+                  <li>
+                    <strong>State:</strong> {order.billingstate || "N/A"}
+                  </li>
+                  <li>
+                    <strong>Zip:</strong> {order.billingzip || "N/A"}
+                  </li>
+                </ul>
+
+                <h2 className="text-xl font-semibold my-6 text-purple-700">
+                  Carrier Information
+                </h2>
+                {order.carrierInfos && order.carrierInfos.length > 0 ? (
+                  order.carrierInfos.map((carrier, index) => (
+                    <div
+                      key={index}
+                      className="mb-4 p-4 bg-gray-100 rounded-lg"
+                    >
+                      <h3 className="text-lg font-semibold">
+                        Carrier #{index + 1}
+                      </h3>
+                      <ul className="list-disc pl-6">
+                        <li>
+                          <strong>Carrier:</strong>{" "}
+                          {carrier.currentwirelesscarrier}
+                        </li>
+                        <li>
+                          <strong>Account Number:</strong>{" "}
+                          {carrier.accountnumber}
+                        </li>
+                        <li>
+                          <strong>PIN/Password:</strong> {carrier.pinorpassword}
+                        </li>
+                        <li>
+                          <strong>SSN/Tax ID:</strong> {carrier.ssnortaxid}
+                        </li>
+                        <li>
+                          <strong>Billing Name:</strong> {carrier.billingname}
+                        </li>
+                        <li>
+                          <strong>Billing Address:</strong>{" "}
+                          {carrier.billingaddress}
+                        </li>
+                        <li>
+                          <strong>City:</strong> {carrier.billingcity}
+                        </li>
+                        <li>
+                          <strong>State:</strong> {carrier.billingstate}
+                        </li>
+                        <li>
+                          <strong>Zip:</strong> {carrier.billingzip}
+                        </li>
+                        <li>
+                          <strong>Authorized Name:</strong>{" "}
+                          {carrier.authorizedname}
+                        </li>
+                        <li>
+                          <strong>Unique Code:</strong> {carrier.uniqueCode}
+                        </li>
+                      </ul>
+                    </div>
+                  ))
+                ) : (
+                  <p>No carrier information available.</p>
+                )}
               </div>
             </div>
           </main>

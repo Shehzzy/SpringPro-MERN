@@ -32,6 +32,7 @@ import AllUsers from "./components/Admin-Dashboard/AllUsers.jsx";
 import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
 import Orders from "./components/Orders/Orders.jsx";
 import MainContent from "./components/Admin-Dashboard/MainContent.jsx";
+import OrderDetails from "./components/Admin-Dashboard/OrderDetails.jsx";
 
 function App() {
   return (
@@ -246,7 +247,7 @@ function App() {
           path="/single-order-details/:orderId"
           element={
             <div className="overflow-x-hidden ">
-              <AllOrders />
+              <OrderDetails />
             </div>
           }
         />

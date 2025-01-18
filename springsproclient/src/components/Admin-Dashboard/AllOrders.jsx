@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
@@ -120,7 +120,6 @@ function AllOrders() {
                           <th>Status</th>
                           <th>Update Status</th>
                           <th>Actions</th>
-
                         </tr>
                       </thead>
                       <tbody>
@@ -174,16 +173,12 @@ function AllOrders() {
                                 </select>
                               </td>
                               <td>
-                                <button
-                                  onClick={() =>
-                                    navigate(
-                                      `/single-order-details/${order._id}`
-                                    )
-                                  }
+                                <Link
+                                  to={`/single-order-details/${order._id}`}
                                   className="btn text-white mt-2 w-40 btn-view"
                                 >
                                   View Details
-                                </button>
+                                </Link>
                               </td>
                             </tr>
                           ))
