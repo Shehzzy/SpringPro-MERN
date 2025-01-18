@@ -75,6 +75,11 @@ const Form: React.FC = () => {
       label: "Total Wireless",
       value: "TTL",
     },
+    {
+      // label: "Total Wireless (TTL ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
+      label: "Other",
+      value: "Other",
+    },
   ];
   const [carrierInfos, setCarrierInfos] = useState([
     {
@@ -1141,9 +1146,9 @@ const Form: React.FC = () => {
               )}
             </div>
 
-            <div className="mb-4 w-full">
+            {/* <div className="mb-4 w-full">
               {" "}
-              {/* Wrap the Shipping Address input in a div */}
+              Wrap the Shipping Address input in a div
               <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
                 Shipping Address
               </h6>
@@ -1158,7 +1163,9 @@ const Form: React.FC = () => {
               {errors.shippingaddress && (
                 <p className=" text-danger text-sm">{errors.shippingaddress}</p> // Error message
               )}
-            </div>
+            </div> */}
+
+
 
             <div className="mb-4 w-full">
               {" "}
@@ -1267,7 +1274,7 @@ const Form: React.FC = () => {
                   </p>
                 )}
               </div>
-              <div className="mb-4">
+              {/* <div className="mb-4">
                 <h6 className="text-start md:text-center">Account Number</h6>
                 <input
                   type="text"
@@ -1285,7 +1292,7 @@ const Form: React.FC = () => {
                     {errors[`accountnumber_${index}`]}
                   </p>
                 )}
-              </div>
+              </div> */}
               <div className="mb-4">
                 <h6 className="text-start md:text-center">Pin or Password</h6>
                 <input
@@ -1455,7 +1462,7 @@ const Form: React.FC = () => {
                 <p className=" text-danger text-sm">{errors.companyname}</p>
               )}
             </div>
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <h6 className="text-start md:text-center">Account Number</h6>
               <input
                 type="text"
@@ -1476,7 +1483,7 @@ const Form: React.FC = () => {
                   </p>
                 </div>
               )}
-            </div>
+            </div> */}
 
             {/* <div className="mb-4">
               <h6 className="text-sm md:text-center text-start font-medium text-gray-700">

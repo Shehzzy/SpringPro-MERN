@@ -29,12 +29,15 @@ function AllOrders() {
     }
 
     axios
-      .get("https://springprobackend-production.up.railway.app/api/order/get-orders", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          role: userRole,
-        },
-      })
+      .get(
+        "https://springprobackend-production.up.railway.app/api/order/get-orders",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            role: userRole,
+          },
+        }
+      )
       .then((response) => {
         setOrders(response.data.orderData);
         setLoading(false);
@@ -97,7 +100,10 @@ function AllOrders() {
         <Sidebar />
         <div id="layoutSidenav_content">
           <main>
-            <div className="container-fluid px-4 md-4"  style={{ marginTop: "50px" }}>
+            <div
+              className="container-fluid px-4 md-4"
+              style={{ marginTop: "50px" }}
+            >
               <h1 className="mt-4 h3">Orders List</h1>
               <div className="card mb-4">
                 <div className="card-body">
@@ -113,6 +119,8 @@ function AllOrders() {
                           <th>Shipping Address</th>
                           <th>Status</th>
                           <th>Update Status</th>
+                          <th>Actions</th>
+
                         </tr>
                       </thead>
                       <tbody>
@@ -123,7 +131,8 @@ function AllOrders() {
                               <td>{order.email}</td>
                               <td>{order.phonenumber}</td>
                               <td>
-                                {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
+                                {order.imeiNumbers &&
+                                order.imeiNumbers.length > 0 ? (
                                   order.imeiNumbers
                                     .map((imei) => imei.imei)
                                     .join(", ")
@@ -135,8 +144,12 @@ function AllOrders() {
                                 {new Date(order.createdAt).toLocaleDateString()}
                               </td>
 
-                              {order.customerId?.shippingaddress ? ( <td>{order.customerId?.shippingaddress}</td>): (<td>Not Available</td>)}
-                             
+                              {order.customerId?.shippingaddress ? (
+                                <td>{order.customerId?.shippingaddress}</td>
+                              ) : (
+                                <td>Not Available</td>
+                              )}
+
                               <td>
                                 <span
                                   style={getStatusStyle(order.status)}
@@ -145,18 +158,32 @@ function AllOrders() {
                                   {order.status}
                                 </span>
                               </td>
-                              <td>
+                              <td className="parent-container">
                                 <select
                                   value={order.status}
                                   onChange={(e) =>
                                     updateOrderStatus(order._id, e.target.value)
                                   }
-                                  className="form-control"
+                                  className="form-control select-admin-status"
                                 >
                                   <option value="Pending">Pending</option>
-                                  <option value="In Progress">In Progress</option>
+                                  <option value="In Progress">
+                                    In Progress
+                                  </option>
                                   <option value="Completed">Completed</option>
                                 </select>
+                              </td>
+                              <td>
+                                <button
+                                  onClick={() =>
+                                    navigate(
+                                      `/single-order-details/${order._id}`
+                                    )
+                                  }
+                                  className="btn text-white mt-2 w-40 btn-view"
+                                >
+                                  View Details
+                                </button>
                               </td>
                             </tr>
                           ))

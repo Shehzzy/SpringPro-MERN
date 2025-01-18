@@ -1,6 +1,6 @@
 import "./App.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
-// import 'bootstrap/dist/js/bootstrap.bundle.min.js';  
+import "bootstrap/dist/css/bootstrap.min.css";
+// import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import Header from "./components/Header";
 import Hero from "./components/Hero";
 import Tags from "./components/Tag";
@@ -241,7 +241,16 @@ function App() {
             </div>
           }
         />
-        
+
+        <Route
+          path="/single-order-details/:orderId"
+          element={
+            <div className="overflow-x-hidden ">
+              <AllOrders />
+            </div>
+          }
+        />
+
         <Route
           path="/cobec"
           element={
@@ -254,7 +263,7 @@ function App() {
             </>
           }
         />
-{/* Main content just for testing  */}
+        {/* Main content just for testing  */}
         <Route
           path="/main-content"
           element={

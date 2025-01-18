@@ -66,7 +66,7 @@ function IMEIForm({
       </button>
 
       {showModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 mt-20" >
           <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 p-6 relative z-60 max-h-[80vh] overflow-y-auto">
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-black z-10"
@@ -172,6 +172,8 @@ function IMEIForm({
                         <option value="RedPocket">RedPocket</option>
                         <option value="Visible">Visible</option>
                         <option value="Total Wireless">Total Wireless</option>
+                        <option value="Other">Other</option>
+
                       </select>
                     </div>
                   ))}
@@ -278,14 +280,14 @@ function IMEIForm({
               )}
             </div>
 
-            <div className="text-center mt-4">
+            {/* <div className="text-center mt-4">
               <button
                 className="bg-[#41FDFE] px-4 py-2 rounded-full hover:bg-teal-600 transition duration-200"
                 onClick={() => setShowModal(false)}
               >
                 Close
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       )}

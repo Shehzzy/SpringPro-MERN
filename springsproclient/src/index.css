@@ -9,3 +9,4 @@
 .sm_nav {
   @apply md:flex-row md:justify-start justify-center flex-col;
 }
+
