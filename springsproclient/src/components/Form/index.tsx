@@ -155,7 +155,6 @@ const Form: React.FC = () => {
       },
     ]);
   };
-
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
   const [accountFields, setAccountFields] = useState([
@@ -1274,7 +1273,7 @@ const Form: React.FC = () => {
                   </p>
                 )}
               </div>
-              {/* <div className="mb-4">
+              <div className="mb-4">
                 <h6 className="text-start md:text-center">Account Number</h6>
                 <input
                   type="text"
@@ -1292,7 +1291,7 @@ const Form: React.FC = () => {
                     {errors[`accountnumber_${index}`]}
                   </p>
                 )}
-              </div> */}
+              </div>
               <div className="mb-4">
                 <h6 className="text-start md:text-center">Pin or Password</h6>
                 <input
