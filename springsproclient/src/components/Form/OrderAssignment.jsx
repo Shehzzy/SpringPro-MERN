@@ -82,9 +82,9 @@ function OrderAssignment({ token, formData, setFormData }) {
 
   return (
     <div>
-      <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-        Select Which Customer To Assign This Order To
-      </h3>
+      <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
+        Select Which Customer To Assign This Order
+      </h2>
 
       {/* Loading Indicator */}
       {loading && (
@@ -102,18 +102,18 @@ function OrderAssignment({ token, formData, setFormData }) {
           <div className="col-span-1">
             <label
               htmlFor="customerSelect"
-              className="block text-sm font-medium text-gray-700 text-start"
+              className="block text-sm font-medium text-gray-800 text-start"
             >
               Select A Customer
             </label>
             <select
               id="customerSelect"
               name="customerSelect"
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+              className="border-b h-10 border-gray-300 w-full"
               value={selectedCustomer}
               onChange={(e) => setSelectedCustomer(e.target.value)}
             >
-              <option value="">-- Select a Customer --</option>
+              <option value="">Select a Customer</option>
               {customers.map((customer) => (
                 <option key={customer._id} value={customer._id}>
                   {customer.businesslegalname}

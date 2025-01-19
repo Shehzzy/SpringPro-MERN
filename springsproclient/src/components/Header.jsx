@@ -162,10 +162,10 @@ const Header = () => {
                         style={{
                           background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
                         }}
-                        className="inline-flex justify-center items-center text-xs font-semibold text-black px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
+                        className="inline-flex justify-center items-center text-sm font-semibold text-white px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
                       >
                         Profile
-                        <ChevronDownIcon aria-hidden="true" className="-mr-1 w-4 h-4 text-gray-400" />
+                        <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                       </MenuButton>
                     </div>
 

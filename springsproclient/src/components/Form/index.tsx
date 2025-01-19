@@ -711,9 +711,9 @@ const Form: React.FC = () => {
         return (
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
             {/* Heading */}
-            <h3 className="text-2xl text-gray-800 font-semibold mb-8 text-center">
+            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
               SANS Agent Information
-            </h3>
+            </h2>
 
             {/* Form */}
             <form onSubmit={onSubmit} className="space-y-6">
@@ -799,11 +799,11 @@ const Form: React.FC = () => {
 
       case "accountInfo":
         return (
-          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
             {/* Heading */}
-            <h3 className="text-2xl text-gray-800 font-semibold mb-8 text-center">
+            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
               AT&T Account Option
-            </h3>
+            </h2>
 
             {/* Form Section */}
             <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-6">
@@ -915,9 +915,9 @@ const Form: React.FC = () => {
             )}
 
             {/* Secondary Heading */}
-            <h3 className="text-2xl text-gray-800 font-semibold mt-12 mb-6 text-center">
+            <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
               AT&T Account Information
-            </h3>
+            </h2>
 
             {/* Account Information Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1005,11 +1005,11 @@ const Form: React.FC = () => {
         );
       case "paymentShipping":
         return (
-          <div className="bg-white max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
             {/* Order Payment Options */}
-            <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
               Order Payment Options
-            </h3>
+            </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
               {/* Bill to Mobile */}
               <div className="w-full">
@@ -1058,7 +1058,7 @@ const Form: React.FC = () => {
                         name="cardNumber"
                         value={formData.cardNumber}
                         onChange={handleChange}
-                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         placeholder="Enter your card number"
                       />
                       {errors.cardNumber && (
@@ -1075,7 +1075,7 @@ const Form: React.FC = () => {
                         name="cardExpiry"
                         value={formData.cardExpiry}
                         onChange={handleChange}
-                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         placeholder="MM/YY"
                       />
                       {errors.cardExpiry && (
@@ -1092,7 +1092,7 @@ const Form: React.FC = () => {
                         name="cardCVC"
                         value={formData.cardCVC}
                         onChange={handleChange}
-                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         placeholder="CVC"
                       />
                       {errors.cardCVC && (
@@ -1105,19 +1105,22 @@ const Form: React.FC = () => {
             </div>
 
             {/* Order Shipping Information */}
-            <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+            <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
               Order Shipping Information
-            </h3>
+            </h2>
             <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
               {/* Shipment Mode */}
               <div className="w-full">
+                <h6 className="text-smfont-medium text-gray-700">
+                  Select Shipment Mode
+                </h6>
                 <select
                   name="singleormultiaddresshipment"
                   value={formData.singleormultiaddresshipment}
                   onChange={handleChange}
                   className="border-b mb-4 border-gray-300 py-2 w-full"
                 >
-                  <option value="">Select Shipment Mode</option>
+                  {/* <option value=""></option> */}
                   <option value="yes">Single Shipment Address</option>
                   <option value="no">Multiple Shipment Address</option>
                 </select>
@@ -1130,7 +1133,7 @@ const Form: React.FC = () => {
 
               {/* Attention Name */}
               <div className="mb-4 w-full">
-                <h6 className="text-sm text-center font-medium text-gray-700">
+                <h6 className="text-sm text-left font-medium text-gray-700">
                   Attention Name
                 </h6>
                 <input
@@ -1147,8 +1150,8 @@ const Form: React.FC = () => {
               </div>
 
               {/* Shipping Address */}
-              {/* <div className="mb-4 w-full">
-                <h6 className="text-sm text-center font-medium text-gray-700">
+              <div className="mb-4 w-full">
+                <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping Address
                 </h6>
                 <input
@@ -1162,11 +1165,11 @@ const Form: React.FC = () => {
                 {errors.shippingaddress && (
                   <p className="text-danger text-sm">{errors.shippingaddress}</p>
                 )}
-              </div> */}
+              </div>
 
               {/* Shipping City */}
               <div className="mb-4 w-full">
-                <h6 className="text-sm text-center font-medium text-gray-700">
+                <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping City
                 </h6>
                 <input
@@ -1184,7 +1187,7 @@ const Form: React.FC = () => {
 
               {/* Shipping State */}
               <div className="mb-4 w-full">
-                <h6 className="text-sm text-center font-medium text-gray-700">
+                <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping State
                 </h6>
                 <input
@@ -1202,7 +1205,7 @@ const Form: React.FC = () => {
 
               {/* Shipping Zip */}
               <div className="mb-4 w-full">
-                <h6 className="text-sm text-center font-medium text-gray-700">
+                <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping Zip
                 </h6>
                 <input
@@ -1223,9 +1226,8 @@ const Form: React.FC = () => {
 
       case "carrierInfo":
         return (
-          <div className="flex justify-center items-center max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
-            <div className="bg-white shadow-md rounded-md p-6 md:p-10 w-full max-w-4xl">
-              <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
+              <h3 className="text-xl text-gray-800 font-semibold mb-4">
                 Carrier Port Information
               </h3>
               {carrierInfos.map((info, index) => (
@@ -1328,11 +1330,13 @@ const Form: React.FC = () => {
               <button
                 type="button"
                 onClick={addCarrierInfo}
-                className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+                style={{
+                  background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                }}
+                className="mt-4 text-white px-6 py-2 rounded"
               >
                 + Add Another Carrier Information
               </button>
-            </div>
           </div>
 
 
@@ -1340,7 +1344,7 @@ const Form: React.FC = () => {
       case "additionalInfo":
         return (
           <div className="flex justify-center items-start">
-            <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+            <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
               <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
                 Additional Information
@@ -1703,15 +1707,21 @@ const Form: React.FC = () => {
               { key: "carrierInfo", label: "Carrier Information" },
               { key: "additionalInfo", label: "Additional Information" },
             ].map((tab) => (
-              <button
-                key={tab.key}
-                type="button"
-                onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 ${activeTab === tab.key ? "bg-blue-500 text-white" : "bg-gray-300"
-                  } rounded`}
-              >
-                {tab.label}
-              </button>
+            <button
+              key={tab.key}
+              type="button"
+              onClick={() => setActiveTab(tab.key)}
+              className={`px-4 py-2 ${activeTab === tab.key ? "text-white" : "bg-gray-300"} rounded`}
+              style={
+                activeTab === tab.key
+                  ? {
+                      background: "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
+                    }
+                  : {}
+              }
+            >
+              {tab.label}
+            </button>
             ))}
           </div>
 
@@ -1731,7 +1741,10 @@ const Form: React.FC = () => {
               <button
                 type="button"
                 onClick={handleNext} // Call `handleNext` to validate the tab and navigate
-                className="bg-blue-500 text-white px-6 py-2 rounded"
+                style={{
+                  background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                }}
+                className="text-white px-6 py-2 rounded"
               >
                 Next
               </button>
