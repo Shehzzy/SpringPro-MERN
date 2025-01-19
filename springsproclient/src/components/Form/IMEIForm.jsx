@@ -348,6 +348,7 @@ function IMEIForm({
     const updatedAddresses = { ...shippingAddresses };
     updatedAddresses[imei] = value;
     setShippingAddresses(updatedAddresses);
+
     onShippingAddressesChange(updatedAddresses);
   };
 
@@ -532,6 +533,7 @@ function IMEIForm({
                         <option value="Visible">Visible</option>
                         <option value="Total Wireless">Total Wireless</option>
                         <option value="Other">Other</option>
+
                       </select>
 
                       {phone.carrier === "Other" && (
@@ -586,7 +588,6 @@ function IMEIForm({
                     maxLength="15"
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-
                   <button
                     type="button"
                     onClick={handleAddImei}
