@@ -27,7 +27,7 @@ function Footer() {
     <footer className="py-4 bg-light mt-auto">
       <div className="container-fluid px-4">
         <div className="d-flex align-items-center justify-content-between small flex-column flex-sm-row">
-          <div className="text-muted mb-2 mb-sm-0">Copyright &copy; SpringPro 2025</div>
+          <div className="text-muted mb-2 mb-sm-0">Copyright &copy; Springairns 2025</div>
           <div>
             <a href="#" className="me-2">Privacy Policy</a>
             &middot;
