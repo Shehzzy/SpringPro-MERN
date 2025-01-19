@@ -7,6 +7,7 @@ import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
 
 const Form: React.FC = () => {
+  const [activeTab, setActiveTab] = useState("sellerInfo");
   const [ratePlan, setRatePlan] = useState("");
   const [buyNewPhone, setBuyNewPhone] = useState("");
   const [smartphoneDetails, setSmartphoneDetails] = useState({
@@ -76,7 +77,6 @@ const Form: React.FC = () => {
       value: "TTL",
     },
     {
-      // label: "Total Wireless (TTL ENDING WITH LAST 4 OF THE ACCOUNT NUMBER XXXX)",
       label: "Other",
       value: "Other",
     },
@@ -155,6 +155,7 @@ const Form: React.FC = () => {
       },
     ]);
   };
+
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
   const [accountFields, setAccountFields] = useState([
@@ -387,6 +388,7 @@ const Form: React.FC = () => {
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
   };
 
+
   const validateForm = (): boolean => {
     const newErrors: any = {};
     if (!formData.name) newErrors.name = "Name is required.";
@@ -553,10 +555,1129 @@ const Form: React.FC = () => {
     }
   };
 
+  const goToNextTab = () => {
+    const tabOrder = ["sellerInfo", "accountInfo", "paymentShipping", "carrierInfo", "additionalInfo"];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    if (currentIndex < tabOrder.length - 1) {
+      setActiveTab(tabOrder[currentIndex + 1]);
+    }
+  };
+
   console.log(formData);
 
+  const validateTab = (tab: string): boolean => {
+    const newErrors: any = {};
+
+    // Validate fields based on the active tab
+    switch (tab) {
+      case "sellerInfo":
+        if (!formData.name) newErrors.name = "Name is required.";
+        if (!formData.email) newErrors.email = "Email is required.";
+        if (!formData.phonenumber) newErrors.phonenumber = "Phone Number is required.";
+        break;
+
+      case "accountInfo":
+        if (!formData.agreementtype)
+          newErrors.agreementtype = "Agreement Type is required.";
+        if (formData.agreementtype === "acda" && !formData.eip)
+          newErrors.eip = "EIP Limit is required.";
+        if (!formData.promotion) newErrors.promotion = "Promotion is required.";
+        if (!formData.paperless)
+          newErrors.paperless = "Paperless Billing is required.";
+        if (!formData.businesslegalname)
+          newErrors.businesslegalname = "Business Legal Name is required.";
+        if (!formData.businessaddress)
+          newErrors.businessaddress = "Business Address is required.";
+        if (!formData.businesscity)
+          newErrors.businesscity = "Business City is required.";
+        if (!formData.businessstate)
+          newErrors.businessstate = "Business State is required.";
+        if (!formData.businesszip)
+          newErrors.businesszip = "Business Zip is required.";
+        if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
+        if (!formData.locationid) newErrors.locationid = "Location ID is required.";
+        if (!formData.contactname) newErrors.contactname = "Contact Name is required.";
+        if (!formData.contactphone)
+          newErrors.contactphone = "Contact Phone is required.";
+        if (!formData.contactemail)
+          newErrors.contactemail = "Contact Email is required.";
+        if (!formData.billtomobile)
+          newErrors.billtomobile = "Bill to Mobile is required.";
+        if (!formData.creditcardpayment)
+          newErrors.creditcardpayment = "Credit Card Payment is required.";
+        if (formData.creditcardpayment === "yes") {
+          if (!formData.cardNumber) newErrors.cardNumber = "Card number is required.";
+          if (!formData.cardExpiry) newErrors.cardExpiry = "Expiry date is required.";
+          if (!formData.cardCVC) newErrors.cardCVC = "CVC is required.";
+        }
+        if (!formData.singleormultiaddresshipment)
+          newErrors.singleormultiaddresshipment =
+            "Single or Multi Address Shipment is required.";
+        if (!formData.attentionname)
+          newErrors.attentionname = "Attention Name is required.";
+        if (!formData.shippingaddress)
+          newErrors.shippingaddress = "Shipping Address is required.";
+        if (!formData.shippingcity)
+          newErrors.shippingcity = "Shipping City is required.";
+        if (!formData.shippingstate)
+          newErrors.shippingstate = "Shipping State is required.";
+        if (!formData.shippingzip) newErrors.shippingzip = "Shipping Zip is required.";
+        if (!formData.companyname) newErrors.companyname = "Company Name is required.";
+        if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
+        if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
+        if (!formData.existingBAN) newErrors.existingBAN = "Existing BAN is required.";
+        if (!formData.existingFAN) newErrors.existingFAN = "Existing FAN is required.";
+        break;
+
+      case "paymentShipping":
+        if (!formData.singleormultiaddresshipment)
+          newErrors.singleormultiaddresshipment = "Single or Multi Address Shipment is required.";
+        if (!formData.shippingaddress) newErrors.shippingaddress = "Shipping Address is required.";
+        if (!formData.shippingcity) newErrors.shippingcity = "Shipping City is required.";
+        if (!formData.shippingstate) newErrors.shippingstate = "Shipping State is required.";
+        if (!formData.shippingzip) newErrors.shippingzip = "Shipping Zip is required.";
+        break;
+
+      case "carrierInfo":
+        carrierInfos.forEach((info, index) => {
+          if (!info.currentwirelesscarrier) {
+            newErrors[`currentwirelesscarrier_${index}`] =
+              "Current Wireless Carrier is required.";
+          }
+          if (!info.accountnumber) {
+            newErrors[`accountnumber_${index}`] = "Account Number is required.";
+          }
+          if (!info.pinorpassword) {
+            newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
+          }
+          if (!info.ssnortaxid) {
+            newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
+          }
+          if (!info.billingname) {
+            newErrors[`billingname_${index}`] = "Billing Name is required.";
+          }
+          if (!info.billingaddress) {
+            newErrors[`billingaddress_${index}`] = "Billing Address is required.";
+          }
+          if (!info.billingcity) {
+            newErrors[`billingcity_${index}`] = "Billing City is required.";
+          }
+          if (!info.billingstate) {
+            newErrors[`billingstate_${index}`] = "Billing State is required.";
+          }
+          if (!info.billingzip) {
+            newErrors[`billingzip_${index}`] = "Billing Zip is required.";
+          }
+          if (!info.authorizedname) {
+            newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
+          }
+        });
+        break;
+
+      case "additionalInfo":
+        if (!formData.companyname) newErrors.companyname = "Company Name is required.";
+        if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
+        if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
+        break;
+
+      default:
+        break;
+    }
+
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+    return Object.keys(newErrors).length === 0; // Return true if no errors
+  };
+
+  const handleNext = () => {
+    if (validateTab(activeTab)) {
+      const tabOrder = [
+        "sellerInfo",
+        "accountInfo",
+        "paymentShipping",
+        "carrierInfo",
+        "additionalInfo",
+      ];
+      const currentIndex = tabOrder.indexOf(activeTab);
+      if (currentIndex < tabOrder.length - 1) {
+        setActiveTab(tabOrder[currentIndex + 1]);
+      }
+    }
+  };
+
+
+  const renderTabContent = () => {
+    switch (activeTab) {
+      case "sellerInfo":
+        return (
+          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+            {/* Heading */}
+            <h3 className="text-2xl text-gray-800 font-semibold mb-8 text-center">
+              AT&T Seller Information
+            </h3>
+
+            {/* Form */}
+            <form onSubmit={onSubmit} className="space-y-6">
+              {/* Row 1 */}
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <h6 className="text-[#3C3C3C] text-start">Name</h6>
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                </div>
+
+                <div>
+                  <h6 className="text-[#3C3C3C] text-start">Email</h6>
+                  <input
+                    type="text"
+                    name="email"
+                    placeholder="Enter Email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                </div>
+
+                <div>
+                  <h6 className="text-[#3C3C3C] text-start">Phone</h6>
+                  <input
+                    name="phonenumber"
+                    placeholder="Enter Phone"
+                    value={formData.phonenumber}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-300 py-2"
+                  />
+                  {errors.phonenumber && (
+                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+                  )}
+                </div>
+              </div>
+
+              {/* Row 2 */}
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <h6 className="text-[#3C3C3C] text-start">Dealer Code</h6>
+                  <input
+                    type="text"
+                    name="dealerCode"
+                    placeholder="Enter Dealer Code"
+                    value={formData.dealerCode}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.dealerCode && (
+                    <p className="text-red-500 text-sm">{errors.dealerCode}</p>
+                  )}
+                </div>
+
+                <div>
+                  <h6 className="text-[#3C3C3C] text-start">Agent Code</h6>
+                  <input
+                    type="text"
+                    name="agentCode"
+                    placeholder="Enter Agent Code"
+                    value={formData.agentCode}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.agentCode && (
+                    <p className="text-red-500 text-sm">{errors.agentCode}</p>
+                  )}
+                </div>
+              </div>
+            </form>
+          </div>
+        );
+
+      case "accountInfo":
+        return (
+          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+            {/* Heading */}
+            <h3 className="text-2xl text-gray-800 font-semibold mb-8 text-center">
+              AT&T Account Option
+            </h3>
+
+            {/* Form Section */}
+            <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-6">
+              {/* Agreement Type */}
+              <div className="w-full">
+                <select
+                  name="agreementtype"
+                  value={formData.agreementtype}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Select Agreement Type</option>
+                  <option value="amb">AMB</option>
+                  <option value="acda">ACDA Attainment/MAC</option>
+                </select>
+                {errors.agreementtype && (
+                  <p className="text-red-500 text-sm">{errors.agreementtype}</p>
+                )}
+              </div>
+
+              {/* EIP Limit (Conditional Field) */}
+              {formData.agreementtype === "acda" && (
+                <div className="w-full">
+                  <input
+                    name="eip"
+                    placeholder="Enter What EIP Limit is needed"
+                    value={formData.eip}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-300 py-2"
+                  />
+                  {errors.eip && <p className="text-red-500 text-sm">{errors.eip}</p>}
+                </div>
+              )}
+
+              {/* Promotions */}
+              <div className="w-full">
+                <select
+                  name="promotion"
+                  value={formData.promotion}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Promotions</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="expected">Expected</option>
+                </select>
+                {errors.promotion && (
+                  <p className="text-red-500 text-sm">{errors.promotion}</p>
+                )}
+              </div>
+
+              {/* Paperless Billing */}
+              <div className="w-full mt-4">
+                <h4 className="text-lg text-gray-800 font-semibold mb-2">
+                  Paperless Billing
+                </h4>
+                <div className="flex items-center space-x-6">
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="paperless"
+                      value="accepted"
+                      checked={formData.paperless === "accepted"}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    Accepted
+                  </label>
+                  <label className="flex items-center">
+                    <input
+                      type="radio"
+                      name="paperless"
+                      value="declined"
+                      checked={formData.paperless === "declined"}
+                      onChange={handleChange}
+                      className="mr-2"
+                    />
+                    Declined
+                  </label>
+                </div>
+                {errors.paperless && (
+                  <p className="text-red-500 text-sm">{errors.paperless}</p>
+                )}
+              </div>
+
+              {/* Special Instructions */}
+              <div className="w-full">
+                <textarea
+                  name="specialinstruction"
+                  value={formData.specialinstruction}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                  onChange={handleChange}
+                  placeholder="Enter Special Instruction"
+                  style={{ resize: "none" }}
+                ></textarea>
+                {errors.specialinstruction && (
+                  <p className="text-red-500 text-sm">{errors.specialinstruction}</p>
+                )}
+              </div>
+            </div>
+
+            {/* Order Assignment */}
+            {!isFirstOrder && (
+              <OrderAssignment
+                token={token}
+                formData={formData}
+                setFormData={setFormData}
+              />
+            )}
+
+            {/* Secondary Heading */}
+            <h3 className="text-2xl text-gray-800 font-semibold mt-12 mb-6 text-center">
+              AT&T Account Information
+            </h3>
+
+            {/* Account Information Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[
+                {
+                  name: "businesslegalname",
+                  label: "Business Legal Name",
+                  placeholder: "Enter Business Legal Name",
+                },
+                {
+                  name: "businessaddress",
+                  label: "Business Address",
+                  placeholder: "Enter Business Address",
+                },
+                {
+                  name: "businesscity",
+                  label: "Business City",
+                  placeholder: "Enter Business City",
+                },
+                {
+                  name: "businessstate",
+                  label: "Business State",
+                  placeholder: "Enter Business State",
+                },
+                {
+                  name: "businesszip",
+                  label: "Business Zip",
+                  placeholder: "Enter Business Zip",
+                },
+                {
+                  name: "taxid",
+                  label: "Tax ID",
+                  placeholder: "Enter Tax ID",
+                },
+                {
+                  name: "contactname",
+                  label: "Contact Name",
+                  placeholder: "Enter Contact Name",
+                },
+                {
+                  name: "contactphone",
+                  label: "Contact Phone",
+                  placeholder: "Enter Contact Phone",
+                },
+                {
+                  name: "contactemail",
+                  label: "Contact Email",
+                  placeholder: "Enter Contact Email",
+                },
+                {
+                  name: "locationid",
+                  label: "Location ID",
+                  placeholder: "Enter Location ID",
+                },
+                {
+                  name: "existingBAN",
+                  label: "Existing BAN",
+                  placeholder: "Enter Existing BAN",
+                },
+                {
+                  name: "existingFAN",
+                  label: "Existing FAN",
+                  placeholder: "Enter Existing FAN",
+                },
+              ].map((field, index) => (
+                <div key={index} className="mb-4">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    {field.label}
+                  </h6>
+                  <input
+                    type="text"
+                    name={field.name}
+                    placeholder={field.placeholder}
+                    value={formData[field.name]}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors[field.name] && (
+                    <p className="text-red-500 text-sm">{errors[field.name]}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      case "paymentShipping":
+        return (
+          <div className="bg-white max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+            {/* Order Payment Options */}
+            <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+              Order Payment Options
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+              {/* Bill to Mobile */}
+              <div className="w-full">
+                <select
+                  name="billtomobile"
+                  value={formData.billtomobile}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="">Bill to Mobile</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                {errors.billtomobile && (
+                  <p className="text-danger text-sm">{errors.billtomobile}</p>
+                )}
+              </div>
+
+              {/* Credit Card Payment */}
+              <div className="w-full">
+                <select
+                  name="creditcardpayment"
+                  value={formData.creditcardpayment}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="">Credit Card Payment?</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                {errors.creditcardpayment && (
+                  <p className="text-danger text-sm">{errors.creditcardpayment}</p>
+                )}
+              </div>
+
+              {/* Credit Card Information */}
+              {formData.creditcardpayment === "yes" && (
+                <div className="w-full md:col-span-3 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardNumber">
+                        Card Number
+                      </label>
+                      <input
+                        type="text"
+                        name="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleChange}
+                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        placeholder="Enter your card number"
+                      />
+                      {errors.cardNumber && (
+                        <p className="text-danger text-sm">{errors.cardNumber}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardExpiry">
+                        Expiry Date (MM/YY)
+                      </label>
+                      <input
+                        type="text"
+                        name="cardExpiry"
+                        value={formData.cardExpiry}
+                        onChange={handleChange}
+                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        placeholder="MM/YY"
+                      />
+                      {errors.cardExpiry && (
+                        <p className="text-danger text-sm">{errors.cardExpiry}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardCVC">
+                        CVC
+                      </label>
+                      <input
+                        type="text"
+                        name="cardCVC"
+                        value={formData.cardCVC}
+                        onChange={handleChange}
+                        className="border-b h-10 border-gray-300 py-2 w-full"
+                        placeholder="CVC"
+                      />
+                      {errors.cardCVC && (
+                        <p className="text-danger text-sm">{errors.cardCVC}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Order Shipping Information */}
+            <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+              Order Shipping Information
+            </h3>
+            <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
+              {/* Shipment Mode */}
+              <div className="w-full">
+                <select
+                  name="singleormultiaddresshipment"
+                  value={formData.singleormultiaddresshipment}
+                  onChange={handleChange}
+                  className="border-b mb-4 border-gray-300 py-2 w-full"
+                >
+                  <option value="">Select Shipment Mode</option>
+                  <option value="yes">Single Shipment Address</option>
+                  <option value="no">Multiple Shipment Address</option>
+                </select>
+                {errors.singleormultiaddresshipment && (
+                  <p className="text-danger text-sm">
+                    {errors.singleormultiaddresshipment}
+                  </p>
+                )}
+              </div>
+
+              {/* Attention Name */}
+              <div className="mb-4 w-full">
+                <h6 className="text-sm text-center font-medium text-gray-700">
+                  Attention Name
+                </h6>
+                <input
+                  type="text"
+                  name="attentionname"
+                  placeholder="Enter Attention Name"
+                  value={formData.attentionname}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.attentionname && (
+                  <p className="text-danger text-sm">{errors.attentionname}</p>
+                )}
+              </div>
+
+              {/* Shipping Address */}
+              {/* <div className="mb-4 w-full">
+                <h6 className="text-sm text-center font-medium text-gray-700">
+                  Shipping Address
+                </h6>
+                <input
+                  type="text"
+                  name="shippingaddress"
+                  placeholder="Enter Shipping Address"
+                  value={formData.shippingaddress}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.shippingaddress && (
+                  <p className="text-danger text-sm">{errors.shippingaddress}</p>
+                )}
+              </div> */}
+
+              {/* Shipping City */}
+              <div className="mb-4 w-full">
+                <h6 className="text-sm text-center font-medium text-gray-700">
+                  Shipping City
+                </h6>
+                <input
+                  type="text"
+                  name="shippingcity"
+                  placeholder="Enter Shipping City"
+                  value={formData.shippingcity}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.shippingcity && (
+                  <p className="text-danger text-sm">{errors.shippingcity}</p>
+                )}
+              </div>
+
+              {/* Shipping State */}
+              <div className="mb-4 w-full">
+                <h6 className="text-sm text-center font-medium text-gray-700">
+                  Shipping State
+                </h6>
+                <input
+                  type="text"
+                  name="shippingstate"
+                  placeholder="Enter Shipping State"
+                  value={formData.shippingstate}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.shippingstate && (
+                  <p className="text-danger text-sm">{errors.shippingstate}</p>
+                )}
+              </div>
+
+              {/* Shipping Zip */}
+              <div className="mb-4 w-full">
+                <h6 className="text-sm text-center font-medium text-gray-700">
+                  Shipping Zip
+                </h6>
+                <input
+                  type="text"
+                  name="shippingzip"
+                  placeholder="Enter Shipping Zip"
+                  value={formData.shippingzip}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.shippingzip && (
+                  <p className="text-danger text-sm">{errors.shippingzip}</p>
+                )}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "carrierInfo":
+        return (
+          <div className="flex justify-center items-center max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+            <div className="bg-white shadow-md rounded-md p-6 md:p-10 w-full max-w-4xl">
+              <h3 className="text-xl text-gray-800 font-semibold mb-4 text-center">
+                Carrier Port Information
+              </h3>
+              {carrierInfos.map((info, index) => (
+                <div
+                  key={index}
+                  className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 border-b pb-6"
+                >
+                  {/* Header with Remove Button */}
+                  <div className="col-span-2 flex justify-between items-center">
+                    {index > 0 && (
+                      <h4 className="text-lg font-semibold">
+                        Carrier Port Info {index + 1}
+                      </h4>
+                    )}
+                    {index > 0 && (
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setCarrierInfos((prev) =>
+                            prev.filter((_, i) => i !== index)
+                          );
+                        }}
+                        className="text-red-500 hover:text-red-700"
+                      >
+                        - Remove
+                      </button>
+                    )}
+                  </div>
+
+                  {/* Carrier Information Fields */}
+                  <div className="mb-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Select Carrier
+                    </h6>
+                    <select
+                      name="currentwirelesscarrier"
+                      value={info.currentwirelesscarrier}
+                      onChange={(e) => handleCarrierInfoChange(e, index)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    >
+                      <option value="">Select Current Wireless Carrier</option>
+                      {carrierOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    {errors[`currentwirelesscarrier_${index}`] && (
+                      <p className="text-danger text-sm">
+                        {errors[`currentwirelesscarrier_${index}`]}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Repeated Fields */}
+                  {[
+                    { name: "accountnumber", label: "Account Number" },
+                    { name: "pinorpassword", label: "Pin or Password" },
+                    { name: "ssnortaxid", label: "SSN or TaxID" },
+                    { name: "billingname", label: "Billing Name" },
+                    { name: "billingaddress", label: "Billing Address" },
+                    { name: "billingcity", label: "Billing City" },
+                    { name: "billingstate", label: "Billing State" },
+                    { name: "billingzip", label: "Billing Zip" },
+                    { name: "authorizedname", label: "Authorized Name" },
+                  ].map(({ name, label }) => (
+                    <div className="mb-4" key={name}>
+                      <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
+                      <input
+                        type="text"
+                        name={name}
+                        placeholder={`Enter ${label}`}
+                        value={info[name]}
+                        onChange={(e) => handleCarrierInfoChange(e, index)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                      {errors[`${name}_${index}`] && (
+                        <p className="text-danger text-sm">
+                          {errors[`${name}_${index}`]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+
+                  {/* Unique Code (Read-Only Field) */}
+                  <div className="mb-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
+                    <input
+                      type="text"
+                      name="uniqueCode"
+                      value={info.uniqueCode}
+                      readOnly
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
+                    />
+                  </div>
+                </div>
+              ))}
+
+              {/* Add Another Carrier Button */}
+              <button
+                type="button"
+                onClick={addCarrierInfo}
+                className="mt-4 bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
+              >
+                + Add Another Carrier Information
+              </button>
+            </div>
+          </div>
+
+
+        );
+      case "additionalInfo":
+        return (
+          <div className="flex justify-center items-start">
+            <div className="bg-white shadow-md rounded-lg p-6 w-full max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+              {/* Additional Information */}
+              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                Additional Information
+              </h3>
+              <div className="grid grid-cols-1 mt-4 md:grid-cols-3 gap-4">
+                <div className="mb-4">
+                  <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
+                    Company Name
+                  </h6>
+                  <input
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter Company Name"
+                    value={formData.companyname}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.companyname && (
+                    <p className="text-danger text-sm">{errors.companyname}</p>
+                  )}
+                </div>
+                <div className="mb-4">
+                  <h6 className="text-start md:text-center">Account Number</h6>
+                  <input
+                    type="text"
+                    name="accountnumber"
+                    placeholder="Enter Account Number"
+                    value={formData.accountnumber}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    disabled={!isFirstOrder && !!formData.accountnumber}
+                  />
+                  {errors.accountnumber && (
+                    <p className="text-danger text-sm">{errors.accountnumber}</p>
+                  )}
+                  {isFirstOrder && (
+                    <div className="flex justify-start">
+                      <p className="text-danger text-sm mt-1 text-center">
+                        This will only be filled out once.
+                      </p>
+                    </div>
+                  )}
+                </div>
+                <IMEIForm
+                  imeiNumbers={imeiNumbers}
+                  onImeiNumbersChange={handleImeiNumbersChange}
+                  onAccountFieldsChange={handleAccountFieldsChange}
+                  onPhoneNumbersChange={handlePhoneNumbersChange}
+                  onShippingAddressesChange={handleShippingAddressesChange}
+                />
+              </div>
+
+              {/* Rate Plan Selection */}
+              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                Rate Plan Selection
+              </h3>
+              <div className="mb-4">
+                <select
+                  name="ratePlan"
+                  value={formData.ratePlan}
+                  onChange={handleRatePlanChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Select Rate Plan</option>
+                  <option value="basic">Basic Plan</option>
+                  <option value="premium">Premium Plan</option>
+                  <option value="unlimited">Unlimited Plan</option>
+                </select>
+              </div>
+
+              {/* Smartphone Purchase Options */}
+              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                Smartphone Purchase Options
+              </h3>
+              <div className="mb-4">
+                <select
+                  name="buyNewPhone"
+                  value={buyNewPhone}
+                  onChange={handleBuyNewPhoneChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Do you want to buy a new smartphone?</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+              </div>
+
+              {buyNewPhone === "yes" && (
+                <div>
+                  <div className="mb-4">
+                    <select
+                      name="brand"
+                      value={smartphoneDetails.brand}
+                      onChange={handleSmartphoneDetailsChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select Brand</option>
+                      <option value="apple">Apple</option>
+                      <option value="samsung">Samsung</option>
+                      <option value="google">Google</option>
+                      <option value="motorola">Motorola</option>
+                      <option value="sonim">Sonim</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+
+                  {smartphoneDetails.brand === "apple" && (
+                    <div className="mb-4">
+                      <select
+                        name="model"
+                        value={smartphoneDetails.model}
+                        onChange={handleSmartphoneDetailsChange}
+                        className="border-b h-10 border-gray-300 w-full"
+                      >
+                        <option value="">Select Model</option>
+                        <option value="iphone13">iPhone 13</option>
+                        <option value="iphone14">iPhone 14</option>
+                        <option value="iphone15">iPhone 15</option>
+                      </select>
+                    </div>
+                  )}
+
+                  {smartphoneDetails.brand === "samsung" && (
+                    <div className="mb-4">
+                      <select
+                        name="model"
+                        value={smartphoneDetails.model}
+                        onChange={handleSmartphoneDetailsChange}
+                        className="border-b h-10 border-gray-300 w-full"
+                      >
+                        <option value="">Select Model</option>
+                        <option value="s24">S24</option>
+                        <option value="s24_fe">S24 FE</option>
+                        <option value="s24_plus">S24 Plus</option>
+                        <option value="s24_ultra">S24 Ultra</option>
+                      </select>
+                    </div>
+                  )}
+
+                  <div className="mb-4">
+                    <select
+                      name="color"
+                      value={smartphoneDetails.color}
+                      onChange={handleSmartphoneDetailsChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select Color</option>
+                      <option value="black">Black</option>
+                      <option value="white">White</option>
+                      <option value="blue">Blue</option>
+                      <option value="red">Red</option>
+                      <option value="green">Green</option>
+                    </select>
+                  </div>
+
+                  <div className="mb-4">
+                    <select
+                      name="size"
+                      value={smartphoneDetails.size}
+                      onChange={handleSmartphoneDetailsChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select Size</option>
+                      <option value="64gb">64GB</option>
+                      <option value="128gb">128GB</option>
+                      <option value="256gb">256GB</option>
+                      <option value="512gb">512GB</option>
+                      <option value="1tb">1TB</option>
+                      <option value="2tb">2TB</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        );
+
+
+
+        return (
+          <div>
+            {/* Smartphone Purchase Options */}
+            <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+              Smartphone Purchase Options
+            </h3>
+            <div className="mb-4">
+              <select
+                name="buyNewPhone"
+                value={buyNewPhone}
+                onChange={handleBuyNewPhoneChange}
+                className="border-b h-10 border-gray-300 w-full"
+              >
+                <option value="">Do you want to buy a new smartphone?</option>
+                <option value="yes">Yes</option>
+                <option value="no">No</option>
+              </select>
+            </div>
+
+            {buyNewPhone === "yes" && (
+              <div>
+                {/* Brand Selection */}
+                <div className="mb-4">
+                  <select
+                    name="brand"
+                    value={smartphoneDetails.brand}
+                    onChange={handleSmartphoneDetailsChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select Brand</option>
+                    <option value="apple">Apple</option>
+                    <option value="samsung">Samsung</option>
+                    <option value="google">Google</option>
+                    <option value="motorola">Motorola</option>
+                    <option value="sonim">Sonim</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+
+                {/* Model Selection */}
+                {smartphoneDetails.brand === "apple" && (
+                  <div className="mb-4">
+                    <select
+                      name="model"
+                      value={smartphoneDetails.model}
+                      onChange={handleSmartphoneDetailsChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select Model</option>
+                      <option value="iphone13">iPhone 13</option>
+                      <option value="iphone14">iPhone 14</option>
+                      <option value="iphone15">iPhone 15</option>
+                    </select>
+                  </div>
+                )}
+
+                {smartphoneDetails.brand === "samsung" && (
+                  <div className="mb-4">
+                    <select
+                      name="model"
+                      value={smartphoneDetails.model}
+                      onChange={handleSmartphoneDetailsChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select Model</option>
+                      <option value="s24">S24</option>
+                      <option value="s24_fe">S24 FE</option>
+                      <option value="s24_plus">S24 Plus</option>
+                      <option value="s24_ultra">S24 Ultra</option>
+                      <option value="a13">A13</option>
+                      <option value="a23">A23</option>
+                      <option value="a14">A14</option>
+                      <option value="a52">A52</option>
+                      <option value="x_cover_6_pro">X Cover 6 Pro</option>
+                    </select>
+                  </div>
+                )}
+
+                {/* Color Selection */}
+                <div className="mb-4">
+                  <select
+                    name="color"
+                    value={smartphoneDetails.color}
+                    onChange={handleSmartphoneDetailsChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select Color</option>
+                    <option value="black">Black</option>
+                    <option value="white">White</option>
+                    <option value="blue">Blue</option>
+                    <option value="red">Red</option>
+                    <option value="green">Green</option>
+                  </select>
+                </div>
+
+                {/* Size Selection */}
+                <div className="mb-4">
+                  <select
+                    name="size"
+                    value={smartphoneDetails.size}
+                    onChange={handleSmartphoneDetailsChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select Size</option>
+                    <option value="64gb">64GB</option>
+                    <option value="128gb">128GB</option>
+                    <option value="256gb">256GB</option>
+                    <option value="512gb">512GB</option>
+                    <option value="1tb">1TB</option>
+                    <option value="2tb">2TB</option>
+                  </select>
+                </div>
+              </div>
+            )}
+
+            {/* Error and Submit Button */}
+            <div className="flex flex-col mt-8">
+              {Object.keys(errors).length > 0 && (
+                <p className="text-danger text-sm mb-4">
+                  Please fix the errors above.
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={state.submitting}
+                className="bg-[#41FDFE] text-black px-6 py-3 rounded-full"
+              >
+                Submit
+              </button>
+            </div>
+
+            {/* View Orders Link */}
+            <div className="flex justify-start items-center">
+              <div>
+                <Link
+                  to={"/your-orders"}
+                  className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
+                >
+                  I want to see my orders
+                </Link>
+              </div>
+            </div>
+
+            {/* Submission Confirmation */}
+            {isSubmitted && (
+              <p className="text-center text-green-500 mt-4">
+                Thanks for submitting the order!
+              </p>
+            )}
+          </div>
+        );
+      default:
+        return null;
+    }
+  };
+
   return (
-    <section className="py-24 mt-[120px] px-8 text-center bg-white">
+    <form onSubmit={onSubmit}>
+      <section className="py-24 mt-[120px] px-8 text-center bg-white">
       <div className="container mx-auto w-full ">
         <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-2">
           Ready to Make the Network?
@@ -565,1164 +1686,60 @@ const Form: React.FC = () => {
           It’s time to stop overpaying for your services. Fill out the form
           below to get started.
         </p>
-
-        <form onSubmit={onSubmit} className="max-w-2xl mx-auto space-y-6">
-          {/* Agent Information Start*/}
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            AT&T Seller Information
-          </h3>
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-            <div className="w-full">
-              <h6 className="text-[#3C3C3C] sm:text-center text-start">Name</h6>
-              <input
-                type="text"
-                name="name"
-                placeholder="Enter Name"
-                value={formData.name}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.name && (
-                <p className=" text-danger text-sm">{errors.name}</p>
-              )}
-            </div>
-
-            <div>
-              <h6 className="text-[#3C3C3C] sm:text-center text-start">
-                Email
-              </h6>
-              <input
-                type="text"
-                name="email"
-                placeholder="Enter Email"
-                value={formData.email}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.email && (
-                <p className=" text-danger text-sm">{errors.email}</p>
-              )}
-            </div>
-            <div>
-              <h6 className="text-[#3C3C3C] sm:text-center text-start">
-                Phone
-              </h6>
-              <input
-                name="phonenumber"
-                placeholder="Enter Phone"
-                value={formData.phonenumber}
-                onChange={handleChange}
-                className="w-full border-b border-gray-300 py-2"
-              />
-              {errors.phonenumber && (
-                <p className=" text-danger text-sm">{errors.phonenumber}</p>
-              )}
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-            <div className="w-full">
-              <h6 className="text-[#3C3C3C] sm:text-center text-start">
-                Dealer Code
-              </h6>
-              <input
-                type="text"
-                name="dealerCode"
-                placeholder="Enter Dealer Code"
-                value={formData.dealerCode}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.dealerCode && (
-                <p className=" text-danger text-sm">{errors.dealerCode}</p>
-              )}
-            </div>
-
-            <div>
-              <h6 className="text-[#3C3C3C] sm:text-center text-start">
-                Agent Code
-              </h6>
-              <input
-                type="text"
-                name="agentCode"
-                placeholder="Enter Agent Code"
-                value={formData.agentCode}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.agentCode && (
-                <p className=" text-danger text-sm">{errors.agentCode}</p>
-              )}
-            </div>
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold sm:text-center text-start">
-            AT&T Account Option
-          </h3>
-          <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-4">
-            <div className="w-full">
-              {" "}
-              {/* Wrap the select in a div */}
-              <select
-                name="agreementtype"
-                value={formData.agreementtype}
-                onChange={handleChange}
-                className="border-b h-10 border-gray-300 w-full" // Added w-full for full width
+          {/* Tab Navigation */}
+          <div className="flex justify-center space-x-4 mb-6">
+            {[
+              { key: "sellerInfo", label: "Seller Information" },
+              { key: "accountInfo", label: "Account Information" },
+              { key: "paymentShipping", label: "Payment & Shipping" },
+              { key: "carrierInfo", label: "Carrier Information" },
+              { key: "additionalInfo", label: "Additional Information" },
+            ].map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 ${activeTab === tab.key ? "bg-blue-500 text-white" : "bg-gray-300"
+                  } rounded`}
               >
-                <option value="">Select Agreement Type</option>
-                <option value="amb">AMB</option>
-                <option value="acda">ACDA Attainment/MAC</option>
-              </select>
-              {errors.agreementtype && (
-                <p className=" text-danger text-sm">{errors.agreementtype}</p>
-              )}{" "}
-              {/* Error message */}
-            </div>
-
-            {formData.agreementtype === "acda" && (
-              <div className="w-full">
-                {" "}
-                {/* Wrap the input in a div */}
-                <input
-                  name="eip"
-                  placeholder="Enter What EIP Limit is needed"
-                  value={formData.eip}
-                  onChange={handleChange}
-                  className="w-full mt-4 border-b border-gray-300 py-2"
-                />
-                {errors.eip && (
-                  <p className=" text-danger text-sm">{errors.eip}</p>
-                )}{" "}
-                {/* Error message */}
-              </div>
-            )}
-
-            <div className="w-full">
-              {" "}
-              {/* Wrap the select in a div */}
-              <select
-                name="promotion"
-                value={formData.promotion}
-                onChange={handleChange}
-                className="border-b h-10 border-gray-300 w-full" // Added w-full for full width
-              >
-                <option value="">Promotions</option>
-                <option value="accepted">Accepted</option>
-                <option value="expected">Expected</option>
-              </select>
-              {errors.promotion && (
-                <p className=" text-danger text-sm">{errors.promotion}</p>
-              )}{" "}
-              {/* Error message */}
-            </div>
-
-            <div className="mt-4 w-full">
-              {" "}
-              {/* Wrap the radio buttons in a div */}
-              <h4 className="text-lg text-gray-800 font-semibold mb-2">
-                Paperless Billing
-              </h4>
-              <div className="flex items-center space-x-6">
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paperless"
-                    value="accepted"
-                    checked={formData.paperless === "accepted"}
-                    onChange={handleChange}
-                    className="mr-2"
-                  />
-                  Accepted
-                </label>
-                <label className="flex items-center">
-                  <input
-                    type="radio"
-                    name="paperless"
-                    value="declined"
-                    checked={formData.paperless === "declined"}
-                    onChange={handleChange}
-                    className="mr-2"
-                  />
-                  Declined
-                </label>
-              </div>
-              {errors.paperless && (
-                <p className=" text-danger text-sm">{errors.paperless}</p>
-              )}{" "}
-              {/* Error message */}
-            </div>
-
-            <div className="w-full">
-              {" "}
-              {/* Wrap the textarea in a div */}
-              <textarea
-                name="specialinstruction"
-                value={formData.specialinstruction}
-                className="w-full"
-                onChange={handleChange}
-                placeholder="Enter Special Instruction"
-                style={{ resize: "none" }}
-              ></textarea>
-              {errors.specialinstruction && (
-                <p className=" text-danger text-sm">
-                  {errors.specialinstruction}
-                </p>
-              )}{" "}
-              {/* Error message */}
-            </div>
+                {tab.label}
+              </button>
+            ))}
           </div>
 
-          {!isFirstOrder && (
-            <OrderAssignment
-              token={token}
-              formData={formData}
-              setFormData={setFormData}
-            />
-          )}
+          {/* Tab Content */}
+          {renderTabContent()}
 
-          {/* Agent Information End*/}
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            AT&T Account Information
-          </h3>
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Business Legal Name
-              </h6>
-              <input
-                type="text"
-                name="businesslegalname"
-                placeholder="Enter Business Legal Name"
-                value={formData.businesslegalname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.businesslegalname && (
-                <p className=" text-danger text-sm">
-                  {errors.businesslegalname}
-                </p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Business Address
-              </h6>
-              <input
-                type="text"
-                name="businessaddress"
-                placeholder="Enter Business Address"
-                value={formData.businessaddress}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.businessaddress && (
-                <p className=" text-danger text-sm">{errors.businessaddress}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Business City
-              </h6>
-              <input
-                type="text"
-                name="businesscity"
-                placeholder="Enter Business City"
-                value={formData.businesscity}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.businesscity && (
-                <p className=" text-danger text-sm">{errors.businesscity}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Business State
-              </h6>
-              <input
-                type="text"
-                name="businessstate"
-                placeholder="Enter Business State"
-                value={formData.businessstate}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.businessstate && (
-                <p className=" text-danger text-sm">{errors.businessstate}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Business Zip
-              </h6>
-              <input
-                type="text"
-                name="businesszip"
-                placeholder="Enter Business Zip"
-                value={formData.businesszip}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.businesszip && (
-                <p className=" text-danger text-sm">{errors.businesszip}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Tax ID
-              </h6>
-              <input
-                type="text"
-                name="taxid"
-                placeholder="Enter Tax ID"
-                value={formData.taxid}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.taxid && (
-                <p className=" text-danger text-sm">{errors.taxid}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Contact Name
-              </h6>
-              <input
-                type="text"
-                name="contactname"
-                placeholder="Enter Contact Name"
-                value={formData.contactname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.contactname && (
-                <p className=" text-danger text-sm">{errors.contactname}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Contact Phone
-              </h6>
-              <input
-                type="text"
-                name="contactphone"
-                placeholder="Enter Contact Phone"
-                value={formData.contactphone}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray  
-                border-gray-300 py-2 w-full"
-              />
-              {errors.contactphone && (
-                <p className=" text-danger text-sm">{errors.contactphone}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Contact Email
-              </h6>
-              <input
-                type="email"
-                name="contactemail"
-                placeholder="Enter Contact Email"
-                value={formData.contactemail}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.contactemail && (
-                <p className=" text-danger text-sm">{errors.contactemail}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Location ID
-              </h6>
-              <input
-                type="text"
-                name="locationid"
-                placeholder="Enter Location ID"
-                value={formData.locationid}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.locationid && (
-                <p className=" text-danger text-sm">{errors.locationid}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Existing BAN
-              </h6>
-              <input
-                type="text"
-                name="existingBAN"
-                placeholder="Enter Existing BAN"
-                value={formData.existingBAN}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.existingBAN && (
-                <p className=" text-danger text-sm">{errors.existingBAN}</p>
-              )}
-            </div>
-
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Existing FAN
-              </h6>
-              <input
-                type="text"
-                name="existingFAN"
-                placeholder="Enter Existing FAN"
-                value={formData.existingFAN}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.existingFAN && (
-                <p className=" text-danger text-sm">{errors.existingFAN}</p>
-              )}
-            </div>
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Order Payment Options
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-            {/* Bill to Mobile */}
-            <div className="w-full">
-              <select
-                name="billtomobile"
-                value={formData.billtomobile}
-                onChange={handleChange}
-                className="border-b h-10 border-gray-300 py-2 w-full"
+          {/* Conditional Button */}
+          <div className="flex justify-center mt-6">
+            {activeTab === "additionalInfo" ? (
+              <button
+                type="submit" // Submit button triggers the form's onSubmit handler
+                className="bg-green-500 text-white px-6 py-2 rounded"
               >
-                <option value="">Bill to Mobile</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-              {errors.billtomobile && (
-                <p className="text-danger text-sm">{errors.billtomobile}</p>
-              )}
-            </div>
-
-            {/* Credit Card Payment */}
-            <div className="w-full">
-              <select
-                name="creditcardpayment"
-                value={formData.creditcardpayment}
-                onChange={handleChange}
-                className="border-b h-10 border-gray-300 py-2 w-full"
-              >
-                <option value="">Credit Card Payment?</option>
-                <option value="yes">Yes</option>
-                <option value="no">No</option>
-              </select>
-              {errors.creditcardpayment && (
-                <p className="text-danger text-sm">
-                  {errors.creditcardpayment}
-                </p>
-              )}
-            </div>
-
-            {/* Credit Card Information (only shown if 'Yes' is selected) */}
-            {formData.creditcardpayment === "yes" && (
-              <div className="w-full md:col-span-3 mt-4">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="w-full">
-                    <label
-                      className="block text-sm font-medium mb-2"
-                      htmlFor="cardNumber"
-                    >
-                      Card Number
-                    </label>
-                    <input
-                      type="text"
-                      name="cardNumber"
-                      value={formData.cardNumber}
-                      onChange={handleChange}
-                      className="border-b h-10 border-gray-300 py-2 w-full"
-                      placeholder="Enter your card number"
-                    />
-                    {errors.cardNumber && (
-                      <p className="text-danger text-sm">{errors.cardNumber}</p>
-                    )}
-                  </div>
-
-                  <div className="w-full">
-                    <label
-                      className="block text-sm font-medium mb-2"
-                      htmlFor="cardExpiry"
-                    >
-                      Expiry Date (MM/YY)
-                    </label>
-                    <input
-                      type="text"
-                      name="cardExpiry"
-                      value={formData.cardExpiry}
-                      onChange={handleChange}
-                      className="border-b h-10 border-gray-300 py-2 w-full"
-                      placeholder="MM/YY"
-                    />
-                    {errors.cardExpiry && (
-                      <p className="text-danger text-sm">{errors.cardExpiry}</p>
-                    )}
-                  </div>
-
-                  <div className="w-full">
-                    <label
-                      className="block text-sm font-medium mb-2"
-                      htmlFor="cardCVC"
-                    >
-                      CVC
-                    </label>
-                    <input
-                      type="text"
-                      name="cardCVC"
-                      value={formData.cardCVC}
-                      onChange={handleChange}
-                      className="border-b h-10 border-gray-300 py-2 w-full"
-                      placeholder="CVC"
-                    />
-                    {errors.cardCVC && (
-                      <p className="text-danger text-sm">{errors.cardCVC}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Order Shipping Information
-          </h3>
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-            <div className="w-full">
-              {" "}
-              {/* Wrap the select in a div */}
-              <select
-                name="singleormultiaddresshipment"
-                value={formData.singleormultiaddresshipment}
-                onChange={handleChange}
-                className="border-b mb-4 border-gray-300 py-2 w-full" // Added w-full for full width
-              >
-                <option value="">Select Shipment Mode</option>
-                <option value="yes">Single Shipment Address</option>
-                <option value="no">Multiple Shipment Address</option>
-              </select>
-              {errors.singleormultiaddresshipment && (
-                <p className=" text-danger text-sm">
-                  {errors.singleormultiaddresshipment}
-                </p> // Error message
-              )}
-            </div>
-
-            <div className="mb-4 w-full">
-              {" "}
-              {/* Wrap the Attention Name input in a div */}
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Attention Name
-              </h6>
-              <input
-                type="text"
-                name="attentionname"
-                placeholder="Enter Attention Name"
-                value={formData.attentionname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.attentionname && (
-                <p className=" text-danger text-sm">{errors.attentionname}</p> // Error message
-              )}
-            </div>
-
-            {/* <div className="mb-4 w-full">
-              {" "}
-              Wrap the Shipping Address input in a div
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Shipping Address
-              </h6>
-              <input
-                type="text"
-                name="shippingaddress"
-                placeholder="Enter Shipping Address"
-                value={formData.shippingaddress}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.shippingaddress && (
-                <p className=" text-danger text-sm">{errors.shippingaddress}</p> // Error message
-              )}
-            </div> */}
-
-
-
-            <div className="mb-4 w-full">
-              {" "}
-              {/* Wrap the Shipping City input in a div */}
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Shipping City
-              </h6>
-              <input
-                type="text"
-                name="shippingcity"
-                placeholder="Enter Shipping City"
-                value={formData.shippingcity}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.shippingcity && (
-                <p className=" text-danger text-sm">{errors.shippingcity}</p> // Error message
-              )}
-            </div>
-
-            <div className="mb-4 w-full">
-              {" "}
-              {/* Wrap the Shipping State input in a div */}
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Shipping State
-              </h6>
-              <input
-                type="text"
-                name="shippingstate"
-                placeholder="Enter Shipping State"
-                value={formData.shippingstate}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.shippingstate && (
-                <p className=" text-danger text-sm">{errors.shippingstate}</p> // Error message
-              )}
-            </div>
-
-            <div className="mb-4 w-full">
-              {" "}
-              {/* Wrap the Shipping Zip input in a div */}
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Shipping Zip
-              </h6>
-              <input
-                type="text"
-                name="shippingzip"
-                placeholder="Enter Shipping Zip"
-                value={formData.shippingzip}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.shippingzip && (
-                <p className=" text-danger text-sm">{errors.shippingzip}</p> // Error message
-              )}
-            </div>
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Carrier Port Information
-          </h3>
-          {carrierInfos.map((info, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-4"
-            >
-              <div className="col-span-2 flex justify-between items-center">
-                {index > 0 && (
-                  <h4 className="text-lg font-semibold">
-                    Carrier Port Info {index + 1}
-                  </h4>
-                )}
-                {index > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setCarrierInfos((prev) =>
-                        prev.filter((_, i) => i !== index)
-                      );
-                    }}
-                    className="text-red-500 hover:text-red-700"
-                  >
-                    - Remove
-                  </button>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Select Carrier</h6>
-                <select
-                  name="currentwirelesscarrier"
-                  value={info.currentwirelesscarrier}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                >
-                  <option value="">Select Current Wireless Carrier</option>
-                  {carrierOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-                {errors[`currentwirelesscarrier_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`currentwirelesscarrier_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Account Number</h6>
-                <input
-                  type="text"
-                  name="accountnumber"
-                  placeholder="Enter Account Number"
-                  value={info.accountnumber}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.accountnumber && (
-                  <p className=" text-danger text-sm">{errors.accountnumber}</p> // Error message
-                )}
-                {errors[`accountnumber_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`accountnumber_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Pin or Password</h6>
-                <input
-                  type="text"
-                  name="pinorpassword"
-                  placeholder="Enter Pin or Password"
-                  value={info.pinorpassword}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`pinorpassword_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`pinorpassword_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">SSN or TaxID</h6>
-                <input
-                  type="text"
-                  name="ssnortaxid"
-                  placeholder="Enter SSN or Tax ID"
-                  value={info.ssnortaxid}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`ssnortaxid_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`ssnortaxid_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Billing Name</h6>
-                <input
-                  type="text"
-                  name="billingname"
-                  placeholder="Enter Billing Name"
-                  value={info.billingname}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 ```javascript
-        w-full"
-                />
-                {errors[`billingname_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`billingname_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Billing Address</h6>
-                <input
-                  type="text"
-                  name="billingaddress"
-                  placeholder="Enter Billing Address"
-                  value={info.billingaddress}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`billingaddress_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`billingaddress_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Billing City</h6>
-                <input
-                  type="text"
-                  name="billingcity"
-                  placeholder="Enter Billing City"
-                  value={info.billingcity}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`billingcity_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`billingcity_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Billing State</h6>
-                <input
-                  type="text"
-                  name="billingstate"
-                  placeholder="Enter Billing State"
-                  value={info.billingstate}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`billingstate_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`billingstate_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Billing Zip</h6>
-                <input
-                  type="text"
-                  name="billingzip"
-                  placeholder="Enter Billing Zip"
-                  value={info.billingzip}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`billingzip_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`billingzip_${index}`]}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Authorized Name</h6>
-                <input
-                  type="text"
-                  name="authorizedname"
-                  placeholder="Enter Authorized Name"
-                  value={info.authorizedname}
-                  onChange={(e) => handleCarrierInfoChange(e, index)}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors[`authorizedname_${index}`] && (
-                  <p className="text-danger text-sm">
-                    {errors[`authorizedname_${index}`]}
-                  </p>
-                )}
-              </div>
-
-              <div className="mb-4">
-                <h6 className="text-start md:text-center">Unique Code</h6>
-                <input
-                  type="text"
-                  name="uniqueCode"
-                  value={info.uniqueCode}
-                  readOnly
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
-                />
-              </div>
-            </div>
-          ))}
-          <button
-            type="button"
-            onClick={addCarrierInfo}
-            className="mt-4 bg-[#41FDFE] text-black px-4 py-2 rounded"
-          >
-            + Add Another Carrier Information
-          </button>
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Additional Information
-          </h3>
-          <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-            <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Company Name
-              </h6>
-              <input
-                type="text"
-                name="companyname"
-                placeholder="Enter Company Name"
-                value={formData.companyname}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
-              {errors.companyname && (
-                <p className=" text-danger text-sm">{errors.companyname}</p>
-              )}
-            </div>
-            {/* <div className="mb-4">
-              <h6 className="text-start md:text-center">Account Number</h6>
-              <input
-                type="text"
-                name="accountnumber"
-                placeholder="Enter Account Number"
-                value={formData.accountnumber}
-                onChange={handleChange}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                disabled={!isFirstOrder && !!formData.accountnumber}
-              />
-              {errors.accountnumber && (
-                <p className=" text-danger text-sm">{errors.accountnumber}</p>
-              )}
-              {isFirstOrder && (
-                <div className="d-flex justify-start">
-                  <p className="text-danger text-sm mt-1 text-center">
-                    This will only be filled out once.
-                  </p>
-                </div>
-              )}
-            </div> */}
-
-            {/* <div className="mb-4">
-              <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                Add New IMEI Number
-              </h6>
-              <input
-                type="text"
-                name="imeiInput"
-                placeholder="Enter IMEI Number"
-                value={imeiInput}
-                onChange={(e) => setImeiInput(e.target.value)}
-                className="border-b focus:outline-none border-gray-300 py-2 w-full"
-              />
+                Submit
+              </button>
+            ) : (
               <button
                 type="button"
-                onClick={() => {
-                  if (imeiInput) {
-                    setImeiNumbers((prev) => [...prev, imeiInput]);
-                    setImeiInput(""); // Clear the input field
-                  }
-                }}
-                className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded"
+                onClick={handleNext} // Call `handleNext` to validate the tab and navigate
+                className="bg-blue-500 text-white px-6 py-2 rounded"
               >
-                Add IMEI Number
+                Next
               </button>
 
-              {imeiNumbers.length > 0 && (
-                <div className="mt-4">
-                  <p className="w-100 md:text-center text-start font-medium text-gray-700">
-                    Select from Existing IMEI Numbers
-                  </p>
-                  <div className="flex flex-col">
-                    {(showAllImeis ? imeiNumbers : imeiNumbers.slice(0, 4)).map(
-                      (imei, index) => (
-                        <label key={index} className="flex items-center">
-                          <input
-                            type="checkbox"
-                            value={imei}
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                console.log(`${imei} selected`);
-                              } else {
-                                console.log(`${imei} deselected`);
-                              }
-                            }}
-                            className="mr-2"
-                          />
-                          {imei}
-                        </label>
-                      )
-                    )}
-                  </div>
-
-                  {imeiNumbers.length > 4 && (
-                    <button
-                      type="button"
-                      onClick={() => setShowAllImeis(!showAllImeis)}
-                      style={{
-                        background:
-                          "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
-                      }}
-                      className="transition-all text-black hover:bg-black hover:text-white inter text-xs px-4 py-2 font-semibold rounded-3xl"
-                    >
-                      {showAllImeis ? "See Less" : "See More"}
-                    </button>
-                  )}
-                </div>
-              )}
-            </div> */}
-
-            <IMEIForm
-              imeiNumbers={imeiNumbers} // Pass fetched IMEIs here
-              onImeiNumbersChange={handleImeiNumbersChange}
-              onAccountFieldsChange={handleAccountFieldsChange}
-              onPhoneNumbersChange={handlePhoneNumbersChange}
-              onShippingAddressesChange={handleShippingAddressesChange}
-            />
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Rate Plan Selection
-          </h3>
-          <div className="mb-4">
-            <select
-              name="ratePlan"
-              value={ratePlan}
-              onChange={handleRatePlanChange}
-              className="border-b h-10 border-gray-300 w-full"
-            >
-              <option value="">Select Rate Plan</option>
-              <option value="basic">Basic Plan</option>
-              <option value="premium">Premium Plan</option>
-              <option value="unlimited">Unlimited Plan</option>
-            </select>
-          </div>
-
-          <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-            Smartphone Purchase Options
-          </h3>
-          <div className="mb-4">
-            <select
-              name="buyNewPhone"
-              value={buyNewPhone}
-              onChange={handleBuyNewPhoneChange}
-              className="border-b h-10 border-gray-300 w-full"
-            >
-              <option value="">Do you want to buy a new smartphone?</option>
-              <option value="yes">Yes</option>
-              <option value="no">No</option>
-            </select>
-          </div>
-
-          {buyNewPhone === "yes" && (
-            <div>
-              <div className="mb-4">
-                <select
-                  name="brand"
-                  value={smartphoneDetails.brand}
-                  onChange={handleSmartphoneDetailsChange}
-                  className="border-b h-10 border-gray-300 w-full"
-                >
-                  <option value="">Select Brand</option>
-                  <option value="apple">Apple</option>
-                  <option value="samsung">Samsung</option>
-                  <option value="google">Google</option>
-                  <option value="motorola">Motorola</option>
-                  <option value="sonim">Sonim</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-
-              {smartphoneDetails.brand === "apple" && (
-                <div className="mb-4">
-                  <select
-                    name="model"
-                    value={smartphoneDetails.model}
-                    onChange={handleSmartphoneDetailsChange}
-                    className="border-b h-10 border-gray-300 w-full"
-                  >
-                    <option value="">Select Model</option>
-                    <option value="iphone13">iPhone 13</option>
-                    <option value="iphone14">iPhone 14</option>
-                    <option value="iphone15">iPhone 15</option>
-                    {/* Add more models as needed */}
-                  </select>
-                </div>
-              )}
-
-              {smartphoneDetails.brand === "samsung" && (
-                <div className="mb-4">
-                  <select
-                    name="model"
-                    value={smartphoneDetails.model}
-                    onChange={handleSmartphoneDetailsChange}
-                    className="border-b h-10 border-gray-300 w-full"
-                  >
-                    <option value="">Select Model</option>
-                    <option value="s24">S24</option>
-                    <option value="s24_fe">S24 FE</option>
-                    <option value="s24_plus">S24 Plus</option>
-                    <option value="s24_ultra">S24 Ultra</option>
-                    <option value="a13">A13</option>
-                    <option value="a23">A23</option>
-                    <option value="a14">A14</option>
-                    <option value="a52">A52</option>
-                    <option value="x_cover_6_pro">X Cover 6 Pro</option>
-                  </select>
-                </div>
-              )}
-
-              <div className="mb-4">
-                <select
-                  name="color"
-                  value={smartphoneDetails.color}
-                  onChange={handleSmartphoneDetailsChange}
-                  className="border-b h-10 border-gray-300 w-full"
-                >
-                  <option value="">Select Color</option>
-                  <option value="black">Black</option>
-                  <option value="white">White</option>
-                  <option value="blue">Blue</option>
-                  <option value="red">Red</option>
-                  <option value="green">Green</option>
-                </select>
-              </div>
-
-              <div className="mb-4">
-                <select
-                  name="size"
-                  value={smartphoneDetails.size}
-                  onChange={handleSmartphoneDetailsChange}
-                  className="border-b h-10 border-gray-300 w-full"
-                >
-                  <option value="">Select Size</option>
-                  <option value="64gb">64GB</option>
-                  <option value="128gb">128GB</option>
-                  <option value="256gb">256GB</option>
-                  <option value="512gb">512GB</option>
-                  <option value="1tb">1TB</option>
-                  <option value="2tb">2TB</option>
-                </select>
-              </div>
-            </div>
-          )}
-
-          <div className="flex flex-col mt-8">
-            {Object.keys(errors).length > 0 && (
-              <p className=" text-danger text-sm mb-4">
-                Please fix the errors above.
-              </p>
             )}
-            <button
-              type="submit"
-              disabled={state.submitting}
-              className="bg-[#41FDFE] text-black px-6 py-3 rounded-full"
-            >
-              Submit
-            </button>
           </div>
 
-          <div className="flex justify-start items-center">
-            <div>
-              <Link
-                to={"/your-orders"}
-                className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
-              >
-                I want to see my orders
-              </Link>
-            </div>
-          </div>
-        </form>
-
-        {isSubmitted && (
-          <p className="text-center text-green-500 mt-4">
-            Thanks for submitting the order!
-          </p>
-        )}
-      </div>
-    </section>
+          {/* Success Message */}
+          {isSubmitted && (
+            <p className="text-center text-green-500 mt-4">Form Submitted Successfully!</p>
+          )}
+        </div>
+      </section>
+    </form>
   );
+
 };
 
 export default Form;
