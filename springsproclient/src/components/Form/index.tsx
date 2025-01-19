@@ -712,7 +712,7 @@ const Form: React.FC = () => {
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
             {/* Heading */}
             <h3 className="text-2xl text-gray-800 font-semibold mb-8 text-center">
-              AT&T Seller Information
+              SANS Agent Information
             </h3>
 
             {/* Form */}
@@ -778,7 +778,8 @@ const Form: React.FC = () => {
                 </div>
 
                 <div>
-                  <h6 className="text-[#3C3C3C] text-start">Agent Code</h6>
+                  {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
+                  <h6 className="text-[#3C3C3C] text-start">SANS Partner ID:</h6>
                   <input
                     type="text"
                     name="agentCode"
@@ -845,9 +846,9 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 w-full"
                 >
-                  <option value="">Promotions</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="expected">Expected</option>
+                  <option value="">Trade In Promotions</option>
+                  <option value="accepted">Yes</option>
+                  <option value="expected">No</option>
                 </select>
                 {errors.promotion && (
                   <p className="text-red-500 text-sm">{errors.promotion}</p>
@@ -1403,10 +1404,17 @@ const Form: React.FC = () => {
                   onChange={handleRatePlanChange}
                   className="border-b h-10 border-gray-300 w-full"
                 >
-                  <option value="">Select Rate Plan</option>
-                  <option value="basic">Basic Plan</option>
-                  <option value="premium">Premium Plan</option>
-                  <option value="unlimited">Unlimited Plan</option>
+                  <option value="">UYW 2.0 Advanced</option>
+                  <option value="">UYW 2.0 Premium</option>
+                  <option value="">Turnkey BYOD</option>
+                  <option value="">Turnkey Standard</option>
+                  <option value="">Turnkey Premium</option>
+                  <option value="">Unlimited Tablet</option>
+                  <option value="">Unlimited Watch</option>
+                  <option value="">AWB / Hotspot Core</option>
+                  <option value="basic">AWB / Hotspot Pro</option>
+                  <option value="premium">AWB / Hotspot Ultra</option>
+                  <option value="unlimited">AT&T Internet Air</option>
                 </select>
               </div>
 
