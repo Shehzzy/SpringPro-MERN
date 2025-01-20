@@ -7,7 +7,8 @@ const Hero = () => {
       <div className="relative overflow-hidden">
         <div className="overflow-hidden container md:flex-row flex-col px-4 xl:px-[120px] mx-auto w-full flex md:pt-[140px] pt-[120px] md:h-[700px]">
           <div className="flex-col md:h-auto md:px-4 px-4 sticky z-[10] lg:px-4 xl:px-4 !pr-0 w-full md:w-1/2 flex justify-center items-start">
-            <h1 className="work-sans text-5xl sm:text-7xl font-medium text-[#3C3C3C]">
+          <h1 className="work-sans font-medium text-[#3C3C3C] leading-tight 
+              text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
               We Are One <br className="md:hidden block" /> with a <br className="md:hidden block" /> platform.
             </h1>
             <p className="text-[#3C3C3C] text-lg sm:text-xl mt-6 font-[350] inter">

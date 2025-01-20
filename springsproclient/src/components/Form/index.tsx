@@ -200,6 +200,11 @@ const Form: React.FC = () => {
     agreementtype: "",
     eip: "",
     promotion: "",
+    phonemodel: "",
+    imeistatus: "",
+    noCracks: "",
+    screenDefects: "",
+    factoryReset: "",
     paperless: "",
     specialinstruction: "",
     businesslegalname: "",
@@ -581,7 +586,24 @@ const Form: React.FC = () => {
           newErrors.agreementtype = "Agreement Type is required.";
         if (formData.agreementtype === "acda" && !formData.eip)
           newErrors.eip = "EIP Limit is required.";
-        if (!formData.promotion) newErrors.promotion = "Promotion is required.";
+        if (!formData.promotion)
+          newErrors.promotion = "Promotion is required.";
+        if (formData.promotion === "accepted" && !formData.phonemodel)
+          newErrors.phonemodel = "Phone Model is required.";
+        if (formData.promotion === "accepted" && !formData.imeistatus)
+          newErrors.imeistatus = "IMEI Status is required.";
+
+        // Phone Has No Cracks?
+        if (formData.promotion === "accepted" && !formData.noCracks)
+          newErrors.noCracks = "Phone Cracks status is required.";
+
+        // Screen Blur or Display Defects?
+        if (formData.promotion === "accepted" && !formData.screenDefects)
+          newErrors.screenDefects = "Screen Blur or Display Defects status is required.";
+
+        // Factory Reset & Log out of All Accounts?
+        if (formData.promotion === "accepted" && !formData.factoryReset)
+          newErrors.factoryReset = "Factory Reset & Log out of all Accounts status is required.";
         if (!formData.paperless)
           newErrors.paperless = "Paperless Billing is required.";
         if (!formData.businesslegalname)
@@ -806,7 +828,7 @@ const Form: React.FC = () => {
             </h2>
 
             {/* Form Section */}
-            <div className="grid grid-cols-1 items-end md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
               {/* Agreement Type */}
               <div className="w-full">
                 <select
@@ -837,7 +859,6 @@ const Form: React.FC = () => {
                   {errors.eip && <p className="text-red-500 text-sm">{errors.eip}</p>}
                 </div>
               )}
-
               {/* Promotions */}
               <div className="w-full">
                 <select
@@ -848,12 +869,175 @@ const Form: React.FC = () => {
                 >
                   <option value="">Trade In Promotions</option>
                   <option value="accepted">Yes</option>
-                  <option value="expected">No</option>
+                  <option value="declined">No</option>
                 </select>
                 {errors.promotion && (
                   <p className="text-red-500 text-sm">{errors.promotion}</p>
                 )}
               </div>
+
+              {/* Phone Model Section */}
+              {formData.promotion === "accepted" && (
+                <div className="col-span-full">
+                  {/* Phone Model Dropdown */}
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Model
+                    </label>
+                    <select
+                      name="phonemodel"
+                      value={formData.phonemodel}
+                      onChange={handleChange}
+                      className="border-b h-12 border-gray-300 w-full rounded-md"
+                    >
+                      <option value="">Select Phone Model</option>
+                      <option value="iphone">iPhone</option>
+                      <option value="samsung">Samsung</option>
+                      <option value="google">Google</option>
+                    </select>
+                    {errors.phonemodel && (
+                      <p className="text-red-500 text-sm">{errors.phonemodel}</p>
+                    )}
+                  </div>
+
+
+                  {/* IMEI Status (Phone Turned On or Off) */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      IMEI Status (Phone Turned On or Off)
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="imeistatus"
+                          value="on"
+                          checked={formData.imeistatus === "on"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="imeistatus"
+                          value="off"
+                          checked={formData.imeistatus === "off"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.imeistatus && (
+                      <p className="text-red-500 text-sm">{errors.imeistatus}</p>
+                    )}
+                  </div>
+
+                  {/* Phone Has No Cracks */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Phone Has No Cracks?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="noCracks"
+                          value="yes"
+                          checked={formData.noCracks === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="noCracks"
+                          value="no"
+                          checked={formData.noCracks === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.noCracks && (
+                      <p className="text-red-500 text-sm">{errors.noCracks}</p>
+                    )}
+                  </div>
+
+                  {/* Screen Blur or Display Defects */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Screen Blur or Display Defects?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="screenDefects"
+                          value="yes"
+                          checked={formData.screenDefects === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="screenDefects"
+                          value="no"
+                          checked={formData.screenDefects === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.screenDefects && (
+                      <p className="text-red-500 text-sm">{errors.screenDefects}</p>
+                    )}
+                  </div>
+
+                  {/* Factory Reset & Log out of All Accounts */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Factory Reset & Log out of all Accounts?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="factoryReset"
+                          value="yes"
+                          checked={formData.factoryReset === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="factoryReset"
+                          value="no"
+                          checked={formData.factoryReset === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.factoryReset && (
+                      <p className="text-red-500 text-sm">{errors.factoryReset}</p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {/* Paperless Billing */}
               <div className="w-full mt-4">
@@ -1226,118 +1410,118 @@ const Form: React.FC = () => {
 
       case "carrierInfo":
         return (
-          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
-              <h3 className="text-xl text-gray-800 font-semibold mb-4">
-                Carrier Port Information
-              </h3>
-              {carrierInfos.map((info, index) => (
-                <div
-                  key={index}
-                  className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-10 border-b pb-6"
-                >
-                  {/* Header with Remove Button */}
-                  <div className="col-span-2 flex justify-between items-center">
-                    {index > 0 && (
-                      <h4 className="text-lg font-semibold">
-                        Carrier Port Info {index + 1}
-                      </h4>
-                    )}
-                    {index > 0 && (
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCarrierInfos((prev) =>
-                            prev.filter((_, i) => i !== index)
-                          );
-                        }}
-                        className="text-red-500 hover:text-red-700"
-                      >
-                        - Remove
-                      </button>
-                    )}
-                  </div>
+          <div className="bg-white max-w-4xl mx-auto p-6 md:p-8 shadow-lg rounded-lg border text-left">
+            <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mb-4">
+              Carrier Port Information
+            </h3>
+            {carrierInfos.map((info, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-b pb-6"
+              >
+                {/* Header with Remove Button */}
+                <div className="col-span-1 md:col-span-2 flex justify-between items-center">
+                  {index > 0 && (
+                    <h4 className="text-lg font-semibold">
+                      Carrier Port Info {index + 1}
+                    </h4>
+                  )}
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCarrierInfos((prev) => prev.filter((_, i) => i !== index));
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm md:text-base"
+                    >
+                      - Remove
+                    </button>
+                  )}
+                </div>
 
-                  {/* Carrier Information Fields */}
-                  <div className="mb-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      Select Carrier
-                    </h6>
-                    <select
-                      name="currentwirelesscarrier"
-                      value={info.currentwirelesscarrier}
+                {/* Carrier Information Fields */}
+                <div className="mb-4">
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Select Carrier
+                  </h6>
+                  <select
+                    name="currentwirelesscarrier"
+                    value={info.currentwirelesscarrier}
+                    onChange={(e) => handleCarrierInfoChange(e, index)}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  >
+                    <option value="">Select Current Wireless Carrier</option>
+                    {carrierOptions.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                  {errors[`currentwirelesscarrier_${index}`] && (
+                    <p className="text-red-500 text-sm">
+                      {errors[`currentwirelesscarrier_${index}`]}
+                    </p>
+                  )}
+                </div>
+
+                {/* Repeated Fields */}
+                {[
+                  { name: "accountnumber", label: "Account Number" },
+                  { name: "pinorpassword", label: "Pin or Password" },
+                  { name: "ssnortaxid", label: "SSN or TaxID" },
+                  { name: "billingname", label: "Billing Name" },
+                  { name: "billingaddress", label: "Billing Address" },
+                  { name: "billingcity", label: "Billing City" },
+                  { name: "billingstate", label: "Billing State" },
+                  { name: "billingzip", label: "Billing Zip" },
+                  { name: "authorizedname", label: "Authorized Name" },
+                ].map(({ name, label }) => (
+                  <div className="mb-4" key={name}>
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
+                    <input
+                      type="text"
+                      name={name}
+                      placeholder={`Enter ${label}`}
+                      value={info[name]}
                       onChange={(e) => handleCarrierInfoChange(e, index)}
                       className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    >
-                      <option value="">Select Current Wireless Carrier</option>
-                      {carrierOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    {errors[`currentwirelesscarrier_${index}`] && (
-                      <p className="text-danger text-sm">
-                        {errors[`currentwirelesscarrier_${index}`]}
+                    />
+                    {errors[`${name}_${index}`] && (
+                      <p className="text-red-500 text-sm">
+                        {errors[`${name}_${index}`]}
                       </p>
                     )}
                   </div>
+                ))}
 
-                  {/* Repeated Fields */}
-                  {[
-                    { name: "accountnumber", label: "Account Number" },
-                    { name: "pinorpassword", label: "Pin or Password" },
-                    { name: "ssnortaxid", label: "SSN or TaxID" },
-                    { name: "billingname", label: "Billing Name" },
-                    { name: "billingaddress", label: "Billing Address" },
-                    { name: "billingcity", label: "Billing City" },
-                    { name: "billingstate", label: "Billing State" },
-                    { name: "billingzip", label: "Billing Zip" },
-                    { name: "authorizedname", label: "Authorized Name" },
-                  ].map(({ name, label }) => (
-                    <div className="mb-4" key={name}>
-                      <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
-                      <input
-                        type="text"
-                        name={name}
-                        placeholder={`Enter ${label}`}
-                        value={info[name]}
-                        onChange={(e) => handleCarrierInfoChange(e, index)}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                      {errors[`${name}_${index}`] && (
-                        <p className="text-danger text-sm">
-                          {errors[`${name}_${index}`]}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-
-                  {/* Unique Code (Read-Only Field) */}
-                  <div className="mb-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
-                    <input
-                      type="text"
-                      name="uniqueCode"
-                      value={info.uniqueCode}
-                      readOnly
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
-                    />
-                  </div>
+                {/* Unique Code (Read-Only Field) */}
+                <div className="mb-4">
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
+                  <input
+                    type="text"
+                    name="uniqueCode"
+                    value={info.uniqueCode}
+                    readOnly
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
+                  />
                 </div>
-              ))}
+              </div>
+            ))}
 
-              {/* Add Another Carrier Button */}
-              <button
-                type="button"
-                onClick={addCarrierInfo}
-                style={{
-                  background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                }}
-                className="mt-4 text-white px-6 py-2 rounded"
-              >
-                + Add Another Carrier Information
-              </button>
+            {/* Add Another Carrier Button */}
+            <button
+              type="button"
+              onClick={addCarrierInfo}
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+              }}
+              className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
+            >
+              + Add Another Carrier Information
+            </button>
           </div>
+
 
 
         );
@@ -1690,16 +1874,16 @@ const Form: React.FC = () => {
   return (
     <form onSubmit={onSubmit}>
       <section className="py-24 mt-[120px] px-8 text-center bg-white">
-      <div className="container mx-auto w-full ">
-        <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-2">
-          Ready to Make the Network?
-        </h2>
-        <p className="text-md text-gray-500 mt-4 mb-6">
-          It’s time to stop overpaying for your services. Fill out the form
-          below to get started.
-        </p>
+        <div className="container mx-auto w-full ">
+          <h2 className="text-4xl sm:text-5xl font-bold text-gray-800 mb-2">
+            Ready to Make the Network?
+          </h2>
+          <p className="text-md text-gray-500 mt-4 mb-6">
+            It’s time to stop overpaying for your services. Fill out the form
+            below to get started.
+          </p>
           {/* Tab Navigation */}
-          <div className="flex justify-center space-x-4 mb-6">
+          <div className="flex flex-wrap justify-center space-x-0 md:space-x-4 mb-6 gap-2 md:gap-0">
             {[
               { key: "sellerInfo", label: "Seller Information" },
               { key: "accountInfo", label: "Account Information" },
@@ -1707,21 +1891,21 @@ const Form: React.FC = () => {
               { key: "carrierInfo", label: "Carrier Information" },
               { key: "additionalInfo", label: "Additional Information" },
             ].map((tab) => (
-            <button
-              key={tab.key}
-              type="button"
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 ${activeTab === tab.key ? "text-white" : "bg-gray-300"} rounded`}
-              style={
-                activeTab === tab.key
-                  ? {
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={`px-4 py-2 w-full md:w-auto ${activeTab === tab.key ? "text-white" : "bg-gray-300"} rounded`}
+                style={
+                  activeTab === tab.key
+                    ? {
                       background: "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
                     }
-                  : {}
-              }
-            >
-              {tab.label}
-            </button>
+                    : {}
+                }
+              >
+                {tab.label}
+              </button>
             ))}
           </div>
 
