@@ -88,8 +88,8 @@ const Network = () => {
   return (
     <>
       <div className="container pt-20 mx-auto">
-        <h1 className="text-5xl px-4 font-medium text-center work-sans">
-          Everything works better on a cloud- <br /> managed network.
+        <h1 className="work-sans font-medium text-[#3C3C3C] text-center leading-tight text-3xl md:text-4xl lg:text-5xl">
+          Everything Works Better on <br className="mb-5"/>Cloud Managed Network
         </h1>
 
         {/* For mobile, render Swiper with buttons; for desktop, render grid */}
@@ -136,7 +136,7 @@ const Network = () => {
                   <p className="inter text-center mt-2 font-light">{card.description}</p>
                   <a
                     href="#"
-                    className="text-tron-blue text-base mt-6 font-semibold capitalize text-center"
+                    className="text-tron-blue text-base mt-6 font-semibold capitalize text-center no-underline"
                   >
                     {card.linkText} <i className="fa-solid -rotate-90 fa-chevron-down"></i>
                   </a>

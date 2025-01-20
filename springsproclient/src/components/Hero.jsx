@@ -7,14 +7,18 @@ const Hero = () => {
       <div className="relative overflow-hidden">
         <div className="overflow-hidden container md:flex-row flex-col px-4 xl:px-[120px] mx-auto w-full flex md:pt-[140px] pt-[120px] md:h-[700px]">
           <div className="flex-col md:h-auto md:px-4 px-4 sticky z-[10] lg:px-4 xl:px-4 !pr-0 w-full md:w-1/2 flex justify-center items-start">
-          <h1 className="work-sans font-medium text-[#3C3C3C] leading-tight 
-              text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
-              We Are One <br className="md:hidden block" /> with a <br className="md:hidden block" /> platform.
-            </h1>
-            <p className="text-[#3C3C3C] text-lg sm:text-xl mt-6 font-[350] inter">
+          <h1 className="work-sans font-medium text-gray-800 leading-tight text-4xl md:text-5xl lg:text-6xl xl:text-7xl">
+            We Are One <br className="hidden md:block" /> with a <br className="hidden md:block" /> platform.
+          </h1>
+            <p className="text-[#3C3C3C] text-lg mt-6 font-[350] inter">
               Spring Air Network Solutions is here to help you put technology to work for you.
             </p>
-            <button className="font-semibold lg:text-sm text-base text-black hover:border-black hover:bg-transparent transition-all w-fit tracking-wider px-8 py-2.5 border-2 border-tron-blue rounded-full bg-tron-blue mt-8">
+            <button 
+            style={{
+              background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+            }} 
+            className="font-bold mt-3 text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+            >
               LEARN MORE
             </button>
           </div>

@@ -147,7 +147,7 @@ const Login: React.FC = () => {
             <div>
               <Link
                 to={"/signup"}
-                className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
+                className="transition-all text-black hover:text-[#41FDFE] inter text-md px-4 py-3"
               >
                 Don't have an account? Signup
               </Link>

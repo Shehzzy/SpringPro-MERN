@@ -33,14 +33,19 @@ const Products = () => {
                         <h1 className="text-5xl work-sans text-center font-semibold text-[#3C3C3C]">
                         A complete tool kit to build a  <br className="sm:block hidden"/>complete experience.
                         </h1>
-                        <p className="text-center text-gray-700 mt-3 inter font-light">
+                        <p className="text-center mt-3">
                             We know you want scalable, secure, and seamless IT solutions. Experience the ease and
                             <br />
                             efficiency of building them on the Meraki platform. Go ahead, give it a try—we’re with you
                             <br />
                             every step of the way.
                         </p>
-                        <button className="text-black border-2 border-tron-blue hover:bg-transparent hover:border-black transition-all bg-tron-blue px-6 mt-5 inter text-base sm:text-sm py-2.5 rounded-full font-medium tracking-wide">
+                        <button 
+                        style={{
+                        background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+                        }} 
+                        className="font-bold text-xs text-white transition-all tracking-wider mt-3 px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                        >
                             BROWSE ALL PRODUCTS
                         </button>
                     </div>
@@ -58,9 +63,14 @@ const Products = () => {
                                     alt=""
                                 /></div>
                                 <div>
-                                <button className="text-black border-2 border-tron-blue  hover:border-black hover:bg-transparent transition-all bg-tron-blue px-6  mt-5 inter lg:text-sm sm:text-sm py-3 rounded-full font-medium tracking-wide">
-       {card.button}
-    </button>
+                                <button 
+                                style={{
+                                background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+                                }} 
+                                className="font-bold text-xs text-white transition-all tracking-wider mt-4 px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                                >
+                                    {card.button}
+                                </button>
                                 </div>
 
                         </div>

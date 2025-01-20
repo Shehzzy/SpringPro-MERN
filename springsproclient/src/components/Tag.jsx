@@ -8,33 +8,47 @@ const Tags = () => {
         <div className="container mx-auto w-full flex flex-col-reverse md:flex-row px-4 sm:px-6 xl:px-[120px] gap-6 md:h-auto">
           {/* Left Content */}
           <div className="w-full flex justify-center md:justify-end items-center md:w-1/2">
-            <img src={women} alt="About Us" className="w-full max-w-[400px] md:max-w-[540px] h-auto" />
+            <img
+              src={women}
+              alt="About Us"
+              className="w-full max-w-[400px] md:max-w-[540px] h-auto"
+            />
           </div>
 
           {/* Right Content */}
-          <div className="w-full flex flex-col justify-center items-center md:items-start md:w-1/2 text-center md:text-left">
-            <h2 className="work-sans text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-semibold text-[#212121] leading-tight">
+          <div className="w-full flex flex-col justify-center items-start md:items-start md:w-1/2 text-left md:text-left">
+            <h1 className="work-sans font-medium text-[#3C3C3C] text-center leading-tight text-3xl md:text-4xl lg:text-5xl">
               About Us
-            </h2>
+            </h1>
             <p className="inter text-sm sm:text-base mt-6 font-light">
               Our team is made up of seasoned telecommunication professionals who have extensive
               experience with all the major carriers. This gives us a distinct advantage when it comes
               to providing the best solutions for our customers’ varying needs.
             </p>
-            <p className="inter text-sm sm:text-base mt-4 font-light">
+            <p className="inter text-sm sm:text-base mt-2 font-light">
               We take care of management, procurement, and implementation of systems so our customers
               can focus on the main aspects of their business.
             </p>
 
             {/* Buttons */}
-            <div className="flex flex-wrap gap-4 mt-6">
-              <button className="font-semibold text-sm text-black hover:border-black hover:bg-transparent transition-all tracking-wider px-6 py-2 border-2 border-tron-blue rounded-full bg-tron-blue">
+            <div className="flex flex-wrap gap-4 mt-6 justify-start">
+              <button 
+                style={{
+                  background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+                }} 
+                className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-105 hover:shadow-lg hover:bg-transparent">
                 LEARN ABOUT DXA
               </button>
-              <button className="font-semibold text-sm text-black hover:border-black hover:bg-transparent transition-all tracking-wider px-6 py-2 border-2 border-tron-blue rounded-full bg-tron-blue">
+
+              <button 
+                style={{
+                  background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+                }} 
+                className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-105 hover:shadow-lg hover:bg-transparent">
                 CONTACT
               </button>
             </div>
+
           </div>
         </div>
       </div>

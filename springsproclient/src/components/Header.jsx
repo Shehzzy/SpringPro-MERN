@@ -149,7 +149,7 @@ const Header = () => {
                     style={{
                       background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
                     }}
-                    className="transition-all text-black hover:bg-black hover:text-white inter text-xs px-4 py-3 font-semibold rounded-3xl no-underline"
+                    className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                   >
                     LOGIN NOW
                   </Link>
@@ -162,9 +162,9 @@ const Header = () => {
                         style={{
                           background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
                         }}
-                        className="inline-flex justify-center items-center text-sm font-semibold text-white px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
+                        className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                       >
-                        Profile
+                        PROFILE
                         <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                       </MenuButton>
                     </div>
@@ -263,104 +263,70 @@ const Header = () => {
               <div className="flex w-fit justify-center items-center">
                 {/* <a href="" className="font-light inter text-gray-600 text-sm">Contact Us</a> */}
                 {/* <a href="" className="font-light inter text-gray-600 text-sm">Log In</a> */}
-              
-                {showLogout && (
-              <Menu as="div" className="relative inline-block text-left ml-2">
-                <div>
-                  <MenuButton
-                    style={{
-                      background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                    }}
-                    className="inline-flex justify-center items-center text-sm font-semibold text-gray-700 px-4 py-3 rounded-3xl transition-all hover:bg-black hover:text-white"
-                  >
-                    Profile
-                    <ChevronDownIcon aria-hidden="true" className="ml-1 w-4 h-4 text-gray-700" />
-                  </MenuButton>
-                </div>
-
-                <Menu.Items
-                    transition
-                    className="dropdown-profile absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
-                    style={{ transform: "translateX(150px)" }}
-                >
-                  <div className="py-1">
-                  <MenuItem>
-                      <a
-                        href="/order-form"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 no-underline"
-                      >
-                        Order Now
-                      </a>
-                    </MenuItem>
-                    <MenuItem>
-                      <a
-                        href="/your-orders"
-                        className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 no-underline"
-                      >
-                        Previous Orders
-                      </a>
-                    </MenuItem>
-                    <MenuItem>
-                      <button
-                        onClick={logout} // Replace with your actual logout function
-                        className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900"
-                      >
-                        Logout
-                      </button>
-                    </MenuItem>
+                {
+                !showLogout ? (
+                  <div className="flex w-[200px] justify-start items-start">
+                    <Link
+                      to={'/login'}
+                      style={{
+                        background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                      }}
+                      className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                    >
+                      LOGIN NOW
+                    </Link>
                   </div>
-                </Menu.Items>
+                )
+                  : (
+                    <Menu as="div" className="relative inline-block text-left ml-2 mt-2">
+                      <div>
+                        <MenuButton
+                          style={{
+                            background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                          }}
+                          className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                        >
+                          PROFILE
+                          <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
+                        </MenuButton>
+                      </div>
 
-                <style jsx>{`
-                  @media (max-width: 768px) {
-                    .profile-drop {
-                      position: fixed;
-                      left:80px; /* Align to the left edge of the screen on mobile */
-                      right: 0; /* Align to the right edge of the screen */
-                      top: 710px; /* Adjust depending on the position of your header */
-                      z-index: 50; /* Make sure it's on top */
-                      width: 70%; /* Ensure it takes the full width on mobile */
-                      background-color: white;
-                      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Optional: Adds a shadow to dropdown */
-                    }
+                      <Menu.Items
+                        transition
+                        className="dropdown-profile absolute right-0 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                      >
+                        <div className="py-1">
+                        <MenuItem>
+                          <a
+                            href="/order-form"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 no-underline"
+                          >
+                            Order Now
+                          </a>
+                        </MenuItem>
 
-                    .profile-drop .py-1 {
-                      padding: 0.5rem; /* Add some padding for better spacing */
-                    }
-
-                    .profile-drop .block {
-                      display: block;
-                    }
-
-                    .profile-drop .text-sm {
-                      font-size: 14px; /* Make text size slightly smaller for mobile */
-                    }
-
-                    .profile-drop .hover\:bg-gray-100:hover {
-                      background-color: #f7fafc; /* Slightly lighter background */
-                    }
-
-                    .profile-drop .hover\:text-gray-900:hover {
-                      color: #1a202c; /* Darker text on hover */
-                    }
-
-                    .profile-drop .w-56 {
-                      width: 90%; /* Adjust width for better fit */
-                    }
-                  }
-
-                  @media (min-width: 769px) {
-                    .profile-drop {
-                      position: absolute;
-                      right: 0;
-                      top: 50px; /* Adjust based on your header height */
-                      width: 250px; /* Adjust width for larger screens */
-                    }
-                  }
-                `}
-                </style>
-              </Menu>
-            )}
+                          <MenuItem>
+                            <a
+                              href="/your-orders"
+                              className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 no-underline"
+                            >
+                              Previous Orders
+                            </a>
+                            
+                          </MenuItem>
+                          <MenuItem>
+                            <button
+                              onClick={logout} // Replace with your actual logout function
+                              className="block w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 no-underline"
+                            >
+                              Logout
+                            </button>
+                          </MenuItem>
+                        </div>
+                      </Menu.Items>
+                    </Menu>
+                  )
+              }
             </div>
             </div>
 

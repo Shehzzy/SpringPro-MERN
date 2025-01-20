@@ -16,7 +16,7 @@ function Navbar() {
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
         <a className="navbar-brand" href="#">
-          SpringPro
+          Springairns
         </a>
         {/* <button
           className="navbar-toggler"
