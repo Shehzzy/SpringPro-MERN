@@ -229,7 +229,7 @@ const Form: React.FC = () => {
     shippingstate: "",
     shippingzip: "",
     // currentwirelesscarrier: "",
-    // accountnumber: "",
+    accountnumber: "",
     // pinorpassword: "",
     // ssnortaxid: "",
     // billingname: "",

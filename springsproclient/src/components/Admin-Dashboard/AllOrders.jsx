@@ -131,7 +131,7 @@ function AllOrders() {
                               <td>{order.phonenumber}</td>
                               <td>
                                 {order.imeiNumbers &&
-                                order.imeiNumbers.length > 0 ? (
+                                  order.imeiNumbers.length > 0 ? (
                                   order.imeiNumbers
                                     .map((imei) => imei.imei)
                                     .join(", ")
@@ -184,7 +184,7 @@ function AllOrders() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan="8" style={{ textAlign: "center" }}>
+                            <td colSpan="9" style={{ textAlign: "center" }}>
                               No orders found.
                             </td>
                           </tr>
