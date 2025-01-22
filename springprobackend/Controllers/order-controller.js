@@ -480,6 +480,39 @@ const getUserOrders = async (req, res) => {
   }
 };
 
+// Update order notes API
+const updateOrderNotes = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { notes } = req.body;
+
+    // Check if the notes are provided and are not empty
+    if (!notes || notes.trim() === "") {
+      return res.status(400).json({ message: "Notes cannot be empty" });
+    }
+
+    // Find and update the order with the new notes
+    const order = await orderModel.findByIdAndUpdate(
+      id,
+      { notes },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    res.status(200).json({
+      message: "Order notes updated successfully",
+      order,
+    });
+  } catch (error) {
+    console.error("Error updating order notes:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+
 // Update order status API
 const updateOrderStatus = async (req, res) => {
   try {

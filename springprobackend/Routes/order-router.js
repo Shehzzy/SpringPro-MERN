@@ -10,5 +10,6 @@ router.put('/update-order-status/:id', authenticateJWT, authorizeRole('admin'),o
 router.get('/get-customers', authenticateJWT, (orderController.getCustomers));
 router.get('/get-user-orders', authenticateJWT, orderController.getUserOrders);
 router.get('/imei', authenticateJWT, orderController.getIMEINumbers);
+router.put('/update-order-notes/:id', authenticateJWT, orderController.updateOrderNotes);
 
 module.exports = router;
