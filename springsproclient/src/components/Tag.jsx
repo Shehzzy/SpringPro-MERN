@@ -1,10 +1,11 @@
 import React from "react";
 import women from "../assets/images/women.png";
+import { Link } from 'react-router-dom';
 
 const Tags = () => {
   return (
     <>
-      <div className="w-full bg-tron-blue-200 py-10">
+      <div className="w-full bg-tron-blue-200 py-10 md:py-16" id="about">
         <div className="container mx-auto w-full flex flex-col-reverse md:flex-row px-4 sm:px-6 xl:px-[120px] gap-6 md:h-auto">
           {/* Left Content */}
           <div className="w-full flex justify-center md:justify-end items-center md:w-1/2">
@@ -37,16 +38,16 @@ const Tags = () => {
                   background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
                 }} 
                 className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-105 hover:shadow-lg hover:bg-transparent">
-                LEARN ABOUT DXA
+                  <Link to={"/cellular-service"} className='text-white no-underline'>LEARN ABOUT DXA</Link>
               </button>
-
+{/* 
               <button 
                 style={{
                   background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
                 }} 
                 className="font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-105 hover:shadow-lg hover:bg-transparent">
                 CONTACT
-              </button>
+              </button> */}
             </div>
 
           </div>

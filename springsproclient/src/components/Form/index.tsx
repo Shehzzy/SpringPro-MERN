@@ -122,6 +122,58 @@ const Form: React.FC = () => {
     }
   };
 
+  
+  const [shippingInfos, setShippingInfos] = useState([
+    {
+      attentionname: "",
+      shippingaddress: "",
+      shippingstate: "",
+      shippingzip: "",
+      shippingcity: "",
+      uniqueCode: "",
+    },
+  ]);
+
+  // Function to handle changes in Shipping information fields
+  const handleShippingInfoChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { name, value } = e.target;
+    setShippingInfos((prev) =>
+      prev.map((info, i) => (i === index ? { ...info, [name]: value } : info))
+    );
+    // Generate unique code whenever a relevant field changes
+    if (
+      name === "attentionname" ||
+      name === "shippingstate" ||
+      name === "shippingzip" ||
+      name === "shippingcity"
+    ) {
+      const updatedInfo = { ...shippingInfos[index], [name]: value };
+      const uniqueCode = generateShippingUniqueCode(updatedInfo);
+      setShippingInfos((prev) =>
+        prev.map((info, i) =>
+          i === index ? { ...updatedInfo, uniqueCode } : info
+        )
+      );
+    }
+  };
+
+  const generateShippingUniqueCode = ({
+    attentionname,
+    shippingstate,
+    shippingcity,
+  }) => {
+    // Get the last 4 digits of the account number
+    const last4ShippingState = shippingstate.slice(-4);
+
+    // Get the last 4 characters of the pin/password
+    const last4ShippingCity = shippingcity.slice(-4);
+
+    return `${attentionname}_${last4ShippingState}_${last4ShippingCity}`;
+  };
+
   const generateUniqueCode = ({
     currentwirelesscarrier,
     accountnumber,
@@ -155,6 +207,21 @@ const Form: React.FC = () => {
       },
     ]);
   };
+
+    // Function to add a new carrier information entry
+    const addShippingInfo = () => {
+      setShippingInfos((prev) => [
+        ...prev,
+        {
+          attentionname: "",
+          shippingaddress: "",
+          shippingstate: "",
+          shippingzip: "",
+          shippingcity: "",
+          uniqueCode: "",
+        },
+      ]);
+    };
 
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
@@ -1289,11 +1356,10 @@ const Form: React.FC = () => {
             </div>
 
             {/* Order Shipping Information */}
-            <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
+            {/* <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
               Order Shipping Information
             </h2>
             <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-              {/* Shipment Mode */}
               <div className="w-full">
                 <h6 className="text-smfont-medium text-gray-700">
                   Select Shipment Mode
@@ -1304,7 +1370,6 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b mb-4 border-gray-300 py-2 w-full"
                 >
-                  {/* <option value=""></option> */}
                   <option value="yes">Single Shipment Address</option>
                   <option value="no">Multiple Shipment Address</option>
                 </select>
@@ -1314,8 +1379,6 @@ const Form: React.FC = () => {
                   </p>
                 )}
               </div>
-
-              {/* Attention Name */}
               <div className="mb-4 w-full">
                 <h6 className="text-sm text-left font-medium text-gray-700">
                   Attention Name
@@ -1332,8 +1395,6 @@ const Form: React.FC = () => {
                   <p className="text-danger text-sm">{errors.attentionname}</p>
                 )}
               </div>
-
-              {/* Shipping Address */}
               <div className="mb-4 w-full">
                 <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping Address
@@ -1350,8 +1411,6 @@ const Form: React.FC = () => {
                   <p className="text-danger text-sm">{errors.shippingaddress}</p>
                 )}
               </div>
-
-              {/* Shipping City */}
               <div className="mb-4 w-full">
                 <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping City
@@ -1368,8 +1427,6 @@ const Form: React.FC = () => {
                   <p className="text-danger text-sm">{errors.shippingcity}</p>
                 )}
               </div>
-
-              {/* Shipping State */}
               <div className="mb-4 w-full">
                 <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping State
@@ -1386,8 +1443,6 @@ const Form: React.FC = () => {
                   <p className="text-danger text-sm">{errors.shippingstate}</p>
                 )}
               </div>
-
-              {/* Shipping Zip */}
               <div className="mb-4 w-full">
                 <h6 className="text-sm text-left font-medium text-gray-700">
                   Shipping Zip
@@ -1404,7 +1459,99 @@ const Form: React.FC = () => {
                   <p className="text-danger text-sm">{errors.shippingzip}</p>
                 )}
               </div>
-            </div>
+              <button
+                type="button"
+                onClick={addShippingInfo}
+                style={{
+                  background:
+                    "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+                }}
+                className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
+              >
+                + Add Another Shipping Information
+              </button>
+            </div> */}
+
+            <h3 className="text-xl md:text-2xl text-gray-800 font-semibold my-2">
+              Order Shipping Information
+            </h3>
+            {shippingInfos.map((info, index) => (
+              <div
+                key={index}
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-b pb-6"
+              >
+                {/* Header with Remove Button */}
+                <div className="col-span-1 md:col-span-2 flex justify-between items-center">
+                  {index > 0 && (
+                    <h4 className="text-lg font-semibold">
+                      Shipping Port Info {index + 1}
+                    </h4>
+                  )}
+                  {index > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShippingInfos((prev) => prev.filter((_, i) => i !== index));
+                      }}
+                      className="text-red-500 hover:text-red-700 text-sm md:text-base"
+                    >
+                      - Remove
+                    </button>
+                  )}
+                </div>
+
+                {/* Repeated Fields */}
+                {[
+                  { name: "attentionname", label: "Attention Name" },
+                  { name: "shippingaddress", label: "Shipping Address" },
+                  { name: "shippingstate", label: "Shipping State" },
+                  { name: "shippingzip", label: "Shipping Zip" },
+                  { name: "shippingcity", label: "Shipping City" },
+                ].map(({ name, label }) => (
+                  <div className="mb-4" key={name}>
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
+                    <input
+                      type="text"
+                      name={name}
+                      placeholder={`Enter ${label}`}
+                      value={info[name]}
+                      onChange={(e) => handleShippingInfoChange(e, index)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    />
+                    {errors[`${name}_${index}`] && (
+                      <p className="text-red-500 text-sm">
+                        {errors[`${name}_${index}`]}
+                      </p>
+                    )}
+                  </div>
+                ))}
+
+                {/* Unique Code (Read-Only Field) */}
+                <div className="mb-4">
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
+                  <input
+                    type="text"
+                    name="uniqueCode"
+                    value={info.uniqueCode}
+                    readOnly
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full bg-gray-100"
+                  />
+                </div>
+              </div>
+            ))}
+
+            {/* Add Another Shipping Button */}
+            <button
+              type="button"
+              onClick={addShippingInfo}
+              style={{
+                background:
+                  "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+              }}
+              className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
+            >
+              + Add Another Shipping Information
+            </button>      
           </div>
         );
 
@@ -1521,9 +1668,6 @@ const Form: React.FC = () => {
               + Add Another Carrier Information
             </button>
           </div>
-
-
-
         );
       case "additionalInfo":
         return (

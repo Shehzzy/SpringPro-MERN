@@ -4,6 +4,7 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Link } from 'react-router-dom';
 
 const Network = () => {
   const [isMobile, setIsMobile] = useState(false);
@@ -32,8 +33,9 @@ const Network = () => {
       color: "#ffff14",
       style: "regular",
       title: "Cellular Service for Business",
-      description: "Our mobility account team brings years of combined AT&T Mobility experience to our customers. Every individual on our team is considered a leader in..",
+      description: "Our mobility account team brings years of combined AT&T Mobility experience to our customers.",
       linkText: "EVOLVE ENABLE WORK",
+      linkRef: "/cellular-service"
     },
     {
       icon: "cloud",
@@ -42,6 +44,7 @@ const Network = () => {
       title: "Fiber Internet for Business & Enterprise",
       description: "AT&T provides first-class business internet service with no data caps, no equipment fees, and no annual term...",
       linkText: "POWER REMOTE WORK",
+      linkRef: "/fibre-internet"
     },
     {
       icon: "check",
@@ -50,6 +53,7 @@ const Network = () => {
       title: "Cloud Solutions",
       description: "Businesses need to migrate to the cloud to stay competitive. We proudly offer AT&T end-to-end cloud-based designed to scale with your business...",
       linkText: "SECURE YOUR SPACES",
+      linkRef: "/cloud-solution"
     },
     {
       icon: "shield-alt",
@@ -58,6 +62,7 @@ const Network = () => {
       title: "Cybersecurity",
       description: "Our expertise in threat intelligence and network security will give your business unrivaled secure connectivity..",
       linkText: "OPTIMIZE YOUR SPACES",
+      linkRef: "/cyber-security"
     },
     {
       icon: "wifi",
@@ -66,6 +71,7 @@ const Network = () => {
       title: "AT&T",
       description: "Our team of experts will help you navigate the AT&T landscape while taking ownership of the pre and post sale processes.",
       linkText: "OPTIMIZE YOUR SPACES",
+      linkRef: "/internet-wan"
     },
     {
       icon: "globe",
@@ -73,7 +79,8 @@ const Network = () => {
       style: "solid",
       title: "Internet & WAN Networking",
       description: "Discover the right network connectivity type for your SD-WAN solution. We specialize in simplifying...",
-      linkText: "MAKE YOUR INTERNET"
+      linkText: "MAKE YOUR INTERNET",
+      linkRef: "/internet-wan"
     },
     {
       icon: "phone-alt",
@@ -81,7 +88,8 @@ const Network = () => {
       style: "solid",
       title: "Business Voice Solution",
       description: "AT&T Phone for Business is a voice service provided over an Internet Protocol (VOiP) digital connection that...",
-      linkText: "GROW YOUR BUSINESS"
+      linkText: "GROW YOUR BUSINESS",
+      linkRef: "/business-voice"
     }
   ];
 
@@ -134,12 +142,12 @@ const Network = () => {
                     {card.title}
                   </h1>
                   <p className="inter text-center mt-2 font-light">{card.description}</p>
-                  <a
-                    href="#"
+                  <Link
+                    to={card.linkRef}
                     className="text-tron-blue text-base mt-6 font-semibold capitalize text-center no-underline"
                   >
                     {card.linkText} <i className="fa-solid -rotate-90 fa-chevron-down"></i>
-                  </a>
+                  </Link>
                 </div>
               </SwiperSlide>
             ))}

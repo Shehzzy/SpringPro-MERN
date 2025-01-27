@@ -1,6 +1,7 @@
 import React from "react";
 import "../App.css";
 import dashboard from "../assets/images/dashboard.svg";
+import { Link } from 'react-router-dom';
 
 const Guide = () => {
    return (
@@ -36,13 +37,13 @@ const Guide = () => {
                      </h5>
                   </div>
                   <div>
-                  <button 
-                  style={{
-                  background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
-                  }} 
-                  className="font-bold text-xs mt-3 text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
-                  >
-                        LEARN MORE
+                     <button 
+                     style={{
+                     background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
+                     }} 
+                     className="font-bold text-xs mt-3 text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                     >
+                        <Link to={"/login"} className='text-white no-underline'>LEARN MORE</Link>
                      </button>
                   </div>
                </div>

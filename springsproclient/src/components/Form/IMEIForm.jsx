@@ -13,49 +13,43 @@ function IMEIForm({
   const [showAllImeis, setShowAllImeis] = useState(false);
   const [imeiInput, setImeiInput] = useState(""); // To store the new IMEI being added
   const [accountFields, setAccountFields] = useState([
-    { accountNumber: "", portOutPin: "" },
+    { accountNumber: "", portOutPin: "", phoneNumber: "", carrier: "", imei: "", shippingAddress: "" },
   ]);
-  const [phoneNumbers, setPhoneNumbers] = useState([
-    { phoneNumber: "", carrier: "" },
-  ]);
-  const [shippingAddresses, setShippingAddresses] = useState({});
-  const [showModal, setShowModal] = useState(false);
   const [uniqueCode, setUniqueCode] = useState(""); // For storing the unique code
   const [selectedImeis, setSelectedImeis] = useState(new Set());
+  const [showModal, setShowModal] = useState(false); // Modal visibility state
+  const [shippingAddresses, setShippingAddresses] = useState([]); // For storing existing shipping addresses
+  const [newShippingAddress, setNewShippingAddress] = useState(""); // For storing the new address
 
-  // Handle changes in account fields
-  const handleAccountChange = (index, field, value) => {
+  // Handle changes in Account, Phone, IMEI, and Shipping Address
+  const handleFieldChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
     updatedAccounts[index][field] = value;
     setAccountFields(updatedAccounts);
-    onAccountFieldsChange(updatedAccounts);
+
+    // Update respective change in parent if necessary
+    if (field === "accountNumber" || field === "portOutPin") {
+      onAccountFieldsChange(updatedAccounts);
+    } else if (field === "phoneNumber" || field === "carrier") {
+      onPhoneNumbersChange(updatedAccounts);
+    } else if (field === "shippingAddress") {
+      onShippingAddressesChange(updatedAccounts);
+    }
   };
 
-  // Handle changes in phone number fields
-  const handlePhoneNumberChange = (index, field, value) => {
-    const updatedPhoneNumbers = [...phoneNumbers];
-    updatedPhoneNumbers[index][field] = value;
-    setPhoneNumbers(updatedPhoneNumbers);
-    onPhoneNumbersChange(updatedPhoneNumbers);
+  // Handle adding a new row with all fields
+  const handleAddRow = () => {
+    setAccountFields([
+      ...accountFields,
+      { accountNumber: "", portOutPin: "", phoneNumber: "", carrier: "", imei: "", shippingAddress: "" },
+    ]);
   };
 
-  // Handle changes in shipping address for a specific IMEI
-  const handleShippingAddressChange = (imei, value) => {
-    const updatedAddresses = { ...shippingAddresses };
-    updatedAddresses[imei] = value;
-    setShippingAddresses(updatedAddresses);
-
-    onShippingAddressesChange(updatedAddresses);
-  };
-
-  // Add a new account field
-  const addAccountField = () => {
-    setAccountFields([...accountFields, { accountNumber: "", portOutPin: "" }]);
-  };
-
-  // Add a new phone number field
-  const addPhoneNumberField = () => {
-    setPhoneNumbers([...phoneNumbers, { phoneNumber: "", carrier: "" }]);
+  // Handle removing a row
+  const handleRemoveRow = (index) => {
+    const updatedAccounts = [...accountFields];
+    updatedAccounts.splice(index, 1); // Remove the row at the given index
+    setAccountFields(updatedAccounts);
   };
 
   // Handle fetching data from unique code
@@ -78,15 +72,13 @@ function IMEIForm({
           return; // Exit early if no data found
         }
 
-        const { accountFields, phoneNumbers, shippingAddresses } =
-          response.data;
+        const { accountFields, phoneNumbers, shippingAddresses } = response.data;
 
         setAccountFields(accountFields);
-        setPhoneNumbers(phoneNumbers);
-        setShippingAddresses(shippingAddresses);
         onAccountFieldsChange(accountFields);
         onPhoneNumbersChange(phoneNumbers);
         onShippingAddressesChange(shippingAddresses);
+        setShippingAddresses(shippingAddresses); // Store existing addresses
       } catch (error) {
         setErrorUniqueCode("No such unique code exists.");
       }
@@ -112,6 +104,29 @@ function IMEIForm({
     setSelectedImeis(newSelectedImeis);
   };
 
+  // Handle Shipping Address Change
+  const handleShippingAddressChange = (imei, value) => {
+    setShippingAddresses((prevState) => ({
+      ...prevState,
+      [imei]: value,
+    }));
+  };
+
+  // Handle New Shipping Address Input Change
+  const handleNewShippingAddressChange = (e) => {
+    setNewShippingAddress(e.target.value);
+  };
+
+  const handleAddNewAddress = () => {
+    if (newShippingAddress.trim()) {
+      setShippingAddresses((prevAddresses) => [
+        ...prevAddresses,
+        newShippingAddress.trim(),
+      ]);
+      setNewShippingAddress(""); // Reset the input
+    }
+  };
+
   return (
     <div>
       <button
@@ -131,223 +146,110 @@ function IMEIForm({
               ✕
             </button>
 
-            <h2 className="text-2xl font-bold text-center mb-6">
+            <h2 className="text-3xl font-bold text-center mb-6">
               Add IMEI and Account Information
             </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Accounts Ported In */}
-              <div>
-                <h6 className="text-sm font-medium text-gray-700 mb-2 text-center">
-                  Accounts Ported In
-                </h6>
-                <div className="space-y-4">
-                  {accountFields.map((account, index) => (
-                    <div key={index} className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        placeholder="Account Number"
-                        value={account.accountNumber}
-                        onChange={(e) =>
-                          handleAccountChange(
-                            index,
-                            "accountNumber",
-                            e.target.value
-                          )
-                        }
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                      <input
-                        type="text"
-                        placeholder="Port Out PIN"
-                        value={account.portOutPin}
-                        onChange={(e) =>
-                          handleAccountChange(
-                            index,
-                            "portOutPin",
-                            e.target.value
-                          )
-                        }
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                    </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={addAccountField}
-                    className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded-full hover:bg-teal-600 transition duration-200"
-                  >
-                    + Add Account
-                  </button>
-                </div>
-              </div>
-
-              {/* Phone Numbers Porting In */}
-              <div>
-                <h6 className="text-sm font-medium text-gray-700 mb-2 text-center">
-                  Phone Numbers Porting In
-                </h6>
-                <div className="space-y-4">
-                  {phoneNumbers.map((phone, index) => (
-                    <div key={index} className="flex gap-2 mb-2">
-                      <input
-                        type="text"
-                        placeholder="Phone Number"
-                        value={phone.phoneNumber}
-                        onChange={(e) =>
-                          handlePhoneNumberChange(
-                            index,
-                            "phoneNumber",
-                            e.target.value
-                          )
-                        }
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                      <select
-                        value={phone.carrier}
-                        onChange={(e) =>
-                          handlePhoneNumberChange(
-                            index,
-                            "carrier",
-                            e.target.value
-                          )
-                        }
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      >
-                        <option value="">Select Carrier</option>
-                        <option value="T-Mobile">T-Mobile</option>
-                        <option value="Verizon">Verizon</option>
-                        <option value="AT&T">AT&T</option>
-                        <option value="Cricket">Cricket</option>
-                        <option value="Boost">Boost</option>
-                        <option value="MetroPCS">MetroPCS</option>
-                        <option value="Lycamobile">Lycamobile</option>
-                        <option value="Altice">Altice</option>
-                        <option value="Spectrum">Spectrum</option>
-                        <option value="H2O">H2O</option>
-                        <option value="RedPocket">RedPocket</option>
-                        <option value="Visible">Visible</option>
-                        <option value="Total Wireless">Total Wireless</option>
-                        <option value="Other">Other</option>
-
-                      </select>
-
-                      {phone.carrier === "Other" && (
-                        <div>
-                          <input
-                            type="text"
-                            placeholder="Enter Unique Code"
-                            value={uniqueCode}
-                            onChange={(e) =>
-                              handleUniqueCodeChange(e.target.value)
-                            }
-                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          />
-
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {errorUniqueCode && (
-                            <p style={{color:'red', fontSize:'13px'}}>
-                              {errorUniqueCode}
-                            </p>
-                          )}
-                  <button
-                    type="button"
-                    onClick={addPhoneNumberField}
-                    className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded-full hover:bg-teal-600 transition duration-200"
-                  >
-                    + Add Phone Number
-                  </button>
-                </div>
-              </div>
-
-              {/* Add New IMEI Number */}
-              <div>
-                <h6 className="text-sm font-medium text-gray-700 mb-2 text-center">
-                  Add New IMEI Number
-                </h6>
-                <div className="space-y-4">
-                  <input
-                    type="text"
-                    name="imeiInput"
-                    placeholder="Enter IMEI Number"
-                    value={imeiInput}
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/\D/g, ""); // Remove non-digit characters
-                      if (value.length <= 15) {
-                        setImeiInput(value);
-                      }
-                    }}
-                    maxLength="15"
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  <button
-                    type="button"
-                    onClick={handleAddImei}
-                    className="mt-2 bg-[#41FDFE] text-black px-4 py-2 rounded-full hover:bg-teal-600 transition duration-200"
-                  >
-                    Add IMEI Number
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* IMEI Numbers List */}
+            {/* Account, Phone, IMEI & Shipping Fields */}
             <div className="mt-6">
-              {imeiNumbers.length > 0 && (
-                <div className="mt-4">
-                  <p className="font-medium text-gray-700 text-center">
-                    Select from Existing IMEI Numbers
-                  </p>
-                  <div className="flex flex-wrap gap-4 justify-center">
-                    {imeiNumbers
-                      .slice(0, showAllImeis ? imeiNumbers.length : 3)
-                      .map((imei, index) => (
-                        <div key={index} className="text-center">
-                          <label className="flex items-center justify-center">
-                            <input
-                              type="checkbox"
-                              value={imei}
-                              className="mr-2"
-                              onChange={() => handleSelectImei(imei)}
-                            />
-                            {imei}
-                          </label>
-
-                          {/* Shipping Address for Each IMEI */}
-                          <div className="mt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-2">
-                              Shipping Address for {imei}
-                            </h6>
-                            <input
-                              type="text"
-                              placeholder="Enter Shipping Address"
-                              value={shippingAddresses[imei] || ""}
-                              onChange={(e) =>
-                                handleShippingAddressChange(
-                                  imei,
-                                  e.target.value
-                                )
-                              }
-                              className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                            />
-                          </div>
-                        </div>
-                      ))}
+              {accountFields.map((account, index) => (
+                <div key={index} className="space-y-4">
+                  <div className="flex justify-between mt-4">
+                    <h3 className="text-2xl font-bold text-center">
+                      {index === 0 ? "Add Info" : `Add Info ${index + 1}`}
+                    </h3>
+                    {/* Remove Row Button */}
+                    {accountFields.length > 1 && (
+                      <button
+                        style={{
+                          background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                        }}
+                        type="button"
+                        onClick={() => handleRemoveRow(index)}
+                        className="font-bold text-xs text-white transition-all px-6 py-2 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                        >
+                          REMOVE ROW
+                      </button>
+                      
+                    )}
+                  </div>                  
+                  {/* Account Number and Port Out PIN */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Account Number"
+                      value={account.accountNumber}
+                      onChange={(e) => handleFieldChange(index, "accountNumber", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    />
+                    <input
+                      type="text"
+                      placeholder="Port Out PIN"
+                      value={account.portOutPin}
+                      onChange={(e) => handleFieldChange(index, "portOutPin", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    />
                   </div>
-                  {imeiNumbers.length > 3 && (
-                    <button
-                      className="mt-2 bg-[#41FDFE] px-2 py-1 rounded-full text-sm hover:bg-teal-600"
-                      onClick={() => setShowAllImeis(!showAllImeis)}
+
+                  {/* Phone Number and Carrier */}
+                  <div className="flex gap-2">
+                    <input
+                      type="text"
+                      placeholder="Phone Number"
+                      value={account.phoneNumber}
+                      onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    />
+                    <input
+                      type="text"
+                      placeholder="IMEI Number"
+                      value={account.imei}
+                      onChange={(e) => handleFieldChange(index, "imei", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    />
+                  </div>
+
+                  {/* IMEI Number */}
+                  <div className="flex gap-2">
+                    <select
+                      value={account.carrier}
+                      onChange={(e) => handleFieldChange(index, "carrier", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
                     >
-                      {showAllImeis ? "Show Less" : "Show More"}
-                    </button>
-                  )}
+                      <option value="">Select Carrier</option>
+                      {/* Add carrier options here */}
+                    </select>                    
+                    {/* Shipping Address */}
+                    <select
+                      value={account.shippingAddress}
+                      onChange={(e) => handleFieldChange(index, "shippingAddress", e.target.value)}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    >
+                      <option value="">Select Shipping Address</option>
+                      {shippingAddresses.map((address, idx) => (
+                        <option key={idx} value={address}>
+                          {address}
+                        </option>
+                      ))}
+                    </select>                    
+                  </div>
+
                 </div>
-              )}
+              ))}
+
+              {/* Add New Button */}
+              <div className="flex justify-center mt-4">
+                <button
+                  type="button"
+                  onClick={handleAddRow}
+                  style={{
+                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                  }}
+                  className="font-bold text-sm text-white transition-all px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                >
+                  + Add New
+                </button>
+              </div>
             </div>
           </div>
         </div>

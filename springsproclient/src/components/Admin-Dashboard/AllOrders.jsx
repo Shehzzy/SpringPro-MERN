@@ -8,6 +8,9 @@ import Navbar from "./Navbar";
 import "./styles.css";
 
 function AllOrders() {
+  const [showModal, setShowModal] = useState(false);
+  const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [comment, setComment] = useState("");
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -49,6 +52,19 @@ function AllOrders() {
       });
   }, [navigate]);
 
+  const handleAddComment = (orderId) => {
+    setSelectedOrderId(orderId);
+    setShowModal(true);
+  };
+
+  const handleSaveComment = () => {
+    if (comment) {
+      updateOrderNotes(selectedOrderId, comment);
+      setComment("");
+      setShowModal(false);
+    }
+  };
+
   const updateOrderStatus = (orderId, newStatus) => {
     const token = localStorage.getItem("jwt_token");
 
@@ -89,6 +105,59 @@ function AllOrders() {
     }
   };
 
+  const handleFileUpload = (orderId, file) => {
+    const token = localStorage.getItem("jwt_token");
+    const formData = new FormData();
+    formData.append("file", file);
+
+    axios
+      .post(
+        `https://springprobackend-production.up.railway.app/api/order/upload-file/${orderId}`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            role: userRole,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      )
+      .then((response) => {
+        alert("File uploaded successfully");
+      })
+      .catch((error) => {
+        console.error("Error uploading file:", error);
+        setError("Error uploading file");
+      });
+  };
+
+  const updateOrderNotes = (orderId, notes) => {
+    const token = localStorage.getItem("jwt_token");
+
+    axios
+      .put(
+        `https://springprobackend-production.up.railway.app/api/order/update-order-notes/${orderId}`,
+        { notes },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            role: userRole,
+          },
+        }
+      )
+      .then((response) => {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, notes } : order
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating notes:", error);
+        setError("Error updating notes");
+      });
+  };
+
   if (error) {
     return <div>{error}</div>;
   }
@@ -100,82 +169,84 @@ function AllOrders() {
         <Sidebar />
         <div id="layoutSidenav_content">
           <main>
-            <div
-              className="container-fluid px-4 md-4"
-              style={{ marginTop: "50px" }}
-            >
-              <h1 className="mt-4 h3">Orders List</h1>
+            <div className="container-fluid px-4 md-4" style={{ marginTop: "50px" }}>
+              <h1 className="mt-4 h3 text-center text-gray-800 mb-4">Orders List</h1>
               <div className="card mb-4">
                 <div className="card-body">
-                  <div className="table-responsive">
+                  {/* Scrollable container */}
+                  <div className="table-responsive overflow-x-auto">
                     <table className="table table-striped table-bordered">
                       <thead className="thead-dark">
                         <tr>
-                          <th>Name</th>
-                          <th>Email</th>
-                          <th>Phone Number</th>
-                          <th>IMEI Numbers</th>
-                          <th>Order Date</th>
-                          <th>Shipping Address</th>
-                          <th>Status</th>
-                          <th>Update Status</th>
-                          <th>Actions</th>
+                          <th className="px-3 py-2">Name</th>
+                          <th className="px-3 py-2">Email</th>
+                          <th className="px-3 py-2">IMEI Numbers</th>
+                          <th className="px-3 py-2">Order Date</th>
+                          <th className="px-3 py-2">Status</th>
+                          <th className="px-3 py-2">Update Status</th>
+                          <th className="px-3 py-2" style={{ width: "250px" }}>
+                            Notes
+                          </th>
+                          <th className="px-3 py-2" style={{ width: "250px" }}>
+                            File Attachment
+                          </th>
+                          <th className="px-3 py-2">Actions</th>
                         </tr>
                       </thead>
                       <tbody>
                         {orders && orders.length > 0 ? (
                           orders.map((order) => (
-                            <tr key={order._id}>
-                              <td>{order.name}</td>
-                              <td>{order.email}</td>
-                              <td>{order.phonenumber}</td>
-                              <td>
-                                {order.imeiNumbers &&
-                                  order.imeiNumbers.length > 0 ? (
-                                  order.imeiNumbers
-                                    .map((imei) => imei.imei)
-                                    .join(", ")
+                            <tr key={order._id} className="align-middle">
+                              <td className="px-3 py-2" style={{ width: "150px" }}>{order.name}</td> {/* Adjust width */}
+                              <td className="px-3 py-2" style={{ width: "180px" }}>{order.email}</td> {/* Adjust width */}
+                              <td className="px-3 py-2" style={{ width: "200px" }}>
+                                {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
+                                  order.imeiNumbers.map((imei) => imei.imei).join(", ")
                                 ) : (
                                   <span>No IMEI numbers</span>
                                 )}
                               </td>
-                              <td>
-                                {new Date(order.createdAt).toLocaleDateString()}
+                              <td className="px-3 py-2" style={{ width: "180px" }}>
+                                {new Date(order.createdAt).toLocaleString()}
                               </td>
-
-                              {order.customerId?.shippingaddress ? (
-                                <td>{order.customerId?.shippingaddress}</td>
-                              ) : (
-                                <td>Not Available</td>
-                              )}
-
-                              <td>
-                                <span
-                                  style={getStatusStyle(order.status)}
-                                  className="badge"
-                                >
+                              <td className="px-3 py-2" style={{ width: "120px" }}>
+                                <span style={getStatusStyle(order.status)} className="badge">
                                   {order.status}
                                 </span>
                               </td>
-                              <td className="parent-container">
+                              <td className="px-3 py-2" style={{ width: "150px" }}> {/* Reduced width */}
                                 <select
                                   value={order.status}
-                                  onChange={(e) =>
-                                    updateOrderStatus(order._id, e.target.value)
-                                  }
+                                  onChange={(e) => updateOrderStatus(order._id, e.target.value)}
                                   className="form-control select-admin-status"
                                 >
                                   <option value="Pending">Pending</option>
-                                  <option value="In Progress">
-                                    In Progress
-                                  </option>
+                                  <option value="In Progress">In Progress</option>
                                   <option value="Completed">Completed</option>
                                 </select>
                               </td>
-                              <td>
+                              <td className="px-3 py-2" style={{ width: "250px" }}>
+                                <button
+                                  onClick={() => handleAddComment(order._id)}
+                                  className="btn btn-secondary btn-sm"
+                                >
+                                  Add Comment
+                                </button>
+                              </td>
+                              <td className="px-3 py-2" style={{ width: "250px" }}>
+                                <div className="d-flex flex-column">
+                                  <input
+                                    type="file"
+                                    className="form-control mb-2"
+                                    onChange={(e) => handleFileUpload(order._id, e.target.files[0])}
+                                  />
+                                  <small className="text-muted">Max size: 5MB</small>
+                                </div>
+                              </td>
+                              <td className="px-3 py-2" style={{ width: "150px" }}>
                                 <Link
                                   to={`/single-order-details/${order._id}`}
-                                  className="btn text-white mt-2 w-40 btn-view"
+                                  className="btn btn-primary text-white btn-sm w-100"
                                 >
                                   View Details
                                 </Link>
@@ -184,12 +255,13 @@ function AllOrders() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan="9" style={{ textAlign: "center" }}>
+                            <td colSpan="9" className="text-center">
                               No orders found.
                             </td>
                           </tr>
                         )}
                       </tbody>
+
                     </table>
                   </div>
                 </div>
@@ -199,8 +271,55 @@ function AllOrders() {
           <Footer />
         </div>
       </div>
+
+      {/* Modal for adding comment */}
+      {showModal && (
+        <div className="modal" style={{ display: "block" }}>
+          <div className="modal-dialog">
+            <div className="modal-content">
+              <div className="modal-header">
+                <h5 className="modal-title">Add Comment</h5>
+                <button
+                  type="button"
+                  className="close"
+                  onClick={() => setShowModal(false)}
+                >
+                  &times;
+                </button>
+              </div>
+              <div className="modal-body">
+                <textarea
+                  placeholder="Add your comment here..."
+                  rows="4"
+                  className="form-control"
+                  value={comment}
+                  onChange={(e) => setComment(e.target.value)}
+                ></textarea>
+              </div>
+              <div className="modal-footer">
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => setShowModal(false)}
+                >
+                  Close
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-primary"
+                  onClick={handleSaveComment}
+                >
+                  Save Comment
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </>
+
   );
 }
 
 export default AllOrders;
+

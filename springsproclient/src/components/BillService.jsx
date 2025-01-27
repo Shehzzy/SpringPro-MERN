@@ -37,14 +37,14 @@ const BillService = () => {
                      </h5>
                   </div>
                   <div>
-                  <button 
+                  {/* <button 
                   style={{
                   background: "linear-gradient(90deg, rgba(65, 253, 254) 0%, rgba(0, 210, 255, 1) 100%)"
                   }} 
                   className="font-bold text-xs text-white transition-all tracking-wider mt-3 px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                   >
                         EXPLORE THE PLATFORM
-                     </button>
+                     </button> */}
                   </div>
                </div>
 

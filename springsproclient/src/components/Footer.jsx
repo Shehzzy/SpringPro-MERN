@@ -15,39 +15,36 @@ const Footer = () => {
                             />
                         </div>
                         <div className=" w-full  sm:gap-x-6 gap-x-4 md:w-[80%] lg:w-[70%] h-full gap-y-10 grid-cols-2 grid md:grid-cols-3 ">
-                            <div className="h-full gap-2 flex flex-col">
-                                <h2 className="text-gray-600  font-poppins font-[550] inter tracking-wider">Quick Links</h2>
-                                <a href="#" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Home</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">About</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline mt-">First Responder Agency Solutions</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Technology Solutions</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Wireless Account Management</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline mt-">Contact</a>
+                            <div className="h-full gap-y-2.5 flex flex-col">
+                                <h4 className="text-gray-600 font-poppins font-[400] tracking-wider">COMPANY</h4>
+                                <div className="mt-1"></div>
+                                <a href="#" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Home</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">About</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline mt-">First Responder</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Technology Solutions</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Wireless Account Management</a>
                             </div>
-                            <div className="h-full gap-2 flex flex-col">
+                            <div className="h-full gap-y-2.5 flex flex-col">
                                 {/* <h2 className="text-gray-600  font-poppins font-[550] inter pb-6 tracking-wider">Technology Solutions</h2> */}
-                                <h2 className="text-gray-600  font-poppins font-[550] inter tracking-wider">Solutions</h2>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Cellular Service for Business</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Fibre Internet for Business & Enterprise</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Cloud Solutions</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">CyberSecurity</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">AT&T</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Internet & WAN Networking</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Business Voice Solution</a>
+                                <h4 className="text-gray-600 font-poppins font-[400] tracking-wider">SOLUTIONS</h4>
+                                <div className="mt-1"></div>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Cellular Service</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Fibre Internet</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Cloud Solutions</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">CyberSecurity</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">AT&T</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Internet & WAN Networking</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Business Voice Solution</a>
 
                             </div>
-                            <div className="h-full gap-2 flex flex-col">
+                            <div className="h-full gap-y-2.5 flex flex-col">
                                 {/* <h2 className="text-gray-600  font-poppins  font-[550] inter pb-6 tracking-wider">Contact Information</h2> */}
-                                <h2 className="text-gray-600 font-poppins font-[550] inter tracking-wider">Contact</h2>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Cellular Service for Business</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Fibre Internet for Business & Enterprise</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">Cloud Solutions</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">info@springsairns.com</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">212-991-8442</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[16px]  inter tracking-wider no-underline">90 Hausman St, Brooklyn NY 11222</a>
-
-
-
+                                <h4 className="text-gray-600 font-poppins font-[400] tracking-wider">CONTACT</h4>
+                                <div className="mt-1"></div>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline mt-">Contact Us</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">office@springsairns.com</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">(855) 525-0855</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">33 Great Neck Rd. STE #7, Great Neck Plaza, NY 11021</a>
                             </div>
                         </div>
                     </div>
@@ -59,8 +56,8 @@ const Footer = () => {
                             <i className="fa-brands text-gray-600 fa-youtube"></i>
                             <i className="fa-brands text-gray-600 fa-whatsapp"></i>
                         </div>
-                        <div className="w-fit  text-gray-600  inter font-light tracking-wide text-sm">
-                            <h1 className="text-lg">© 2024 Spring Air Network Solutions, Inc. 33 Great Neck Rd., Ste #7 Great Neck Plaza, NY 11021</h1>
+                        <div className="w-fit">
+                            <h1 className="text-gray-600 inter font-[350] text-sm sm:text-[16px]">© 2024 Spring Air Network Solutions, Inc.</h1>
                         </div>
                     </div>
                 </div>

@@ -10,6 +10,7 @@ import partner4 from "../assets/images/partner4.png";
 import partner5 from "../assets/images/partner5.png";
 import partner6 from "../assets/images/partner6.png";
 import partner7 from "../assets/images/partner7.png";
+import { Link } from 'react-router-dom';
 
 const Technology = () => {
   // State to track the opacity of slide-2
@@ -60,7 +61,7 @@ const Technology = () => {
             </div>
 
             <button className="bg-white hover:bg-transparent border border-transparent hover:border-black transition-all px-6 mt-10 inter text-sm sm:text-base py-4 sm:py-2.5 rounded-full font-semibold tracking-wide">
-              START NOW
+              <Link to={"/login"} className='text-black no-underline'>LEARN MORE</Link>
             </button>
           </div>
         </div>

@@ -29,7 +29,7 @@ const Deploys = () => {
                      }} 
                      className="font-bold text-xs text-white transition-all tracking-wider mt-3 px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                      >
-                        CALL 212-991-8442
+                        CALL (855) 525-0855
                      </button>
                   </div>
                </div>
