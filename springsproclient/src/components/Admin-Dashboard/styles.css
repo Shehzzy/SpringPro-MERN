@@ -11242,3 +11242,12 @@ body {
   font-size: 0.75rem;
   border-radius: 0.375rem !important;
 }
+
+.rdt_TableCol{
+  font-size: 18px;
+}
+
+table {
+  table-layout: fixed;
+  width: 100%; /* Ensure the table occupies full width of the container */
+}
