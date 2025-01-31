@@ -231,32 +231,44 @@ function Orders() {
                   <span className="font-semibold">Credit Card Payment:</span>{" "}
                   {selectedOrder.customerId.creditcardpayment}
                 </div>
-                <div>
+                {/* <div>
                   <span className="font-semibold">
                     Single or Multi Address Shipment:
                   </span>{" "}
                   {selectedOrder.customerId.singleormultiaddresshipment}
-                </div>
-                <div>
+                </div> */}
+
+                {
+                  selectedOrder.shippingAddresses && selectedOrder.shippingAddresses.length > 0 ? (
+                    selectedOrder.shippingAddresses.map((shippingAddress, index) => (
+                      <div key={index}>
+
+                      <div>
                   <span className="font-semibold">Attention Name:</span>{" "}
-                  {selectedOrder.customerId.attentionname}
+                  {shippingAddress.attentionname}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping Address:</span>{" "}
-                  {selectedOrder.customerId?.shippingaddress}
+                  {shippingAddress.shippingaddress}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping City:</span>{" "}
-                  {selectedOrder.customerId.shippingcity}
+                  {shippingAddress.shippingcity}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping State:</span>{" "}
-                  {selectedOrder.customerId.shippingstate}
+                  {shippingAddress.shippingstate}
                 </div>
                 <div>
                   <span className="font-semibold">Shipping ZIP:</span>{" "}
-                  {selectedOrder.customerId.shippingzip}
+                  {shippingAddress.shippingzip}
                 </div>
+                      </div>
+                  ))) : (
+                    <p>No shipping addresses available</p>
+                  )
+                }
+
                 {selectedOrder.carrierInfos &&
                 selectedOrder.carrierInfos.length > 0 ? (
                   selectedOrder.carrierInfos.map((carrierInfo, index) => (

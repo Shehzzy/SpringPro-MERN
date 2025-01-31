@@ -328,6 +328,10 @@
 // }
 
 // export default AllOrders;
+// The upper code is simple table
+// The below code is datatable
+
+
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -346,9 +350,9 @@ function AllOrders() {
   const [comment, setComment] = useState("");
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [totalRows, setTotalRows] = useState(0); // To manage total rows for pagination
-  const [currentPage, setCurrentPage] = useState(1); // For handling page changes
-  const [pageSize] = useState(10); // Set default page size to 10
+  const [totalRows, setTotalRows] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize] = useState(10);
 
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt_token");
@@ -382,8 +386,8 @@ function AllOrders() {
         },
       })
       .then((response) => {
-        setOrders(response.data.orderData); // Assuming the API returns order data in this format
-        setTotalRows(response.data.totalRows); // Assuming the API returns the total rows count for pagination
+        setOrders(response.data.orderData);
+        setTotalRows(response.data.totalRows);
         setLoading(false);
       })
       .catch((error) => {
@@ -423,6 +427,20 @@ function AllOrders() {
       sortable: true,
     },
     {
+      name: "Update Status",
+      cell: (row) => (
+        <select
+          value={row.status}
+          onChange={(e) => updateOrderStatus(row._id, e.target.value)}
+          className="form-control select-admin-status"
+        >
+          <option value="Pending">Pending</option>
+          <option value="In Progress">In Progress</option>
+          <option value="Completed">Completed</option>
+        </select>
+      ),
+    },
+    {
       name: "Actions",
       cell: (row) => (
         <div className="d-flex justify-content-between">
@@ -444,7 +462,7 @@ function AllOrders() {
   ];
 
   const handlePageChange = (page) => {
-    setCurrentPage(page); // Update current page when the user navigates
+    setCurrentPage(page);
   };
 
   const handleAddComment = (orderId) => {
@@ -487,14 +505,41 @@ function AllOrders() {
       });
   };
 
+  const updateOrderStatus = (orderId, newStatus) => {
+    const token = localStorage.getItem("jwt_token");
+
+    axios
+      .put(
+        `https://springprobackend-production.up.railway.app/api/order/update-order-status/${orderId}`,
+        { status: newStatus },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            role: userRole,
+          },
+        }
+      )
+      .then(() => {
+        setOrders((prevOrders) =>
+          prevOrders.map((order) =>
+            order._id === orderId ? { ...order, status: newStatus } : order
+          )
+        );
+      })
+      .catch((error) => {
+        console.error("Error updating order status:", error);
+        setError("Error updating order status");
+      });
+  };
+
   const getStatusStyle = (status) => {
     switch (status) {
       case "Pending":
-        return { backgroundColor: "#f1c40f", color: "#2d3436", padding: '8px', borderRadius: '6px' }; // Yellow
+        return { backgroundColor: "#f1c40f", color: "#2d3436", padding: '8px', borderRadius: '6px' };
       case "In Progress":
-        return { backgroundColor: "#e67e22", color: "white", padding: '8px', borderRadius: '6px' }; // Orange
+        return { backgroundColor: "#e67e22", color: "white", padding: '8px', borderRadius: '6px' };
       case "Completed":
-        return { backgroundColor: "#2ecc71", color: "white", padding: '8px', borderRadius: '6px' }; // Green
+        return { backgroundColor: "#2ecc71", color: "white", padding: '8px', borderRadius: '6px' };
       default:
         return {};
     }
@@ -519,7 +564,6 @@ function AllOrders() {
               <h1 className="mt-4 h3 text-center text-gray-800 mb-4">Orders List</h1>
               <div className="card mb-4">
                 <div className="card-body">
-                  {/* DataTable for displaying orders */}
                   <DataTable
                     columns={columns}
                     data={orders}
@@ -541,13 +585,12 @@ function AllOrders() {
                       },
                       cells: {
                         style: {
-                          maxWidth: '200px', // Adjust the maximum width for each column cell
+                          maxWidth: '200px',
                           wordWrap: 'break-word',
                         }
                       },
                     }}
                   />
-
                 </div>
               </div>
             </div>
@@ -556,7 +599,6 @@ function AllOrders() {
         </div>
       </div>
 
-      {/* Modal for adding comment */}
       {showModal && (
         <div className="modal" style={{ display: "block" }}>
           <div className="modal-dialog">
@@ -601,7 +643,7 @@ function AllOrders() {
         </div>
       )}
     </>
-  );
+ );
 }
 
 export default AllOrders;

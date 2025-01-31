@@ -122,7 +122,6 @@ const Form: React.FC = () => {
     }
   };
 
-  
   const [shippingInfos, setShippingInfos] = useState([
     {
       attentionname: "",
@@ -208,20 +207,20 @@ const Form: React.FC = () => {
     ]);
   };
 
-    // Function to add a new carrier information entry
-    const addShippingInfo = () => {
-      setShippingInfos((prev) => [
-        ...prev,
-        {
-          attentionname: "",
-          shippingaddress: "",
-          shippingstate: "",
-          shippingzip: "",
-          shippingcity: "",
-          uniqueCode: "",
-        },
-      ]);
-    };
+  // Function to add a new carrier information entry
+  const addShippingInfo = () => {
+    setShippingInfos((prev) => [
+      ...prev,
+      {
+        attentionname: "",
+        shippingaddress: "",
+        shippingstate: "",
+        shippingzip: "",
+        shippingcity: "",
+        uniqueCode: "",
+      },
+    ]);
+  };
 
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
@@ -460,7 +459,6 @@ const Form: React.FC = () => {
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
   };
 
-
   const newErrors: any = {};
   const validateForm = (): boolean => {
     if (!formData.name) newErrors.name = "Name is required.";
@@ -606,7 +604,7 @@ const Form: React.FC = () => {
             carrierInfos: carrierInfos,
             accountFields: accountFields, // Account fields from the IMEI modal
             phoneNumbers: phoneNumbers, // Phone numbers from the IMEI modal
-            shippingAddresses: shippingAddresses,
+            shippingAddresses: shippingInfos,
           },
           {
             headers: {
@@ -620,7 +618,7 @@ const Form: React.FC = () => {
           setIsSubmitted(true);
         }
       } catch (error) {
-        console.error("There was an error creating the order:", error);
+        console.error("There was an error creating the order:", error.message);
         setErrors((prev) => ({
           ...prev,
           submit: "An error occurred while creating the order.",
@@ -630,7 +628,13 @@ const Form: React.FC = () => {
   };
 
   const goToNextTab = () => {
-    const tabOrder = ["sellerInfo", "accountInfo", "paymentShipping", "carrierInfo", "additionalInfo"];
+    const tabOrder = [
+      "sellerInfo",
+      "accountInfo",
+      "paymentShipping",
+      "carrierInfo",
+      "additionalInfo",
+    ];
     const currentIndex = tabOrder.indexOf(activeTab);
     if (currentIndex < tabOrder.length - 1) {
       setActiveTab(tabOrder[currentIndex + 1]);
@@ -647,7 +651,8 @@ const Form: React.FC = () => {
       case "sellerInfo":
         if (!formData.name) newErrors.name = "Name is required.";
         if (!formData.email) newErrors.email = "Email is required.";
-        if (!formData.phonenumber) newErrors.phonenumber = "Phone Number is required.";
+        if (!formData.phonenumber)
+          newErrors.phonenumber = "Phone Number is required.";
         break;
 
       case "accountInfo":
@@ -655,8 +660,7 @@ const Form: React.FC = () => {
           newErrors.agreementtype = "Agreement Type is required.";
         if (formData.agreementtype === "acda" && !formData.eip)
           newErrors.eip = "EIP Limit is required.";
-        if (!formData.promotion)
-          newErrors.promotion = "Promotion is required.";
+        if (!formData.promotion) newErrors.promotion = "Promotion is required.";
         if (formData.promotion === "accepted" && !formData.phonemodel)
           newErrors.phonemodel = "Phone Model is required.";
         if (formData.promotion === "accepted" && !formData.imeistatus)
@@ -668,11 +672,13 @@ const Form: React.FC = () => {
 
         // Screen Blur or Display Defects?
         if (formData.promotion === "accepted" && !formData.screenDefects)
-          newErrors.screenDefects = "Screen Blur or Display Defects status is required.";
+          newErrors.screenDefects =
+            "Screen Blur or Display Defects status is required.";
 
         // Factory Reset & Log out of All Accounts?
         if (formData.promotion === "accepted" && !formData.factoryReset)
-          newErrors.factoryReset = "Factory Reset & Log out of all Accounts status is required.";
+          newErrors.factoryReset =
+            "Factory Reset & Log out of all Accounts status is required.";
         if (!formData.paperless)
           newErrors.paperless = "Paperless Billing is required.";
         if (!formData.businesslegalname)
@@ -686,8 +692,10 @@ const Form: React.FC = () => {
         if (!formData.businesszip)
           newErrors.businesszip = "Business Zip is required.";
         if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-        if (!formData.locationid) newErrors.locationid = "Location ID is required.";
-        if (!formData.contactname) newErrors.contactname = "Contact Name is required.";
+        if (!formData.locationid)
+          newErrors.locationid = "Location ID is required.";
+        if (!formData.contactname)
+          newErrors.contactname = "Contact Name is required.";
         if (!formData.contactphone)
           newErrors.contactphone = "Contact Phone is required.";
         if (!formData.contactemail)
@@ -697,8 +705,10 @@ const Form: React.FC = () => {
         if (!formData.creditcardpayment)
           newErrors.creditcardpayment = "Credit Card Payment is required.";
         if (formData.creditcardpayment === "yes") {
-          if (!formData.cardNumber) newErrors.cardNumber = "Card number is required.";
-          if (!formData.cardExpiry) newErrors.cardExpiry = "Expiry date is required.";
+          if (!formData.cardNumber)
+            newErrors.cardNumber = "Card number is required.";
+          if (!formData.cardExpiry)
+            newErrors.cardExpiry = "Expiry date is required.";
           if (!formData.cardCVC) newErrors.cardCVC = "CVC is required.";
         }
         if (!formData.singleormultiaddresshipment)
@@ -712,21 +722,32 @@ const Form: React.FC = () => {
           newErrors.shippingcity = "Shipping City is required.";
         if (!formData.shippingstate)
           newErrors.shippingstate = "Shipping State is required.";
-        if (!formData.shippingzip) newErrors.shippingzip = "Shipping Zip is required.";
-        if (!formData.companyname) newErrors.companyname = "Company Name is required.";
-        if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
-        if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
-        if (!formData.existingBAN) newErrors.existingBAN = "Existing BAN is required.";
-        if (!formData.existingFAN) newErrors.existingFAN = "Existing FAN is required.";
+        if (!formData.shippingzip)
+          newErrors.shippingzip = "Shipping Zip is required.";
+        if (!formData.companyname)
+          newErrors.companyname = "Company Name is required.";
+        if (!formData.dealerCode)
+          newErrors.dealerCode = "Dealer Code is required.";
+        if (!formData.agentCode)
+          newErrors.agentCode = "Agent Code is required.";
+        if (!formData.existingBAN)
+          newErrors.existingBAN = "Existing BAN is required.";
+        if (!formData.existingFAN)
+          newErrors.existingFAN = "Existing FAN is required.";
         break;
 
       case "paymentShipping":
         if (!formData.singleormultiaddresshipment)
-          newErrors.singleormultiaddresshipment = "Single or Multi Address Shipment is required.";
-        if (!formData.shippingaddress) newErrors.shippingaddress = "Shipping Address is required.";
-        if (!formData.shippingcity) newErrors.shippingcity = "Shipping City is required.";
-        if (!formData.shippingstate) newErrors.shippingstate = "Shipping State is required.";
-        if (!formData.shippingzip) newErrors.shippingzip = "Shipping Zip is required.";
+          newErrors.singleormultiaddresshipment =
+            "Single or Multi Address Shipment is required.";
+        if (!formData.shippingaddress)
+          newErrors.shippingaddress = "Shipping Address is required.";
+        if (!formData.shippingcity)
+          newErrors.shippingcity = "Shipping City is required.";
+        if (!formData.shippingstate)
+          newErrors.shippingstate = "Shipping State is required.";
+        if (!formData.shippingzip)
+          newErrors.shippingzip = "Shipping Zip is required.";
         break;
 
       case "carrierInfo":
@@ -739,7 +760,8 @@ const Form: React.FC = () => {
             newErrors[`accountnumber_${index}`] = "Account Number is required.";
           }
           if (!info.pinorpassword) {
-            newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
+            newErrors[`pinorpassword_${index}`] =
+              "Pin or Password is required.";
           }
           if (!info.ssnortaxid) {
             newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
@@ -748,7 +770,8 @@ const Form: React.FC = () => {
             newErrors[`billingname_${index}`] = "Billing Name is required.";
           }
           if (!info.billingaddress) {
-            newErrors[`billingaddress_${index}`] = "Billing Address is required.";
+            newErrors[`billingaddress_${index}`] =
+              "Billing Address is required.";
           }
           if (!info.billingcity) {
             newErrors[`billingcity_${index}`] = "Billing City is required.";
@@ -760,15 +783,19 @@ const Form: React.FC = () => {
             newErrors[`billingzip_${index}`] = "Billing Zip is required.";
           }
           if (!info.authorizedname) {
-            newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
+            newErrors[`authorizedname_${index}`] =
+              "Authorized Name is required.";
           }
         });
         break;
 
       case "additionalInfo":
-        if (!formData.companyname) newErrors.companyname = "Company Name is required.";
-        if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
-        if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
+        if (!formData.companyname)
+          newErrors.companyname = "Company Name is required.";
+        if (!formData.dealerCode)
+          newErrors.dealerCode = "Dealer Code is required.";
+        if (!formData.agentCode)
+          newErrors.agentCode = "Agent Code is required.";
         break;
 
       default:
@@ -780,7 +807,7 @@ const Form: React.FC = () => {
   };
 
   const handleNext = () => {
-    if (validateTab(activeTab)) {
+    setActiveTab((prevTab) => {
       const tabOrder = [
         "sellerInfo",
         "accountInfo",
@@ -788,13 +815,13 @@ const Form: React.FC = () => {
         "carrierInfo",
         "additionalInfo",
       ];
-      const currentIndex = tabOrder.indexOf(activeTab);
+      const currentIndex = tabOrder.indexOf(prevTab);
       if (currentIndex < tabOrder.length - 1) {
-        setActiveTab(tabOrder[currentIndex + 1]);
+        return tabOrder[currentIndex + 1];
       }
-    }
+      return prevTab;
+    });
   };
-
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -820,7 +847,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                  )}
                 </div>
 
                 <div>
@@ -833,7 +862,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -870,7 +901,9 @@ const Form: React.FC = () => {
 
                 <div>
                   {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
-                  <h6 className="text-[#3C3C3C] text-start">SANS Partner ID:</h6>
+                  <h6 className="text-[#3C3C3C] text-start">
+                    SANS Partner ID:
+                  </h6>
                   <input
                     type="text"
                     name="agentCode"
@@ -925,7 +958,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2"
                   />
-                  {errors.eip && <p className="text-red-500 text-sm">{errors.eip}</p>}
+                  {errors.eip && (
+                    <p className="text-red-500 text-sm">{errors.eip}</p>
+                  )}
                 </div>
               )}
               {/* Promotions */}
@@ -965,10 +1000,11 @@ const Form: React.FC = () => {
                       <option value="google">Google</option>
                     </select>
                     {errors.phonemodel && (
-                      <p className="text-red-500 text-sm">{errors.phonemodel}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.phonemodel}
+                      </p>
                     )}
                   </div>
-
 
                   {/* IMEI Status (Phone Turned On or Off) */}
                   <div className="mt-4">
@@ -1000,7 +1036,9 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.imeistatus && (
-                      <p className="text-red-500 text-sm">{errors.imeistatus}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.imeistatus}
+                      </p>
                     )}
                   </div>
 
@@ -1068,7 +1106,9 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.screenDefects && (
-                      <p className="text-red-500 text-sm">{errors.screenDefects}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.screenDefects}
+                      </p>
                     )}
                   </div>
 
@@ -1102,7 +1142,9 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.factoryReset && (
-                      <p className="text-red-500 text-sm">{errors.factoryReset}</p>
+                      <p className="text-red-500 text-sm">
+                        {errors.factoryReset}
+                      </p>
                     )}
                   </div>
                 </div>
@@ -1153,7 +1195,9 @@ const Form: React.FC = () => {
                   style={{ resize: "none" }}
                 ></textarea>
                 {errors.specialinstruction && (
-                  <p className="text-red-500 text-sm">{errors.specialinstruction}</p>
+                  <p className="text-red-500 text-sm">
+                    {errors.specialinstruction}
+                  </p>
                 )}
               </div>
             </div>
@@ -1294,7 +1338,9 @@ const Form: React.FC = () => {
                   <option value="no">No</option>
                 </select>
                 {errors.creditcardpayment && (
-                  <p className="text-danger text-sm">{errors.creditcardpayment}</p>
+                  <p className="text-danger text-sm">
+                    {errors.creditcardpayment}
+                  </p>
                 )}
               </div>
 
@@ -1303,7 +1349,10 @@ const Form: React.FC = () => {
                 <div className="w-full md:col-span-3 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardNumber">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardNumber"
+                      >
                         Card Number
                       </label>
                       <input
@@ -1315,12 +1364,17 @@ const Form: React.FC = () => {
                         placeholder="Enter your card number"
                       />
                       {errors.cardNumber && (
-                        <p className="text-danger text-sm">{errors.cardNumber}</p>
+                        <p className="text-danger text-sm">
+                          {errors.cardNumber}
+                        </p>
                       )}
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardExpiry">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardExpiry"
+                      >
                         Expiry Date (MM/YY)
                       </label>
                       <input
@@ -1332,12 +1386,17 @@ const Form: React.FC = () => {
                         placeholder="MM/YY"
                       />
                       {errors.cardExpiry && (
-                        <p className="text-danger text-sm">{errors.cardExpiry}</p>
+                        <p className="text-danger text-sm">
+                          {errors.cardExpiry}
+                        </p>
                       )}
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardCVC">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardCVC"
+                      >
                         CVC
                       </label>
                       <input
@@ -1493,7 +1552,9 @@ const Form: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setShippingInfos((prev) => prev.filter((_, i) => i !== index));
+                        setShippingInfos((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        );
                       }}
                       className="text-red-500 hover:text-red-700 text-sm md:text-base"
                     >
@@ -1511,7 +1572,9 @@ const Form: React.FC = () => {
                   { name: "shippingcity", label: "Shipping City" },
                 ].map(({ name, label }) => (
                   <div className="mb-4" key={name}>
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      {label}
+                    </h6>
                     <input
                       type="text"
                       name={name}
@@ -1530,7 +1593,9 @@ const Form: React.FC = () => {
 
                 {/* Unique Code (Read-Only Field) */}
                 <div className="mb-4">
-                  <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Unique Code
+                  </h6>
                   <input
                     type="text"
                     name="uniqueCode"
@@ -1553,7 +1618,7 @@ const Form: React.FC = () => {
               className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
             >
               + Add Another Shipping Information
-            </button>      
+            </button>
           </div>
         );
 
@@ -1579,7 +1644,9 @@ const Form: React.FC = () => {
                     <button
                       type="button"
                       onClick={() => {
-                        setCarrierInfos((prev) => prev.filter((_, i) => i !== index));
+                        setCarrierInfos((prev) =>
+                          prev.filter((_, i) => i !== index)
+                        );
                       }}
                       className="text-red-500 hover:text-red-700 text-sm md:text-base"
                     >
@@ -1626,7 +1693,9 @@ const Form: React.FC = () => {
                   { name: "authorizedname", label: "Authorized Name" },
                 ].map(({ name, label }) => (
                   <div className="mb-4" key={name}>
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">{label}</h6>
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      {label}
+                    </h6>
                     <input
                       type="text"
                       name={name}
@@ -1645,7 +1714,9 @@ const Form: React.FC = () => {
 
                 {/* Unique Code (Read-Only Field) */}
                 <div className="mb-4">
-                  <h6 className="text-sm font-medium text-gray-700 mb-2">Unique Code</h6>
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Unique Code
+                  </h6>
                   <input
                     type="text"
                     name="uniqueCode"
@@ -1708,7 +1779,9 @@ const Form: React.FC = () => {
                     disabled={!isFirstOrder && !!formData.accountnumber}
                   />
                   {errors.accountnumber && (
-                    <p className="text-danger text-sm">{errors.accountnumber}</p>
+                    <p className="text-danger text-sm">
+                      {errors.accountnumber}
+                    </p>
                   )}
                   {isFirstOrder && (
                     <div className="flex justify-start">
@@ -1724,6 +1797,8 @@ const Form: React.FC = () => {
                   onAccountFieldsChange={handleAccountFieldsChange}
                   onPhoneNumbersChange={handlePhoneNumbersChange}
                   onShippingAddressesChange={handleShippingAddressesChange}
+                  shippingInfos={shippingInfos} // Pass shipping information
+                  carrierInfos={carrierInfos} // Pass carrier information
                 />
               </div>
 
@@ -1738,17 +1813,17 @@ const Form: React.FC = () => {
                   onChange={handleRatePlanChange}
                   className="border-b h-10 border-gray-300 w-full"
                 >
-                  <option value="">UYW 2.0 Advanced</option>
-                  <option value="">UYW 2.0 Premium</option>
-                  <option value="">Turnkey BYOD</option>
-                  <option value="">Turnkey Standard</option>
-                  <option value="">Turnkey Premium</option>
-                  <option value="">Unlimited Tablet</option>
-                  <option value="">Unlimited Watch</option>
-                  <option value="">AWB / Hotspot Core</option>
-                  <option value="basic">AWB / Hotspot Pro</option>
-                  <option value="premium">AWB / Hotspot Ultra</option>
-                  <option value="unlimited">AT&T Internet Air</option>
+                  <option value="UYW 2.0 Advanced">UYW 2.0 Advanced</option>
+                  <option value="UYW 2.0 Premium">UYW 2.0 Premium</option>
+                  <option value="Turnkey BYOD">Turnkey BYOD</option>
+                  <option value="Turnkey Standard">Turnkey Standard</option>
+                  <option value="Turnkey Premium">Turnkey Premium</option>
+                  <option value="Unlimited Tablet">Unlimited Tablet</option>
+                  <option value="Unlimited Watch">Unlimited Watch</option>
+                  <option value="AWB / Hotspot Core">AWB / Hotspot Core</option>
+                  <option value="AWB / Hotspot Pro">AWB / Hotspot Pro</option>
+                  <option value="AWB / Hotspot Ultra">AWB / Hotspot Ultra</option>
+                  <option value="AT&T Internet Air">AT&T Internet Air</option>
                 </select>
               </div>
 
@@ -1858,8 +1933,6 @@ const Form: React.FC = () => {
             </div>
           </div>
         );
-
-
 
         return (
           <div>
@@ -2041,12 +2114,15 @@ const Form: React.FC = () => {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 w-full md:w-auto ${activeTab === tab.key ? "text-white" : "bg-gray-300"} rounded`}
+                className={`px-4 py-2 w-full md:w-auto ${
+                  activeTab === tab.key ? "text-white" : "bg-gray-300"
+                } rounded`}
                 style={
                   activeTab === tab.key
                     ? {
-                      background: "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
-                    }
+                        background:
+                          "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
+                      }
                     : {}
                 }
               >
@@ -2072,25 +2148,26 @@ const Form: React.FC = () => {
                 type="button"
                 onClick={handleNext} // Call `handleNext` to validate the tab and navigate
                 style={{
-                  background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                  background:
+                    "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
                 }}
                 className="text-white px-6 py-2 rounded"
               >
                 Next
               </button>
-
             )}
           </div>
 
           {/* Success Message */}
           {isSubmitted && (
-            <p className="text-center text-green-500 mt-4">Form Submitted Successfully!</p>
+            <p className="text-center text-green-500 mt-4">
+              Form Submitted Successfully!
+            </p>
           )}
         </div>
       </section>
     </form>
   );
-
 };
 
 export default Form;
