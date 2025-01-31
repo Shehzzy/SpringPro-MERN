@@ -415,7 +415,7 @@ const Header = () => {
     {activeModal === 'agencies' && (
       <div className="overflow-scroll">
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[2900]">
-          <div className="relative w-full md:max-w-[1000px] max-h-[100vh] overflow-y-auto">            
+          <div className="relative w-full max-h-[100vh] overflow-y-auto py-6">
             <div className="md:hidden bg-white flex w-full container py-3 px-6 items-center justify-between">              
               <div className="flex items-center">
                 <Link onClick={() => handleLinkClick("/")} to={"/"}>
@@ -430,7 +430,7 @@ const Header = () => {
               </button>
             </div>
 
-            <div className="md:flex-row pt-2 px-3 flex-col flex w-full">                            
+            <div className="md:flex-row py-3 px-3 flex-col flex w-full">
               <div className="w-full md:w-[450px] bg-white  rounded-2xl py-4">
                 <div style={{borderBottom: "2px solid #F2F2F2"}} className='pb-3'>
                   <Link onClick={() => handleLinkClick("/internet-wan")} to={"/"} className="text-black  text-md text-md font flex items-center px-4 no-underline">Home </Link>
@@ -574,7 +574,7 @@ const Header = () => {
     {activeModal === 'managements' && (
       <div className="overflow-scroll">
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[2900]">
-          <div className="relative w-full md:max-w-[1000px] max-h-[100vh] overflow-y-auto">            
+          <div className="relative w-full max-h-[100vh] overflow-y-auto py-6">
             <div className="md:hidden bg-white flex w-full container py-3 px-6 items-center justify-between">              
               <div className="flex items-center">
                 <Link onClick={() => handleLinkClick("/")} to={"/"}>
@@ -589,7 +589,7 @@ const Header = () => {
               </button>
             </div>
 
-            <div className="md:flex-row pt-2 px-3 flex-col flex w-full">                            
+            <div className="md:flex-row py-3 px-3 flex-col flex w-full">
               <div className="w-full md:w-[450px] bg-white  rounded-2xl py-4">
                 <div style={{borderBottom: "2px solid #F2F2F2"}} className='pb-3'>
                   <Link onClick={() => handleLinkClick("/internet-wan")} to={"/"} className="text-black  text-md text-md font flex items-center px-4 no-underline">Home </Link>
@@ -822,7 +822,7 @@ const Header = () => {
     {activeModal === 'technology' && (
       <div className="overflow-scroll">
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-[2900]">
-          <div className="relative w-full md:max-w-[1000px] max-h-[100vh] overflow-y-auto">            
+          <div className="relative w-full max-h-[100vh] overflow-y-auto py-6">
             <div className="md:hidden bg-white flex w-full container py-3 px-6 items-center justify-between">              
               <div className="flex items-center">
                 <Link onClick={() => handleLinkClick("/")} to={"/"}>
@@ -837,7 +837,7 @@ const Header = () => {
               </button>
             </div>
 
-            <div className="md:flex-row pt-2 px-3 flex-col flex w-full">                            
+            <div className="md:flex-row py-3 px-3 flex-col flex w-full">                            
               <div className="w-full md:w-[450px] bg-white  rounded-2xl py-4">
                 <div style={{borderBottom: "2px solid #F2F2F2"}} className='pb-3'>
                   <Link onClick={() => handleLinkClick("/internet-wan")} to={"/"} className="text-black  text-md text-md font flex items-center px-4 no-underline">Home </Link>
