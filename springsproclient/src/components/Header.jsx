@@ -245,7 +245,7 @@ const Header = () => {
                   <a href="#" className="text-black font flex tracking-wide items-center px-4 no-underline">About</a>
                 </div>
                 <div style={{borderBottom: "2px solid #F2F2F2"}} className='py-3'>
-                <a onClick={() => openModal('agencies')} class="text-black text-md font flex justify-between items-center px-4 no-underline">
+                <a onClick={() => openModal('agencies')} className="text-black text-md font flex justify-between items-center px-4 no-underline">
                   First Responder Agency
                   <i className="fa-solid text-black text-xs fa-chevron-down"></i>
                 </a>

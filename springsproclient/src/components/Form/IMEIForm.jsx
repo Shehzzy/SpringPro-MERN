@@ -127,6 +127,41 @@ function IMEIForm({
     }
   };
 
+  // Handle form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    const orderData = {
+      imeiNumbers: imeiNumbers,
+      accountFields: accountFields,
+      phoneNumbers: accountFields.map(account => ({
+        phoneNumber: account.phoneNumber,
+        carrier: account.carrier,
+      })),
+      shippingAddresses: shippingAddresses,
+    };
+
+    try {
+      const response = await axios.post(
+        "https://springprobackend-production.up.railway.app/api/order/create-order",
+        orderData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 201) {
+        console.log("Order created successfully:", response.data);
+        // Handle success (e.g., close modal, reset form, etc.)
+      }
+    } catch (error) {
+      console.error("Error creating order:", error);
+      // Handle error (e.g., show error message)
+    }
+  };
+
   return (
     <div>
       <button
@@ -151,106 +186,115 @@ function IMEIForm({
             </h2>
 
             {/* Account, Phone, IMEI & Shipping Fields */}
-            <div className="mt-6">
-              {accountFields.map((account, index) => (
-                <div key={index} className="space-y-4">
-                  <div className="flex justify-between mt-4">
-                    <h3 className="text-2xl font-bold text-center">
-                      {index === 0 ? "Add Info" : `Add Info ${index + 1}`}
-                    </h3>
-                    {/* Remove Row Button */}
-                    {accountFields.length > 1 && (
-                      <button
-                        style={{
-                          background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                        }}
-                        type="button"
-                        onClick={() => handleRemoveRow(index)}
-                        className="font-bold text-xs text-white transition-all px-6 py-2 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+            <form onSubmit={handleSubmit}>
+              <div className="mt-6">
+                {accountFields.map((account, index) => (
+                  <div key={index} className="space-y-4">
+                    <div className="flex justify-between mt-4">
+                      <h3 className="text-2xl font-bold text-center">
+                        {index === 0 ? "Add Info" : `Add Info ${index + 1}`}
+                      </h3>
+                      {/* Remove Row Button */}
+                      {accountFields.length > 1 && (
+                        <button
+                          style={{
+                            background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                          }}
+                          type="button"
+                          onClick={() => handleRemoveRow(index)}
+                          className="font-bold text-xs text-white transition-all px-6 py-2 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                         >
                           REMOVE ROW
-                      </button>
-                      
-                    )}
-                  </div>                  
-                  {/* Account Number and Port Out PIN */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Account Number"
-                      value={account.accountNumber}
-                      onChange={(e) => handleFieldChange(index, "accountNumber", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      placeholder="Port Out PIN"
-                      value={account.portOutPin}
-                      onChange={(e) => handleFieldChange(index, "portOutPin", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    />
-                  </div>
+                        </button>
+                      )}
+                    </div>
+                    {/* Account Number and Port Out PIN */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Account Number"
+                        value={account.accountNumber}
+                        onChange={(e) => handleFieldChange(index, "accountNumber", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Port Out PIN"
+                        value={account.portOutPin}
+                        onChange={(e) => handleFieldChange(index, "portOutPin", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                    </div>
 
-                  {/* Phone Number and Carrier */}
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      placeholder="Phone Number"
-                      value={account.phoneNumber}
-                      onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    />
-                    <input
-                      type="text"
-                      placeholder="IMEI Number"
-                      value={account.imei}
-                      onChange={(e) => handleFieldChange(index, "imei", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    />
-                  </div>
+                    {/* Phone Number and Carrier */}
+                    <div className="flex gap-2">
+                      <input
+                        type="text"
+                        placeholder="Phone Number"
+                        value={account.phoneNumber}
+                        onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                      <input
+                        type="text"
+                        placeholder="IMEI Number"
+                        value={account.imei}
+                        onChange={(e) => handleFieldChange(index, "imei", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                    </div>
 
-                  {/* IMEI Number */}
-                  <div className="flex gap-2">
-                    <select
-                      value={account.carrier}
-                      onChange={(e) => handleFieldChange(index, "carrier", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    >
-                      <option value="">Select Carrier</option>
-                      {/* Add carrier options here */}
-                    </select>                    
-                    {/* Shipping Address */}
-                    <select
-                      value={account.shippingAddress}
-                      onChange={(e) => handleFieldChange(index, "shippingAddress", e.target.value)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    >
-                      <option value="">Select Shipping Address</option>
-                      {shippingAddresses.map((address, idx) => (
-                        <option key={idx} value={address}>
-                          {address}
-                        </option>
-                      ))}
-                    </select>                    
+                    {/* Carrier and Shipping Address */}
+                    <div className="flex gap-2">
+                      <select
+                        value={account.carrier}
+                        onChange={(e) => handleFieldChange(index, "carrier", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      >
+                        <option value="">Select Carrier</option>
+                        {/* Add carrier options here */}
+                      </select>
+                      <select
+                        value={account.shippingAddress}
+                        onChange={(e) => handleFieldChange(index, "shippingAddress", e.target.value)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      >
+                        <option value="">Select Shipping Address</option>
+                        {shippingAddresses.map((address, idx) => (
+                          <option key={idx} value={address}>
+                            {address}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                   </div>
+                ))}
 
+                {/* Add New Button */}
+                <div className="flex justify-center mt-4">
+                  <button
+                    type="button"
+                    onClick={handleAddRow}
+                    style={{
+                      background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
+                    }}
+                    className="font-bold text-sm text-white transition-all px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                  >
+                    + Add New
+                  </button>
                 </div>
-              ))}
+              </div>
 
-              {/* Add New Button */}
-              <div className="flex justify-center mt-4">
+              {/* Submit Button */}
+              <div className="flex justify-center mt-6">
                 <button
-                  type="button"
-                  onClick={handleAddRow}
-                  style={{
-                    background: "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)"
-                  }}
-                  className="font-bold text-sm text-white transition-all px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
+                  type="submit"
+                  className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
                 >
-                  + Add New
+                  Submit
                 </button>
               </div>
-            </div>
+            </form>
           </div>
         </div>
       )}

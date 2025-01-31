@@ -461,8 +461,8 @@ const Form: React.FC = () => {
   };
 
 
+  const newErrors: any = {};
   const validateForm = (): boolean => {
-    const newErrors: any = {};
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.email) newErrors.email = "Email is required.";
     if (!formData.phonenumber)
@@ -503,19 +503,19 @@ const Form: React.FC = () => {
         newErrors.cardExpiry = "Expiry date is required";
       if (!formData.cardCVC) newErrors.cardCVC = "CVC is required";
     }
-    if (!formData.singleormultiaddresshipment)
-      newErrors.singleormultiaddresshipment =
-        "Single or Multi Address Shipment is required.";
-    if (!formData.attentionname)
-      newErrors.attentionname = "Attention Name is required.";
-    if (!formData.shippingaddress)
-      newErrors.shippingaddress = "Shipping Address is required.";
-    if (!formData.shippingcity)
-      newErrors.shippingcity = "Shipping City is required.";
-    if (!formData.shippingstate)
-      newErrors.shippingstate = "Shipping State is required.";
-    if (!formData.shippingzip)
-      newErrors.shippingzip = "Shipping Zip is required.";
+    // if (!formData.singleormultiaddresshipment)
+    //   newErrors.singleormultiaddresshipment =
+    //     "Single or Multi Address Shipment is required.";
+    // if (!formData.attentionname)
+    //   newErrors.attentionname = "Attention Name is required.";
+    // if (!formData.shippingaddress)
+    //   newErrors.shippingaddress = "Shipping Address is required.";
+    // if (!formData.shippingcity)
+    //   newErrors.shippingcity = "Shipping City is required.";
+    // if (!formData.shippingstate)
+    //   newErrors.shippingstate = "Shipping State is required.";
+    // if (!formData.shippingzip)
+    //   newErrors.shippingzip = "Shipping Zip is required.";
     // if (!formData.currentwirelesscarrier)
     //   newErrors.currentwirelesscarrier =
     //     "Current Wireless Carrier is required.";
@@ -583,6 +583,8 @@ const Form: React.FC = () => {
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    console.log("Form Data before submission:", formData);
+    console.log(newErrors);
     if (validateForm()) {
       try {
         const token = localStorage.getItem("jwt_token");
