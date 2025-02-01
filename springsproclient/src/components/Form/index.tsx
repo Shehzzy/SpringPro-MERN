@@ -266,6 +266,7 @@ const Form: React.FC = () => {
     agreementtype: "",
     eip: "",
     promotion: "",
+    atntaccount:"",
     phonemodel: "",
     imeistatus: "",
     noCracks: "",
@@ -470,6 +471,7 @@ const Form: React.FC = () => {
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
     if (!formData.promotion) newErrors.promotion = "Promotion is required.";
+    if (!formData.atntaccount) newErrors.atntaccount = "Select from add AT&T Account.";
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
     if (!formData.businesslegalname)
@@ -483,7 +485,7 @@ const Form: React.FC = () => {
     if (!formData.businesszip)
       newErrors.businesszip = "Business Zip is required.";
     if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-    if (!formData.locationid) newErrors.locationid = "Location ID is required.";
+    // if (!formData.locationid) newErrors.locationid = "Location ID is required.";
     if (!formData.contactname)
       newErrors.contactname = "Contact Name is required.";
     if (!formData.contactphone)
@@ -692,8 +694,8 @@ const Form: React.FC = () => {
         if (!formData.businesszip)
           newErrors.businesszip = "Business Zip is required.";
         if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-        if (!formData.locationid)
-          newErrors.locationid = "Location ID is required.";
+        // if (!formData.locationid)
+        //   newErrors.locationid = "Location ID is required.";
         if (!formData.contactname)
           newErrors.contactname = "Contact Name is required.";
         if (!formData.contactphone)
@@ -980,6 +982,23 @@ const Form: React.FC = () => {
                 )}
               </div>
 
+              {/* Add AT&T Account */}
+              <div className="w-full">
+                <select
+                  name="atntaccount"
+                  value={formData.atntaccount}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 w-full"
+                >
+                  <option value="">Add AT&T Account</option>
+                  <option value="accepted">Yes</option>
+                  <option value="declined">No</option>
+                </select>
+                {errors.atntaccount && (
+                  <p className="text-red-500 text-sm">{errors.atntaccount}</p>
+                )}
+              </div>              
+
               {/* Phone Model Section */}
               {formData.promotion === "accepted" && (
                 <div className="col-span-full">
@@ -1151,7 +1170,7 @@ const Form: React.FC = () => {
               )}
 
               {/* Paperless Billing */}
-              <div className="w-full mt-4">
+              <div className="w-full mt-2">
                 <h4 className="text-lg text-gray-800 font-semibold mb-2">
                   Paperless Billing
                 </h4>
@@ -1185,13 +1204,16 @@ const Form: React.FC = () => {
               </div>
 
               {/* Special Instructions */}
-              <div className="w-full">
+              <div className="w-full mt-2">
+                <h4 className="text-lg text-gray-800 font-semibold mb-2">
+                  Special Instruction
+                </h4>                
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
                   className="w-full border border-gray-300 rounded-lg p-2"
                   onChange={handleChange}
-                  placeholder="Enter Special Instruction"
+                  placeholder="Type here..."
                   style={{ resize: "none" }}
                 ></textarea>
                 {errors.specialinstruction && (
@@ -1212,11 +1234,12 @@ const Form: React.FC = () => {
             )}
 
             {/* Secondary Heading */}
+            {formData.atntaccount === "accepted" && (
+            <div>
             <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
               AT&T Account Information
             </h2>
-
-            {/* Account Information Grid */}
+            
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {[
                 {
@@ -1264,11 +1287,11 @@ const Form: React.FC = () => {
                   label: "Contact Email",
                   placeholder: "Enter Contact Email",
                 },
-                {
-                  name: "locationid",
-                  label: "Location ID",
-                  placeholder: "Enter Location ID",
-                },
+                // {
+                //   name: "locationid",
+                //   label: "Location ID",
+                //   placeholder: "Enter Location ID",
+                // },
                 {
                   name: "existingBAN",
                   label: "Existing BAN",
@@ -1297,7 +1320,8 @@ const Form: React.FC = () => {
                   )}
                 </div>
               ))}
-            </div>
+            </div></div>
+            )}
           </div>
         );
       case "paymentShipping":
