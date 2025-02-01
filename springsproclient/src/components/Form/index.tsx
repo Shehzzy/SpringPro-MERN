@@ -664,7 +664,7 @@ const Form: React.FC = () => {
         if (formData.promotion === "accepted" && !formData.phonemodel)
           newErrors.phonemodel = "Phone Model is required.";
         if (formData.promotion === "accepted" && !formData.imeistatus)
-          newErrors.imeistatus = "IMEI Status is required.";
+          newErrors.imeistatus = "Device Status is required.";
 
         // Phone Has No Cracks?
         if (formData.promotion === "accepted" && !formData.noCracks)
@@ -1006,10 +1006,10 @@ const Form: React.FC = () => {
                     )}
                   </div>
 
-                  {/* IMEI Status (Phone Turned On or Off) */}
+                  {/* Device Status (Phone Turned On or Off) */}
                   <div className="mt-4">
                     <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      IMEI Status (Phone Turned On or Off)
+                      Device Status (Phone Turned On or Off)
                     </h6>
                     <div className="grid grid-cols-2 gap-4">
                       <label className="flex items-center space-x-2">
@@ -1545,7 +1545,7 @@ const Form: React.FC = () => {
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
                   {index > 0 && (
                     <h4 className="text-lg font-semibold">
-                      Shipping Port Info {index + 1}
+                      Shipping Port Information {index + 1}
                     </h4>
                   )}
                   {index > 0 && (
