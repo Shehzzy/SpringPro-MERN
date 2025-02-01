@@ -1170,7 +1170,7 @@ const Form: React.FC = () => {
               )}
 
               {/* Paperless Billing */}
-              <div className="w-full mt-2">
+              {/* <div className="w-full mt-2">
                 <h4 className="text-lg text-gray-800 font-semibold mb-2">
                   Paperless Billing
                 </h4>
@@ -1201,7 +1201,7 @@ const Form: React.FC = () => {
                 {errors.paperless && (
                   <p className="text-red-500 text-sm">{errors.paperless}</p>
                 )}
-              </div>
+              </div> */}
 
               {/* Special Instructions */}
               <div className="w-full mt-2">
@@ -1332,6 +1332,24 @@ const Form: React.FC = () => {
               Order Payment Options
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+
+              {/* Paperless Billing */}
+              <div className="w-full">
+                <select
+                  name="paperless"
+                  value={formData.paperless}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="">Paperless Billing</option>
+                  <option value="accepted">Accepted</option>
+                  <option value="declined">Declined</option>
+                </select>
+                {errors.paperless && (
+                  <p className="text-danger text-sm">{errors.paperless}</p>
+                )}
+              </div>
+
               {/* Bill to Mobile */}
               <div className="w-full">
                 <select
@@ -1557,13 +1575,13 @@ const Form: React.FC = () => {
               </button>
             </div> */}
 
-            <h3 className="text-xl md:text-2xl text-gray-800 font-semibold my-2">
+            <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mt-6">
               Order Shipping Information
             </h3>
             {shippingInfos.map((info, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-b pb-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 border-b pb-6"
               >
                 {/* Header with Remove Button */}
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
