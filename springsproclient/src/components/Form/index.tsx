@@ -965,22 +965,6 @@ const Form: React.FC = () => {
                   )}
                 </div>
               )}
-              {/* Promotions */}
-              <div className="w-full">
-                <select
-                  name="promotion"
-                  value={formData.promotion}
-                  onChange={handleChange}
-                  className="border-b h-10 border-gray-300 w-full"
-                >
-                  <option value="">Trade In Promotions</option>
-                  <option value="accepted">Yes</option>
-                  <option value="declined">No</option>
-                </select>
-                {errors.promotion && (
-                  <p className="text-red-500 text-sm">{errors.promotion}</p>
-                )}
-              </div>
 
               {/* Add AT&T Account */}
               <div className="w-full">
@@ -997,177 +981,7 @@ const Form: React.FC = () => {
                 {errors.atntaccount && (
                   <p className="text-red-500 text-sm">{errors.atntaccount}</p>
                 )}
-              </div>              
-
-              {/* Phone Model Section */}
-              {formData.promotion === "accepted" && (
-                <div className="col-span-full">
-                  {/* Phone Model Dropdown */}
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Phone Model
-                    </label>
-                    <select
-                      name="phonemodel"
-                      value={formData.phonemodel}
-                      onChange={handleChange}
-                      className="border-b h-12 border-gray-300 w-full rounded-md"
-                    >
-                      <option value="">Select Phone Model</option>
-                      <option value="iphone">iPhone</option>
-                      <option value="samsung">Samsung</option>
-                      <option value="google">Google</option>
-                    </select>
-                    {errors.phonemodel && (
-                      <p className="text-red-500 text-sm">
-                        {errors.phonemodel}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Device Status (Phone Turned On or Off) */}
-                  <div className="mt-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      Device Status (Phone Turned On or Off)
-                    </h6>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="imeistatus"
-                          value="on"
-                          checked={formData.imeistatus === "on"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        Yes
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="imeistatus"
-                          value="off"
-                          checked={formData.imeistatus === "off"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        No
-                      </label>
-                    </div>
-                    {errors.imeistatus && (
-                      <p className="text-red-500 text-sm">
-                        {errors.imeistatus}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Phone Has No Cracks */}
-                  <div className="mt-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      Phone Has No Cracks?
-                    </h6>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="noCracks"
-                          value="yes"
-                          checked={formData.noCracks === "yes"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        Yes
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="noCracks"
-                          value="no"
-                          checked={formData.noCracks === "no"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        No
-                      </label>
-                    </div>
-                    {errors.noCracks && (
-                      <p className="text-red-500 text-sm">{errors.noCracks}</p>
-                    )}
-                  </div>
-
-                  {/* Screen Blur or Display Defects */}
-                  <div className="mt-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      Screen Blur or Display Defects?
-                    </h6>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="screenDefects"
-                          value="yes"
-                          checked={formData.screenDefects === "yes"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        Yes
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="screenDefects"
-                          value="no"
-                          checked={formData.screenDefects === "no"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        No
-                      </label>
-                    </div>
-                    {errors.screenDefects && (
-                      <p className="text-red-500 text-sm">
-                        {errors.screenDefects}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* Factory Reset & Log out of All Accounts */}
-                  <div className="mt-4">
-                    <h6 className="text-sm font-medium text-gray-700 mb-2">
-                      Factory Reset & Log out of all Accounts?
-                    </h6>
-                    <div className="grid grid-cols-2 gap-4">
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="factoryReset"
-                          value="yes"
-                          checked={formData.factoryReset === "yes"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        Yes
-                      </label>
-                      <label className="flex items-center space-x-2">
-                        <input
-                          type="radio"
-                          name="factoryReset"
-                          value="no"
-                          checked={formData.factoryReset === "no"}
-                          onChange={handleChange}
-                          className="mr-2"
-                        />
-                        No
-                      </label>
-                    </div>
-                    {errors.factoryReset && (
-                      <p className="text-red-500 text-sm">
-                        {errors.factoryReset}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
+              </div>
 
               {/* Paperless Billing */}
               {/* <div className="w-full mt-2">
@@ -1844,36 +1658,59 @@ const Form: React.FC = () => {
                 />
               </div>
 
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
               {/* Rate Plan Selection */}
-              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                Rate Plan Selection
-              </h3>
-              <div className="mb-4">
-                <select
-                  name="ratePlan"
-                  value={formData.ratePlan}
-                  onChange={handleRatePlanChange}
-                  className="border-b h-10 border-gray-300 w-full"
-                >
-                  <option value="UYW 2.0 Advanced">UYW 2.0 Advanced</option>
-                  <option value="UYW 2.0 Premium">UYW 2.0 Premium</option>
-                  <option value="Turnkey BYOD">Turnkey BYOD</option>
-                  <option value="Turnkey Standard">Turnkey Standard</option>
-                  <option value="Turnkey Premium">Turnkey Premium</option>
-                  <option value="Unlimited Tablet">Unlimited Tablet</option>
-                  <option value="Unlimited Watch">Unlimited Watch</option>
-                  <option value="AWB / Hotspot Core">AWB / Hotspot Core</option>
-                  <option value="AWB / Hotspot Pro">AWB / Hotspot Pro</option>
-                  <option value="AWB / Hotspot Ultra">AWB / Hotspot Ultra</option>
-                  <option value="AT&T Internet Air">AT&T Internet Air</option>
-                </select>
+              <div>
+                <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                  Rate Plan Selection
+                </h3>
+                <div className="mb-4">
+                  <select
+                    name="ratePlan"
+                    value={formData.ratePlan}
+                    onChange={handleRatePlanChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="UYW 2.0 Advanced">UYW 2.0 Advanced</option>
+                    <option value="UYW 2.0 Premium">UYW 2.0 Premium</option>
+                    <option value="Turnkey BYOD">Turnkey BYOD</option>
+                    <option value="Turnkey Standard">Turnkey Standard</option>
+                    <option value="Turnkey Premium">Turnkey Premium</option>
+                    <option value="Unlimited Tablet">Unlimited Tablet</option>
+                    <option value="Unlimited Watch">Unlimited Watch</option>
+                    <option value="AWB / Hotspot Core">AWB / Hotspot Core</option>
+                    <option value="AWB / Hotspot Pro">AWB / Hotspot Pro</option>
+                    <option value="AWB / Hotspot Ultra">AWB / Hotspot Ultra</option>
+                    <option value="AT&T Internet Air">AT&T Internet Air</option>
+                  </select>
+                </div>
               </div>
 
               {/* Smartphone Purchase Options */}
-              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                Smartphone Purchase Options
-              </h3>
-              <div className="mb-4">
+              <div>
+                <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                  Smartphone Purchase/Trade Options
+                </h3>
+                
+                {/* Promotions */}
+                <div className="w-full">
+                  <select
+                    name="buyNewPhone"
+                    value={buyNewPhone}
+                    onChange={handleBuyNewPhoneChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="">Select</option>
+                    <option value="yes">I want to buy new smartphone</option>
+                    <option value="accepted">Trade in promotion</option>
+                    <option value="no">No, I don't want a new phone or promotion</option>
+                  </select>
+                  {errors.buyNewPhone && (
+                    <p className="text-red-500 text-sm">{errors.buyNewPhone}</p>
+                  )}
+                </div>
+              </div>
+              {/* <div className="mb-4">
                 <select
                   name="buyNewPhone"
                   value={buyNewPhone}
@@ -1884,7 +1721,178 @@ const Form: React.FC = () => {
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
+              </div> */}
               </div>
+
+              {/* Phone Model Section */}
+              {buyNewPhone === "accepted" && (
+                <div className="col-span-full">
+                  {/* Phone Model Dropdown */}
+                  <div className="mt-6">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Phone Model
+                    </label>
+                    <select
+                      name="phonemodel"
+                      value={formData.phonemodel}
+                      onChange={handleChange}
+                      className="border-b h-12 border-gray-300 w-full rounded-md"
+                    >
+                      <option value="">Select Phone Model</option>
+                      <option value="iphone">iPhone</option>
+                      <option value="samsung">Samsung</option>
+                      <option value="google">Google</option>
+                    </select>
+                    {errors.phonemodel && (
+                      <p className="text-red-500 text-sm">
+                        {errors.phonemodel}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Device Status (Phone Turned On or Off) */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Device Status (Phone Turned On or Off)
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="imeistatus"
+                          value="on"
+                          checked={formData.imeistatus === "on"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="imeistatus"
+                          value="off"
+                          checked={formData.imeistatus === "off"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.imeistatus && (
+                      <p className="text-red-500 text-sm">
+                        {errors.imeistatus}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Phone Has No Cracks */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Phone Has No Cracks?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="noCracks"
+                          value="yes"
+                          checked={formData.noCracks === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="noCracks"
+                          value="no"
+                          checked={formData.noCracks === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.noCracks && (
+                      <p className="text-red-500 text-sm">{errors.noCracks}</p>
+                    )}
+                  </div>
+
+                  {/* Screen Blur or Display Defects */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Screen Blur or Display Defects?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="screenDefects"
+                          value="yes"
+                          checked={formData.screenDefects === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="screenDefects"
+                          value="no"
+                          checked={formData.screenDefects === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.screenDefects && (
+                      <p className="text-red-500 text-sm">
+                        {errors.screenDefects}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Factory Reset & Log out of All Accounts */}
+                  <div className="mt-4">
+                    <h6 className="text-sm font-medium text-gray-700 mb-2">
+                      Factory Reset & Log out of all Accounts?
+                    </h6>
+                    <div className="grid grid-cols-2 gap-4">
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="factoryReset"
+                          value="yes"
+                          checked={formData.factoryReset === "yes"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        Yes
+                      </label>
+                      <label className="flex items-center space-x-2">
+                        <input
+                          type="radio"
+                          name="factoryReset"
+                          value="no"
+                          checked={formData.factoryReset === "no"}
+                          onChange={handleChange}
+                          className="mr-2"
+                        />
+                        No
+                      </label>
+                    </div>
+                    {errors.factoryReset && (
+                      <p className="text-red-500 text-sm">
+                        {errors.factoryReset}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
 
               {buyNewPhone === "yes" && (
                 <div>

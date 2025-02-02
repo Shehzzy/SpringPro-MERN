@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -23,6 +22,8 @@ function IMEIForm({
   const [showModal, setShowModal] = useState(false);
   const [shippingAddresses, setShippingAddresses] = useState([]); // For storing existing shipping addresses
   const [newShippingAddress, setNewShippingAddress] = useState("");
+  const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
+  const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
 
   // Handle changes in Account, Phone, IMEI, and Shipping Address
   const handleFieldChange = (index, field, value) => {
@@ -107,7 +108,7 @@ function IMEIForm({
 
       {showModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 mt-20">
-          <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 p-6 relative z-60 max-h-[80vh] overflow-y -auto">
+          <div className="bg-white rounded-lg shadow-lg w-11/12 md:w-4/5 lg:w-3/4 xl:w-2/3 p-6 relative z-60 max-h-[80vh] overflow-y-auto">
             <button
               className="absolute top-3 right-3 text-gray-500 hover:text-black z-10"
               onClick={() => setShowModal(false)}
@@ -142,6 +143,53 @@ function IMEIForm({
                         </button>
                       )}
                     </div>
+                    {/* Trade Smartphone or Purchase New Smartphone */}
+                    <div className="flex gap-4 mb-6">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="smartphoneOption"
+                          value="trade"
+                          checked={tradeSmartphone}
+                          onChange={() => setTradeSmartphone(true)}
+                        />
+                        <span className="ml-2">Trade Smartphone</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="smartphoneOption"
+                          value="purchase"
+                          checked={!tradeSmartphone}
+                          onChange={() => setTradeSmartphone(false)}
+                        />
+                        <span className="ml-2">Purchase New Smartphone</span>
+                      </label>
+                    </div>
+
+                    {/* Buy Phone Number */}
+                    <div className="flex gap-4 mb-6">
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="buyPhoneNumber"
+                          value="yes"
+                          checked={buyPhoneNumber}
+                          onChange={() => setBuyPhoneNumber(true)}
+                        />
+                        <span className="ml-2">Buy Phone Number (Yes)</span>
+                      </label>
+                      <label className="flex items-center">
+                        <input
+                          type="radio"
+                          name="buyPhoneNumber"
+                          value="no"
+                          checked={!buyPhoneNumber}
+                          onChange={() => setBuyPhoneNumber(false)}
+                        />
+                        <span className="ml-2">Buy Phone Number (No)</span>
+                      </label>
+                    </div>                    
                     {/* Account Number and Port Out PIN */}
                     <div className="flex gap-2">
                       <input
@@ -161,22 +209,26 @@ function IMEIForm({
                     </div>
 
                     {/* Phone Number and Carrier */}
-                    <div className="flex gap-2">
-                      <input
-                        type="text"
-                        placeholder="Phone Number"
-                        value={account.phoneNumber}
-                        onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                      <input
-                        type="text"
-                        placeholder="IMEI Number"
-                        value={account.imei}
-                        onChange={(e) => handleFieldChange(index, "imei", e.target.value)}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      />
-                    </div>
+                    {!buyPhoneNumber && (
+                      <div className="flex gap-2">
+                        <input
+                          type="text"
+                          placeholder="Phone Number"
+                          value={account.phoneNumber}
+                          onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        />
+                        {tradeSmartphone && (
+                          <input
+                            type="text"
+                            placeholder="IMEI Number"
+                            value={account.imei}
+                            onChange={(e) => handleFieldChange(index, "imei", e.target.value)}
+                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          />
+                        )}
+                      </div>
+                    )}
 
                     {/* Carrier and Shipping Address */}
                     <div className="flex gap-2">
@@ -205,6 +257,34 @@ function IMEIForm({
                         ))}
                       </select>
                     </div>
+
+                    {/* Unique Code Dropdown */}
+                    {tradeSmartphone && (
+                      <div className="flex gap-2">
+                        <select
+                          value={uniqueCode}
+                          onChange={(e) => setUniqueCode(e.target.value)}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select Promotion Code</option>
+                          <option value="promo1">Promotion Code 1</option>
+                          <option value="promo2">Promotion Code 2</option>
+                        </select>
+                      </div>
+                    )}
+                    {!tradeSmartphone && (
+                      <div className="flex gap-2">
+                        <select
+                          value={uniqueCode}
+                          onChange={(e) => setUniqueCode(e.target.value)}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select Buy New Phone Code</option>
+                          <option value="newphone1">Buy New Phone Code 1</option>
+                          <option value="newphone2">Buy New Phone Code 2</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                 ))}
 
@@ -224,7 +304,7 @@ function IMEIForm({
               </div>
 
               {/* Submit Button */}
-              <div className=" flex justify-center mt-6">
+              <div className="flex justify-center mt-6">
                 <button
                   type="submit"
                   className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
