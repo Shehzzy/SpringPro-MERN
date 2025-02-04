@@ -11,13 +11,13 @@ function IMEIForm({
   carrierInfos, // New prop for carrier information
 }) {
   const token = localStorage.getItem("jwt_token");
-  const [errorUniqueCode, setErrorUniqueCode] = useState("");
+  const [errorphoneUniqueCode, setErrorphoneUniqueCode] = useState("");
   const [showAllImeis, setShowAllImeis] = useState(false);
   const [imeiInput, setImeiInput] = useState("");
   const [accountFields, setAccountFields] = useState([
     { accountNumber: "", portOutPin: "", phoneNumber: "", carrier: "", imei: "", shippingAddress: "" },
   ]);
-  const [uniqueCode, setUniqueCode] = useState("");
+  const [phoneUniqueCode, setphoneUniqueCode] = useState("");
   const [selectedImeis, setSelectedImeis] = useState(new Set());
   const [showModal, setShowModal] = useState(false);
   const [shippingAddresses, setShippingAddresses] = useState([]); // For storing existing shipping addresses
@@ -68,6 +68,25 @@ function IMEIForm({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+
+    // save this for later
+    // const orderData = {
+    //   imeiNumbers: imeiNumbers,
+    //   accountFields: accountFields.map(account => ({
+    //     accountNumber: account.accountNumber || "", // Default to empty string if not filled
+    //     portOutPin: account.portOutPin || "", // Default to empty string if not filled
+    //     phoneNumber: account.phoneNumber || "", // Default to empty string if not filled
+    //     carrier: account.carrier || "", // Default to empty string if not filled
+    //     imei: account.imei || "", // Default to empty string if not filled
+    //     shippingAddress: account.shippingAddress || "", // Default to empty string if not filled
+    //     tradeSmartphone: tradeSmartphone, // Include trade smartphone state
+    //     buyPhoneNumber: buyPhoneNumber, // Include buy phone number state
+    //     phoneUniqueCode: phoneUniqueCode || "", // Default to empty string if not filled
+    //   })),
+    //   shippingAddresses: shippingAddresses, // Assuming this is already handled
+    // };
+  
+
     const orderData = {
       imeiNumbers: imeiNumbers,
       accountFields: accountFields,
@@ -76,6 +95,10 @@ function IMEIForm({
         carrier: account.carrier,
       })),
       shippingAddresses: shippingAddresses,
+      tradeSmartphone: tradeSmartphone, // Include trade smartphone state
+      buyPhoneNumber: buyPhoneNumber, // Include buy phone number state
+      phoneUniqueCode: phoneUniqueCode || "", // Default to empty string if not filled
+    
     };
 
     try {
@@ -262,8 +285,8 @@ function IMEIForm({
                     {tradeSmartphone && (
                       <div className="flex gap-2">
                         <select
-                          value={uniqueCode}
-                          onChange={(e) => setUniqueCode(e.target.value)}
+                          value={phoneUniqueCode}
+                          onChange={(e) => setphoneUniqueCode(e.target.value)}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select Promotion Code</option>
@@ -275,8 +298,8 @@ function IMEIForm({
                     {!tradeSmartphone && (
                       <div className="flex gap-2">
                         <select
-                          value={uniqueCode}
-                          onChange={(e) => setUniqueCode(e.target.value)}
+                          value={phoneUniqueCode}
+                          onChange={(e) => setphoneUniqueCode(e.target.value)}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select Buy New Phone Code</option>
