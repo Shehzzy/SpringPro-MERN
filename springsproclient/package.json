@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.9",
     "bootstrap": "^5.3.3",
+    "exceljs": "^4.4.0",
     "gsap": "^3.12.5",
     "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
@@ -21,7 +22,9 @@
     "react-scripts": "^5.0.1",
     "sweetalert2": "^11.15.3",
     "swiper": "^11.1.15",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "xlsx": "^0.18.5",
+    "xlsx-style": "^0.8.13"
   },
   "scripts": {
     "start": "react-scripts start",

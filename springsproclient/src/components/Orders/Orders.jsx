@@ -264,7 +264,7 @@ function Orders() {
                   {shippingAddress.shippingzip}
                 </div>
                       </div>
-                  ))) : (
+                  ))) :  (
                     <p>No shipping addresses available</p>
                   )
                 }

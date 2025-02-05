@@ -7,6 +7,43 @@ import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
 
 const Form: React.FC = () => {
+  const [showExistingBAN, setShowExistingBAN] = useState(false);
+  const [showExistingFAN, setShowExistingFAN] = useState(false);
+
+  const [phoneUniqueCode, setPhoneUniqueCode] = useState("");
+  const [promoCode, setPromoCode] = useState("");
+  const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
+  const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
+
+  const handleTradeSmartphoneChange = (value) => {
+    console.log("Updating tradeSmartphone:", value);
+    setTradeSmartphone(value); // This updates the parent state
+  };
+
+  const handlePhoneUniqueCodeChange = (value) => {
+    console.log("Updating phone unique code:", value);
+    setPhoneUniqueCode(value); // This updates the parent state
+  };
+
+  const handleBuyPhoneNumberChange = (value) => {
+    console.log("Updating phone number change:", value);
+    setBuyPhoneNumber(value); // This updates the parent state
+  };
+
+  const handlePromoCodeChange = (value) => {
+    console.log("Updating promo code change:", value);
+    setPromoCode(value); // This updates the parent state
+  };
+  
+  
+  const handleBanFanDropdownChange = (e, fieldName) => {
+    if (fieldName === "existingBAN") {
+      setShowExistingBAN(e.target.value === "yes");
+    }
+    if (fieldName === "existingFAN") {
+      setShowExistingFAN(e.target.value === "yes");
+    }
+  };
   const [activeTab, setActiveTab] = useState("sellerInfo");
   const [ratePlan, setRatePlan] = useState("");
   const [buyNewPhone, setBuyNewPhone] = useState("");
@@ -34,6 +71,8 @@ const Form: React.FC = () => {
       buyNewPhone: value,
     }));
   };
+
+
 
   const handleSmartphoneDetailsChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -266,7 +305,7 @@ const Form: React.FC = () => {
     agreementtype: "",
     eip: "",
     promotion: "",
-    atntaccount:"",
+    atntaccount: "",
     phonemodel: "",
     imeistatus: "",
     noCracks: "",
@@ -312,6 +351,10 @@ const Form: React.FC = () => {
     agentCode: "",
     existingFAN: "",
     existingBAN: "",
+    tradeSmartphone: tradeSmartphone,
+    buyPhoneNumber: buyPhoneNumber,
+    phoneUniqueCode: phoneUniqueCode || "", 
+    promoCode: promoCode
   });
 
   const customerData = {
@@ -396,7 +439,7 @@ const Form: React.FC = () => {
 
         if (response.status === 200) {
           const userData = response.data.orders;
-          console.log(userData, "User Data");
+          // console.log(userData, "User Data");
           if (userData[0]) {
             // Destructure and pick only the desired fields
             const {
@@ -471,7 +514,8 @@ const Form: React.FC = () => {
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
     if (!formData.promotion) newErrors.promotion = "Promotion is required.";
-    if (!formData.atntaccount) newErrors.atntaccount = "Select from add AT&T Account.";
+    if (!formData.atntaccount)
+      newErrors.atntaccount = "Select from add AT&T Account.";
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
     if (!formData.businesslegalname)
@@ -540,10 +584,10 @@ const Form: React.FC = () => {
       newErrors.companyname = "Company Name is required.";
     if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
     if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
-    if (!formData.existingBAN)
-      newErrors.existingBAN = "Existing BAN is required.";
-    if (!formData.existingFAN)
-      newErrors.existingFAN = "Existing FAN is required.";
+    // if (!formData.existingBAN)
+    //   newErrors.existingBAN = "Existing BAN is required.";
+    // if (!formData.existingFAN)
+    //   newErrors.existingFAN = "Existing FAN is required.";
     carrierInfos.forEach((info, index) => {
       if (!info.currentwirelesscarrier) {
         newErrors[`currentwirelesscarrier_${index}`] =
@@ -643,7 +687,7 @@ const Form: React.FC = () => {
     }
   };
 
-  console.log(formData);
+  // console.log(formData);
 
   const validateTab = (tab: string): boolean => {
     const newErrors: any = {};
@@ -1021,7 +1065,7 @@ const Form: React.FC = () => {
               <div className="w-full mt-2">
                 <h4 className="text-lg text-gray-800 font-semibold mb-2">
                   Special Instruction
-                </h4>                
+                </h4>
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
@@ -1049,92 +1093,155 @@ const Form: React.FC = () => {
 
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
-            <div>
-            <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
-              AT&T Account Information
-            </h2>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {[
-                {
-                  name: "businesslegalname",
-                  label: "Business Legal Name",
-                  placeholder: "Enter Business Legal Name",
-                },
-                {
-                  name: "businessaddress",
-                  label: "Business Address",
-                  placeholder: "Enter Business Address",
-                },
-                {
-                  name: "businesscity",
-                  label: "Business City",
-                  placeholder: "Enter Business City",
-                },
-                {
-                  name: "businessstate",
-                  label: "Business State",
-                  placeholder: "Enter Business State",
-                },
-                {
-                  name: "businesszip",
-                  label: "Business Zip",
-                  placeholder: "Enter Business Zip",
-                },
-                {
-                  name: "taxid",
-                  label: "Tax ID",
-                  placeholder: "Enter Tax ID",
-                },
-                {
-                  name: "contactname",
-                  label: "Contact Name",
-                  placeholder: "Enter Contact Name",
-                },
-                {
-                  name: "contactphone",
-                  label: "Contact Phone",
-                  placeholder: "Enter Contact Phone",
-                },
-                {
-                  name: "contactemail",
-                  label: "Contact Email",
-                  placeholder: "Enter Contact Email",
-                },
-                // {
-                //   name: "locationid",
-                //   label: "Location ID",
-                //   placeholder: "Enter Location ID",
-                // },
-                {
-                  name: "existingBAN",
-                  label: "Existing BAN",
-                  placeholder: "Enter Existing BAN",
-                },
-                {
-                  name: "existingFAN",
-                  label: "Existing FAN",
-                  placeholder: "Enter Existing FAN",
-                },
-              ].map((field, index) => (
-                <div key={index} className="mb-4">
-                  <h6 className="text-sm font-medium text-gray-700">
-                    {field.label}
-                  </h6>
-                  <input
-                    type="text"
-                    name={field.name}
-                    placeholder={field.placeholder}
-                    value={formData[field.name]}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors[field.name] && (
-                    <p className="text-red-500 text-sm">{errors[field.name]}</p>
-                  )}
+              <div>
+                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
+                  AT&T Account Information
+                </h2>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    {
+                      name: "businesslegalname",
+                      label: "Business Legal Name",
+                      placeholder: "Enter Business Legal Name",
+                    },
+                    {
+                      name: "businessaddress",
+                      label: "Business Address",
+                      placeholder: "Enter Business Address",
+                    },
+                    {
+                      name: "businesscity",
+                      label: "Business City",
+                      placeholder: "Enter Business City",
+                    },
+                    {
+                      name: "businessstate",
+                      label: "Business State",
+                      placeholder: "Enter Business State",
+                    },
+                    {
+                      name: "businesszip",
+                      label: "Business Zip",
+                      placeholder: "Enter Business Zip",
+                    },
+                    {
+                      name: "taxid",
+                      label: "Tax ID",
+                      placeholder: "Enter Tax ID",
+                    },
+                    {
+                      name: "contactname",
+                      label: "Contact Name",
+                      placeholder: "Enter Contact Name",
+                    },
+                    {
+                      name: "contactphone",
+                      label: "Contact Phone",
+                      placeholder: "Enter Contact Phone",
+                    },
+                    {
+                      name: "contactemail",
+                      label: "Contact Email",
+                      placeholder: "Enter Contact Email",
+                    },
+                    // {
+                    //   name: "locationid",
+                    //   label: "Location ID",
+                    //   placeholder: "Enter Location ID",
+                    // },
+                    {
+                      name: "existingBAN",
+                      label: "Existing BAN",
+                      placeholder: "Enter Existing BAN",
+                    },
+                    {
+                      name: "existingFAN",
+                      label: "Existing FAN",
+                      placeholder: "Enter Existing FAN",
+                    },
+                  ].map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        {field.label}
+                      </h6>
+
+                      {/* Exclude Existing BAN and FAN from regular input rendering */}
+                      {field.name !== "existingBAN" &&
+                        field.name !== "existingFAN" && (
+                          <input
+                            type="text"
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          />
+                        )}
+
+                      {/* Dropdown for Existing BAN */}
+                      {field.name === "existingBAN" && (
+                        <select
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={(e) =>
+                            handleBanFanDropdownChange(e, "existingBAN")
+                          }
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      )}
+
+                      {/* Dropdown for Existing FAN */}
+                      {field.name === "existingFAN" && (
+                        <select
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={(e) =>
+                            handleBanFanDropdownChange(e, "existingFAN")
+                          }
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                      )}
+
+                      {/* Input fields for Existing BAN and FAN */}
+                      {showExistingBAN && field.name === "existingBAN" && (
+                        <input
+                          type="text"
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          value={formData[field.name]}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
+                        />
+                      )}
+                      {showExistingFAN && field.name === "existingFAN" && (
+                        <input
+                          type="text"
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          value={formData[field.name]}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
+                        />
+                      )}
+
+                      {errors[field.name] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[field.name]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div></div>
+              </div>
             )}
           </div>
         );
@@ -1146,7 +1253,6 @@ const Form: React.FC = () => {
               Order Payment Options
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-
               {/* Paperless Billing */}
               <div className="w-full">
                 <select
@@ -1653,64 +1759,88 @@ const Form: React.FC = () => {
                   onAccountFieldsChange={handleAccountFieldsChange}
                   onPhoneNumbersChange={handlePhoneNumbersChange}
                   onShippingAddressesChange={handleShippingAddressesChange}
-                  shippingInfos={shippingInfos} // Pass shipping information
-                  carrierInfos={carrierInfos} // Pass carrier information
+                  shippingInfos={shippingInfos}
+                  carrierInfos={carrierInfos}
+                  tradeSmartphone={tradeSmartphone}
+                  setTradeSmartphone={setTradeSmartphone}
+                  buyPhoneNumber={buyPhoneNumber}
+                  setBuyPhoneNumber={setBuyPhoneNumber}
+                  phoneUniqueCode={phoneUniqueCode} // Passed from parent
+                  setPhoneUniqueCode={setPhoneUniqueCode} // Passed from parent
+                  promoCode = {promoCode} // Passed from parent
+                  setPromoCode = {setPromoCode} // Passed from parent
+                  handleTradeSmartphoneChange={handleTradeSmartphoneChange} // Pass function as prop
+                  handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange} // Pass function as prop
+                  handleBuyPhoneNumberChange={handleBuyPhoneNumberChange} // Pass function as prop
+                  handlePromoCodeChange={handlePromoCodeChange}
                 />
               </div>
 
               <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
-              {/* Rate Plan Selection */}
-              <div>
-                <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                  Rate Plan Selection
-                </h3>
-                <div className="mb-4">
-                  <select
-                    name="ratePlan"
-                    value={formData.ratePlan}
-                    onChange={handleRatePlanChange}
-                    className="border-b h-10 border-gray-300 w-full"
-                  >
-                    <option value="UYW 2.0 Advanced">UYW 2.0 Advanced</option>
-                    <option value="UYW 2.0 Premium">UYW 2.0 Premium</option>
-                    <option value="Turnkey BYOD">Turnkey BYOD</option>
-                    <option value="Turnkey Standard">Turnkey Standard</option>
-                    <option value="Turnkey Premium">Turnkey Premium</option>
-                    <option value="Unlimited Tablet">Unlimited Tablet</option>
-                    <option value="Unlimited Watch">Unlimited Watch</option>
-                    <option value="AWB / Hotspot Core">AWB / Hotspot Core</option>
-                    <option value="AWB / Hotspot Pro">AWB / Hotspot Pro</option>
-                    <option value="AWB / Hotspot Ultra">AWB / Hotspot Ultra</option>
-                    <option value="AT&T Internet Air">AT&T Internet Air</option>
-                  </select>
+                {/* Rate Plan Selection */}
+                <div>
+                  <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                    Rate Plan Selection
+                  </h3>
+                  <div className="mb-4">
+                    <select
+                      name="ratePlan"
+                      value={formData.ratePlan}
+                      onChange={handleRatePlanChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="UYW 2.0 Advanced">UYW 2.0 Advanced</option>
+                      <option value="UYW 2.0 Premium">UYW 2.0 Premium</option>
+                      <option value="Turnkey BYOD">Turnkey BYOD</option>
+                      <option value="Turnkey Standard">Turnkey Standard</option>
+                      <option value="Turnkey Premium">Turnkey Premium</option>
+                      <option value="Unlimited Tablet">Unlimited Tablet</option>
+                      <option value="Unlimited Watch">Unlimited Watch</option>
+                      <option value="AWB / Hotspot Core">
+                        AWB / Hotspot Core
+                      </option>
+                      <option value="AWB / Hotspot Pro">
+                        AWB / Hotspot Pro
+                      </option>
+                      <option value="AWB / Hotspot Ultra">
+                        AWB / Hotspot Ultra
+                      </option>
+                      <option value="AT&T Internet Air">
+                        AT&T Internet Air
+                      </option>
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              {/* Smartphone Purchase Options */}
-              <div>
-                <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                  Smartphone Purchase/Trade Options
-                </h3>
-                
-                {/* Promotions */}
-                <div className="w-full">
-                  <select
-                    name="buyNewPhone"
-                    value={buyNewPhone}
-                    onChange={handleBuyNewPhoneChange}
-                    className="border-b h-10 border-gray-300 w-full"
-                  >
-                    <option value="">Select</option>
-                    <option value="yes">I want to buy new smartphone</option>
-                    <option value="accepted">Trade in promotion</option>
-                    <option value="no">No, I don't want a new phone or promotion</option>
-                  </select>
-                  {errors.buyNewPhone && (
-                    <p className="text-red-500 text-sm">{errors.buyNewPhone}</p>
-                  )}
+                {/* Smartphone Purchase Options */}
+                <div>
+                  <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                    Smartphone Purchase/Trade Options
+                  </h3>
+
+                  {/* Promotions */}
+                  <div className="w-full">
+                    <select
+                      name="buyNewPhone"
+                      value={buyNewPhone}
+                      onChange={handleBuyNewPhoneChange}
+                      className="border-b h-10 border-gray-300 w-full"
+                    >
+                      <option value="">Select</option>
+                      <option value="yes">I want to buy new smartphone</option>
+                      <option value="accepted">Trade in promotion</option>
+                      <option value="no">
+                        No, I don't want a new phone or promotion
+                      </option>
+                    </select>
+                    {errors.buyNewPhone && (
+                      <p className="text-red-500 text-sm">
+                        {errors.buyNewPhone}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
-              {/* <div className="mb-4">
+                {/* <div className="mb-4">
                 <select
                   name="buyNewPhone"
                   value={buyNewPhone}
