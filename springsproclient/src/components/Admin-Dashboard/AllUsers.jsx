@@ -7,6 +7,7 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is included
 import "./styles.css"; // Include your custom styles
+import HashLoader from "react-spinners/HashLoader";
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
@@ -51,7 +52,11 @@ function AllUsers() {
   }, [navigate]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+       <HashLoader color="#002441" />
+      </div>
+    );
   }
 
   if (error) {

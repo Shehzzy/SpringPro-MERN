@@ -342,6 +342,7 @@ import Footer from "./Footer";
 import Navbar from "./Navbar";
 import DataTable from "react-data-table-component";
 import "./styles.css";
+import HashLoader from "react-spinners/HashLoader";
 
 function AllOrders() {
   const [orders, setOrders] = useState([]);
@@ -546,8 +547,13 @@ function AllOrders() {
   };
 
   if (loading) {
-    return <div className="text-center mt-20">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-screen">
+       <HashLoader color="#002441" />
+      </div>
+    );
   }
+  
 
   if (error) {
     return <div>{error}</div>;
