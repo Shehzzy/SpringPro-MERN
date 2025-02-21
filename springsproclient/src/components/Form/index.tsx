@@ -677,7 +677,8 @@ const Form: React.FC = () => {
     const tabOrder = [
       "sellerInfo",
       "accountInfo",
-      "paymentShipping",
+      "paymentInfo",
+      "shippingInfo",
       "carrierInfo",
       "additionalInfo",
     ];
@@ -782,7 +783,7 @@ const Form: React.FC = () => {
           newErrors.existingFAN = "Existing FAN is required.";
         break;
 
-      case "paymentShipping":
+      case "shippingInfo":
         if (!formData.singleormultiaddresshipment)
           newErrors.singleormultiaddresshipment =
             "Single or Multi Address Shipment is required.";
@@ -857,7 +858,8 @@ const Form: React.FC = () => {
       const tabOrder = [
         "sellerInfo",
         "accountInfo",
-        "paymentShipping",
+        "paymentInfo",
+        "shippingInfo",
         "carrierInfo",
         "additionalInfo",
       ];
@@ -1245,139 +1247,146 @@ const Form: React.FC = () => {
             )}
           </div>
         );
-      case "paymentShipping":
-        return (
-          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
-            {/* Order Payment Options */}
-            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-              Order Payment Options
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-              {/* Paperless Billing */}
-              <div className="w-full">
-                <select
-                  name="paperless"
-                  value={formData.paperless}
-                  onChange={handleChange}
-                  className="border-b h-10 border-gray-300 py-2 w-full"
-                >
-                  <option value="">Paperless Billing</option>
-                  <option value="accepted">Accepted</option>
-                  <option value="declined">Declined</option>
-                </select>
-                {errors.paperless && (
-                  <p className="text-danger text-sm">{errors.paperless}</p>
-                )}
-              </div>
 
-              {/* Bill to Mobile */}
-              <div className="w-full">
-                <select
-                  name="billtomobile"
-                  value={formData.billtomobile}
-                  onChange={handleChange}
-                  className="border-b h-10 border-gray-300 py-2 w-full"
-                >
-                  <option value="">Bill to Mobile</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                {errors.billtomobile && (
-                  <p className="text-danger text-sm">{errors.billtomobile}</p>
-                )}
-              </div>
-
-              {/* Credit Card Payment */}
-              <div className="w-full">
-                <select
-                  name="creditcardpayment"
-                  value={formData.creditcardpayment}
-                  onChange={handleChange}
-                  className="border-b h-10 border-gray-300 py-2 w-full"
-                >
-                  <option value="">Credit Card Payment?</option>
-                  <option value="yes">Yes</option>
-                  <option value="no">No</option>
-                </select>
-                {errors.creditcardpayment && (
-                  <p className="text-danger text-sm">
-                    {errors.creditcardpayment}
-                  </p>
-                )}
-              </div>
-
-              {/* Credit Card Information */}
-              {formData.creditcardpayment === "yes" && (
-                <div className="w-full md:col-span-3 mt-4">
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="w-full">
-                      <label
-                        className="block text-sm font-medium mb-2"
-                        htmlFor="cardNumber"
-                      >
-                        Card Number
-                      </label>
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        value={formData.cardNumber}
-                        onChange={handleChange}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        placeholder="Enter your card number"
-                      />
-                      {errors.cardNumber && (
-                        <p className="text-danger text-sm">
-                          {errors.cardNumber}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        className="block text-sm font-medium mb-2"
-                        htmlFor="cardExpiry"
-                      >
-                        Expiry Date (MM/YY)
-                      </label>
-                      <input
-                        type="text"
-                        name="cardExpiry"
-                        value={formData.cardExpiry}
-                        onChange={handleChange}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        placeholder="MM/YY"
-                      />
-                      {errors.cardExpiry && (
-                        <p className="text-danger text-sm">
-                          {errors.cardExpiry}
-                        </p>
-                      )}
-                    </div>
-
-                    <div className="w-full">
-                      <label
-                        className="block text-sm font-medium mb-2"
-                        htmlFor="cardCVC"
-                      >
-                        CVC
-                      </label>
-                      <input
-                        type="text"
-                        name="cardCVC"
-                        value={formData.cardCVC}
-                        onChange={handleChange}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        placeholder="CVC"
-                      />
-                      {errors.cardCVC && (
-                        <p className="text-danger text-sm">{errors.cardCVC}</p>
-                      )}
+        case "paymentInfo":
+          return (
+            <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
+              {/* Order Payment Options */}
+              <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+                Order Payment Options
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+                {/* Paperless Billing */}
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">Paperless Billing?</h6>
+                  <select
+                    name="paperless"
+                    value={formData.paperless}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 py-2 w-full"
+                  >
+                    <option value="accepted">Yes</option>
+                    <option value="declined">No</option>
+                  </select>
+                  {errors.paperless && (
+                    <p className="text-danger text-sm">{errors.paperless}</p>
+                  )}
+                </div>
+  
+                {/* Bill to Mobile */}
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">Bill to Mobile?</h6>
+                  <select
+                    name="billtomobile"
+                    value={formData.billtomobile}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 py-2 w-full"
+                  >
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                  {errors.billtomobile && (
+                    <p className="text-danger text-sm">{errors.billtomobile}</p>
+                  )}
+                </div>
+  
+                {/* Credit Card Payment */}
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">Autopay?</h6>
+                  <select
+                    name="creditcardpayment"
+                    value={formData.creditcardpayment}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 py-2 w-full"
+                  >
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                  {errors.creditcardpayment && (
+                    <p className="text-danger text-sm">
+                      {errors.creditcardpayment}
+                    </p>
+                  )}
+                </div>
+  
+                {/* Credit Card Information */}
+                {formData.creditcardpayment === "yes" && (
+                  <div className="w-full md:col-span-3 mt-4">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                      <div className="w-full">
+                        <label
+                          className="block text-sm font-medium mb-2"
+                          htmlFor="cardNumber"
+                        >
+                          Card Number
+                        </label>
+                        <input
+                          type="text"
+                          name="cardNumber"
+                          value={formData.cardNumber}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          placeholder="Enter your card number"
+                        />
+                        {errors.cardNumber && (
+                          <p className="text-danger text-sm">
+                            {errors.cardNumber}
+                          </p>
+                        )}
+                      </div>
+  
+                      <div className="w-full">
+                        <label
+                          className="block text-sm font-medium mb-2"
+                          htmlFor="cardExpiry"
+                        >
+                          Expiry Date (MM/YY)
+                        </label>
+                        <input
+                          type="text"
+                          name="cardExpiry"
+                          value={formData.cardExpiry}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          placeholder="MM/YY"
+                        />
+                        {errors.cardExpiry && (
+                          <p className="text-danger text-sm">
+                            {errors.cardExpiry}
+                          </p>
+                        )}
+                      </div>
+  
+                      <div className="w-full">
+                        <label
+                          className="block text-sm font-medium mb-2"
+                          htmlFor="cardCVC"
+                        >
+                          CVC
+                        </label>
+                        <input
+                          type="text"
+                          name="cardCVC"
+                          value={formData.cardCVC}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          placeholder="CVC"
+                        />
+                        {errors.cardCVC && (
+                          <p className="text-danger text-sm">{errors.cardCVC}</p>
+                        )}
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
 
+          );
+
+      case "shippingInfo":
+        return (
+          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
             {/* Order Shipping Information */}
             {/* <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
               Order Shipping Information
@@ -2286,9 +2295,11 @@ const Form: React.FC = () => {
             {[
               { key: "sellerInfo", label: "Seller Information" },
               { key: "accountInfo", label: "Account Information" },
-              { key: "paymentShipping", label: "Payment & Shipping" },
+              { key: "additionalInfo", label: "Line Configuration" },
+              { key: "shippingInfo", label: "Shipping Information" },
+              { key: "paymentInfo", label: "Payment Information" },
               { key: "carrierInfo", label: "Carrier Information" },
-              { key: "additionalInfo", label: "Additional Information" },
+              // { key: "additionalInfo", label: "Additional Information" },
             ].map((tab) => (
               <button
                 key={tab.key}
