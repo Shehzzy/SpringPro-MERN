@@ -82,7 +82,7 @@ function OrderAssignment({ token, formData, setFormData }) {
 
   return (
     <div>
-      <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
+      <h2 className="text-2xl text-gray-800 font-semibold text-left">
         Select Which Customer To Assign This Order
       </h2>
 

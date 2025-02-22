@@ -34,8 +34,8 @@ const Form: React.FC = () => {
     console.log("Updating promo code change:", value);
     setPromoCode(value); // This updates the parent state
   };
-  
-  
+
+
   const handleBanFanDropdownChange = (e, fieldName) => {
     if (fieldName === "existingBAN") {
       setShowExistingBAN(e.target.value === "yes");
@@ -44,7 +44,7 @@ const Form: React.FC = () => {
       setShowExistingFAN(e.target.value === "yes");
     }
   };
-  const [activeTab, setActiveTab] = useState("sellerInfo");
+  const [activeTab, setActiveTab] = useState("accountInfo");
   const [ratePlan, setRatePlan] = useState("");
   const [buyNewPhone, setBuyNewPhone] = useState("");
   const [smartphoneDetails, setSmartphoneDetails] = useState({
@@ -324,10 +324,18 @@ const Form: React.FC = () => {
     contactphone: "",
     contactemail: "",
     billtomobile: "",
+    paymentMethod: "",
     creditcardpayment: "",
+    cardHolderName: "",
     cardNumber: "",
     cardExpiry: "",
     cardCVC: "",
+    cardBillingAddress: "",
+    // sameAsCardAddress: false,
+    accountHolderName: "",
+    sameAddress: "",
+    routingNumber: "",
+    checkingAccountNumber: "",
     singleormultiaddresshipment: "",
     attentionname: "",
     shippingaddress: "",
@@ -353,7 +361,7 @@ const Form: React.FC = () => {
     existingBAN: "",
     tradeSmartphone: tradeSmartphone,
     buyPhoneNumber: buyPhoneNumber,
-    phoneUniqueCode: phoneUniqueCode || "", 
+    phoneUniqueCode: phoneUniqueCode || "",
     promoCode: promoCode
   });
 
@@ -369,6 +377,13 @@ const Form: React.FC = () => {
     contactemail: formData.contactemail,
     locationid: formData.locationid,
     billtomobile: formData.billtomobile,
+    paymentMethod: formData.paymentMethod,
+    cardHolderName: formData.cardHolderName,
+    cardBillingAddress: formData.cardBillingAddress,
+    // sameAsCardAddress: formData.sameAsCardAddress,
+    accountHolderName: formData.accountHolderName,
+    routingNumber: formData.routingNumber,
+    checkingAccountNumber: formData.checkingAccountNumber,
     creditcardpayment: formData.creditcardpayment,
     cardNumber: formData.cardNumber,
     cardExpiry: formData.cardExpiry,
@@ -382,6 +397,19 @@ const Form: React.FC = () => {
     existingBAN: formData.existingBAN,
     existingFAN: formData.existingFAN,
   };
+
+
+  // const handleCheckboxChange = (e) => {
+  //   const { checked } = e.target;
+  //   if (checked) {
+  //     setFormData({
+  //       ...formData,
+  //       cardBillingAddress: formData.sameAddress ? formData.cardBillingAddress : "",
+  //     });
+  //   } else {
+  //     setFormData({ ...formData, sameAsCardAddress: checked });
+  //   }
+  // };
 
   const [errors, setErrors] = useState<any>({});
   const [state, handleSubmit] = useForm("xanykyav");
@@ -539,14 +567,31 @@ const Form: React.FC = () => {
     if (!formData.billtomobile)
       newErrors.billtomobile = "Bill to Mobile is required.";
     if (!formData.creditcardpayment)
-      newErrors.creditcardpayment = "Credit Card Payment is required.";
+      newErrors.creditcardpayment = "Please select an autopay option";
+
+
     if (formData.creditcardpayment === "yes") {
-      if (!formData.cardNumber)
-        newErrors.cardNumber = "Card number is required";
-      if (!formData.cardExpiry)
-        newErrors.cardExpiry = "Expiry date is required";
-      if (!formData.cardCVC) newErrors.cardCVC = "CVC is required";
+      if (!formData.paymentMethod || formData.paymentMethod === "select") {
+        newErrors.paymentMethod = "Please select a payment method.";
+      }
+
+      if (formData.paymentMethod === "checkingAccount") {
+        if (!formData.accountHolderName) newErrors.accountHolderName = "Account Holder Name is required.";
+        if (!formData.routingNumber) newErrors.routingNumber = "Routing Number is required.";
+        if (!formData.checkingAccountNumber) newErrors.checkingAccountNumber = "Checking Account Number is required.";
+      }
+
+
+      if (formData.paymentMethod === "debitCreditCard") {
+        if (!formData.cardHolderName) newErrors.cardHolderName = "Card Holder Name is required.";
+        if (!formData.cardNumber) newErrors.cardNumber = "Card Number is required.";
+        if (!formData.cardExpiry) newErrors.cardExpiry = "Expiry Date is required.";
+        if (!formData.cardCVC) newErrors.cardCVC = "CVC is required.";
+        if (!formData.cardBillingAddress) newErrors.cardBillingAddress = "Billing Address is required.";
+      }
     }
+
+
     // if (!formData.singleormultiaddresshipment)
     //   newErrors.singleormultiaddresshipment =
     //     "Single or Multi Address Shipment is required.";
@@ -675,7 +720,7 @@ const Form: React.FC = () => {
 
   const goToNextTab = () => {
     const tabOrder = [
-      "sellerInfo",
+      // "sellerInfo",
       "accountInfo",
       "paymentInfo",
       "shippingInfo",
@@ -695,14 +740,12 @@ const Form: React.FC = () => {
 
     // Validate fields based on the active tab
     switch (tab) {
-      case "sellerInfo":
+
+      case "accountInfo":
         if (!formData.name) newErrors.name = "Name is required.";
         if (!formData.email) newErrors.email = "Email is required.";
         if (!formData.phonenumber)
           newErrors.phonenumber = "Phone Number is required.";
-        break;
-
-      case "accountInfo":
         if (!formData.agreementtype)
           newErrors.agreementtype = "Agreement Type is required.";
         if (formData.agreementtype === "acda" && !formData.eip)
@@ -856,7 +899,7 @@ const Form: React.FC = () => {
   const handleNext = () => {
     setActiveTab((prevTab) => {
       const tabOrder = [
-        "sellerInfo",
+        // "sellerInfo",
         "accountInfo",
         "paymentInfo",
         "shippingInfo",
@@ -873,15 +916,111 @@ const Form: React.FC = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case "sellerInfo":
+      // case "sellerInfo":
+      //   return (
+      //     <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+      //       {/* Heading */}
+      //       <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+      //         SANS Agent Information
+      //       </h2>
+
+      //       {/* Form */}
+      //       <form onSubmit={onSubmit} className="space-y-6">
+      //         {/* Row 1 */}
+      //         <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+      //           <div className="w-full">
+      //             <h6 className="text-[#3C3C3C] text-start">Name</h6>
+      //             <input
+      //               type="text"
+      //               name="name"
+      //               placeholder="Enter Name"
+      //               value={formData.name}
+      //               onChange={handleChange}
+      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
+      //             />
+      //             {errors.name && (
+      //               <p className="text-red-500 text-sm">{errors.name}</p>
+      //             )}
+      //           </div>
+
+      //           <div>
+      //             <h6 className="text-[#3C3C3C] text-start">Email</h6>
+      //             <input
+      //               type="text"
+      //               name="email"
+      //               placeholder="Enter Email"
+      //               value={formData.email}
+      //               onChange={handleChange}
+      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
+      //             />
+      //             {errors.email && (
+      //               <p className="text-red-500 text-sm">{errors.email}</p>
+      //             )}
+      //           </div>
+
+      //           <div>
+      //             <h6 className="text-[#3C3C3C] text-start">Phone</h6>
+      //             <input
+      //               name="phonenumber"
+      //               placeholder="Enter Phone"
+      //               value={formData.phonenumber}
+      //               onChange={handleChange}
+      //               className="w-full border-b border-gray-300 py-2"
+      //             />
+      //             {errors.phonenumber && (
+      //               <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+      //             )}
+      //           </div>
+      //         </div>
+
+      //         {/* Row 2 */}
+      //         <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+      //           <div className="w-full">
+      //             <h6 className="text-[#3C3C3C] text-start">Dealer Code</h6>
+      //             <input
+      //               type="text"
+      //               name="dealerCode"
+      //               placeholder="Enter Dealer Code"
+      //               value={formData.dealerCode}
+      //               onChange={handleChange}
+      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
+      //             />
+      //             {errors.dealerCode && (
+      //               <p className="text-red-500 text-sm">{errors.dealerCode}</p>
+      //             )}
+      //           </div>
+
+      //           <div>
+      //             {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
+      //             <h6 className="text-[#3C3C3C] text-start">
+      //               SANS Partner ID:
+      //             </h6>
+      //             <input
+      //               type="text"
+      //               name="agentCode"
+      //               placeholder="Enter Agent Code"
+      //               value={formData.agentCode}
+      //               onChange={handleChange}
+      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
+      //             />
+      //             {errors.agentCode && (
+      //               <p className="text-red-500 text-sm">{errors.agentCode}</p>
+      //             )}
+      //           </div>
+      //         </div>
+      //       </form>
+      //     </div>
+      //   );
+
+      case "accountInfo":
         return (
-          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
+          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
             {/* Heading */}
             <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-              SANS Agent Information
+              AT&T Account Option
             </h2>
 
-            {/* Form */}
+            {/* Form Section */}
             <form onSubmit={onSubmit} className="space-y-6">
               {/* Row 1 */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
@@ -895,9 +1034,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm">{errors.name}</p>
-                  )}
+                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
                 </div>
 
                 <div>
@@ -910,9 +1047,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )}
+                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
                 </div>
 
                 <div>
@@ -924,9 +1059,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2"
                   />
-                  {errors.phonenumber && (
-                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
-                  )}
+                  {errors.phonenumber && <p className="text-red-500 text-sm">{errors.phonenumber}</p>}
                 </div>
               </div>
 
@@ -942,16 +1075,11 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.dealerCode && (
-                    <p className="text-red-500 text-sm">{errors.dealerCode}</p>
-                  )}
+                  {errors.dealerCode && <p className="text-red-500 text-sm">{errors.dealerCode}</p>}
                 </div>
 
                 <div>
-                  {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
-                  <h6 className="text-[#3C3C3C] text-start">
-                    SANS Partner ID:
-                  </h6>
+                  <h6 className="text-[#3C3C3C] text-start">SANS Partner ID:</h6>
                   <input
                     type="text"
                     name="agentCode"
@@ -960,25 +1088,12 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.agentCode && (
-                    <p className="text-red-500 text-sm">{errors.agentCode}</p>
-                  )}
+                  {errors.agentCode && <p className="text-red-500 text-sm">{errors.agentCode}</p>}
                 </div>
               </div>
             </form>
-          </div>
-        );
 
-      case "accountInfo":
-        return (
-          <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
-            {/* Heading */}
-            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-              AT&T Account Option
-            </h2>
-
-            {/* Form Section */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
               {/* Agreement Type */}
               <div className="w-full">
                 <select
@@ -991,9 +1106,7 @@ const Form: React.FC = () => {
                   <option value="amb">AMB</option>
                   <option value="acda">ACDA Attainment/MAC</option>
                 </select>
-                {errors.agreementtype && (
-                  <p className="text-red-500 text-sm">{errors.agreementtype}</p>
-                )}
+                {errors.agreementtype && <p className="text-red-500 text-sm">{errors.agreementtype}</p>}
               </div>
 
               {/* EIP Limit (Conditional Field) */}
@@ -1006,9 +1119,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2"
                   />
-                  {errors.eip && (
-                    <p className="text-red-500 text-sm">{errors.eip}</p>
-                  )}
+                  {errors.eip && <p className="text-red-500 text-sm">{errors.eip}</p>}
                 </div>
               )}
 
@@ -1024,50 +1135,12 @@ const Form: React.FC = () => {
                   <option value="accepted">Yes</option>
                   <option value="declined">No</option>
                 </select>
-                {errors.atntaccount && (
-                  <p className="text-red-500 text-sm">{errors.atntaccount}</p>
-                )}
+                {errors.atntaccount && <p className="text-red-500 text-sm">{errors.atntaccount}</p>}
               </div>
 
-              {/* Paperless Billing */}
-              {/* <div className="w-full mt-2">
-                <h4 className="text-lg text-gray-800 font-semibold mb-2">
-                  Paperless Billing
-                </h4>
-                <div className="flex items-center space-x-6">
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="paperless"
-                      value="accepted"
-                      checked={formData.paperless === "accepted"}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    Accepted
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="radio"
-                      name="paperless"
-                      value="declined"
-                      checked={formData.paperless === "declined"}
-                      onChange={handleChange}
-                      className="mr-2"
-                    />
-                    Declined
-                  </label>
-                </div>
-                {errors.paperless && (
-                  <p className="text-red-500 text-sm">{errors.paperless}</p>
-                )}
-              </div> */}
-
               {/* Special Instructions */}
-              <div className="w-full mt-2">
-                <h4 className="text-lg text-gray-800 font-semibold mb-2">
-                  Special Instruction
-                </h4>
+              <div className="w-full">
+                <h4 className="text-lg text-gray-800 font-semibold mb-2">Special Instruction</h4>
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
@@ -1076,119 +1149,55 @@ const Form: React.FC = () => {
                   placeholder="Type here..."
                   style={{ resize: "none" }}
                 ></textarea>
-                {errors.specialinstruction && (
-                  <p className="text-red-500 text-sm">
-                    {errors.specialinstruction}
-                  </p>
-                )}
+                {errors.specialinstruction && <p className="text-red-500 text-sm">{errors.specialinstruction}</p>}
               </div>
             </div>
 
             {/* Order Assignment */}
             {!isFirstOrder && (
-              <OrderAssignment
-                token={token}
-                formData={formData}
-                setFormData={setFormData}
-              />
+              <OrderAssignment token={token} formData={formData} setFormData={setFormData} />
             )}
 
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
               <div>
-                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
-                  AT&T Account Information
-                </h2>
+                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">AT&T Account Information</h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    {
-                      name: "businesslegalname",
-                      label: "Business Legal Name",
-                      placeholder: "Enter Business Legal Name",
-                    },
-                    {
-                      name: "businessaddress",
-                      label: "Business Address",
-                      placeholder: "Enter Business Address",
-                    },
-                    {
-                      name: "businesscity",
-                      label: "Business City",
-                      placeholder: "Enter Business City",
-                    },
-                    {
-                      name: "businessstate",
-                      label: "Business State",
-                      placeholder: "Enter Business State",
-                    },
-                    {
-                      name: "businesszip",
-                      label: "Business Zip",
-                      placeholder: "Enter Business Zip",
-                    },
-                    {
-                      name: "taxid",
-                      label: "Tax ID",
-                      placeholder: "Enter Tax ID",
-                    },
-                    {
-                      name: "contactname",
-                      label: "Contact Name",
-                      placeholder: "Enter Contact Name",
-                    },
-                    {
-                      name: "contactphone",
-                      label: "Contact Phone",
-                      placeholder: "Enter Contact Phone",
-                    },
-                    {
-                      name: "contactemail",
-                      label: "Contact Email",
-                      placeholder: "Enter Contact Email",
-                    },
-                    // {
-                    //   name: "locationid",
-                    //   label: "Location ID",
-                    //   placeholder: "Enter Location ID",
-                    // },
-                    {
-                      name: "existingBAN",
-                      label: "Existing BAN",
-                      placeholder: "Enter Existing BAN",
-                    },
-                    {
-                      name: "existingFAN",
-                      label: "Existing FAN",
-                      placeholder: "Enter Existing FAN",
-                    },
+                    { name: "businesslegalname", label: "Business Legal Name", placeholder: "Enter Business Legal Name" },
+                    { name: "businessaddress", label: "Business Address", placeholder: "Enter Business Address" },
+                    { name: "businesscity", label: "Business City", placeholder: "Enter Business City" },
+                    { name: "businessstate", label: "Business State", placeholder: "Enter Business State" },
+                    { name: "businesszip", label: "Business Zip", placeholder: "Enter Business Zip" },
+                    { name: "taxid", label: "Tax ID", placeholder: "Enter Tax ID" },
+                    { name: "contactname", label: "Contact Name", placeholder: "Enter Contact Name" },
+                    { name: "contactphone", label: "Contact Phone", placeholder: "Enter Contact Phone" },
+                    { name: "contactemail", label: "Contact Email", placeholder: "Enter Contact Email" },
+                    { name: "existingBAN", label: "Existing BAN", placeholder: "Enter Existing BAN" },
+                    { name: "existingFAN", label: "Existing FAN", placeholder: "Enter Existing FAN" },
                   ].map((field, index) => (
                     <div key={index} className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">
-                        {field.label}
-                      </h6>
+                      <h6 className="text-sm font-medium text-gray-700">{field.label}</h6>
 
                       {/* Exclude Existing BAN and FAN from regular input rendering */}
-                      {field.name !== "existingBAN" &&
-                        field.name !== "existingFAN" && (
-                          <input
-                            type="text"
-                            name={field.name}
-                            placeholder={field.placeholder}
-                            value={formData[field.name]}
-                            onChange={handleChange}
-                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          />
-                        )}
+                      {field.name !== "existingBAN" && field.name !== "existingFAN" && (
+                        <input
+                          type="text"
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          value={formData[field.name]}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        />
+                      )}
 
                       {/* Dropdown for Existing BAN */}
                       {field.name === "existingBAN" && (
                         <select
                           name={field.name}
                           value={formData[field.name]}
-                          onChange={(e) =>
-                            handleBanFanDropdownChange(e, "existingBAN")
-                          }
+                          onChange={(e) => handleBanFanDropdownChange(e, "existingBAN")}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select</option>
@@ -1202,9 +1211,7 @@ const Form: React.FC = () => {
                         <select
                           name={field.name}
                           value={formData[field.name]}
-                          onChange={(e) =>
-                            handleBanFanDropdownChange(e, "existingFAN")
-                          }
+                          onChange={(e) => handleBanFanDropdownChange(e, "existingFAN")}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select</option>
@@ -1235,11 +1242,7 @@ const Form: React.FC = () => {
                         />
                       )}
 
-                      {errors[field.name] && (
-                        <p className="text-red-500 text-sm">
-                          {errors[field.name]}
-                        </p>
-                      )}
+                      {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
                     </div>
                   ))}
                 </div>
@@ -1248,69 +1251,72 @@ const Form: React.FC = () => {
           </div>
         );
 
-        case "paymentInfo":
-          return (
-            <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
-              {/* Order Payment Options */}
-              <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-                Order Payment Options
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
-                {/* Paperless Billing */}
-                <div className="w-full">
-                  <h6 className="text-sm font-medium text-gray-700">Paperless Billing?</h6>
-                  <select
-                    name="paperless"
-                    value={formData.paperless}
-                    onChange={handleChange}
-                    className="border-b h-10 border-gray-300 py-2 w-full"
-                  >
-                    <option value="accepted">Yes</option>
-                    <option value="declined">No</option>
-                  </select>
-                  {errors.paperless && (
-                    <p className="text-danger text-sm">{errors.paperless}</p>
-                  )}
-                </div>
-  
-                {/* Bill to Mobile */}
-                <div className="w-full">
-                  <h6 className="text-sm font-medium text-gray-700">Bill to Mobile?</h6>
-                  <select
-                    name="billtomobile"
-                    value={formData.billtomobile}
-                    onChange={handleChange}
-                    className="border-b h-10 border-gray-300 py-2 w-full"
-                  >
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                  {errors.billtomobile && (
-                    <p className="text-danger text-sm">{errors.billtomobile}</p>
-                  )}
-                </div>
-  
-                {/* Credit Card Payment */}
-                <div className="w-full">
-                  <h6 className="text-sm font-medium text-gray-700">Autopay?</h6>
-                  <select
-                    name="creditcardpayment"
-                    value={formData.creditcardpayment}
-                    onChange={handleChange}
-                    className="border-b h-10 border-gray-300 py-2 w-full"
-                  >
-                    <option value="yes">Yes</option>
-                    <option value="no">No</option>
-                  </select>
-                  {errors.creditcardpayment && (
-                    <p className="text-danger text-sm">
-                      {errors.creditcardpayment}
-                    </p>
-                  )}
-                </div>
-  
-                {/* Credit Card Information */}
-                {formData.creditcardpayment === "yes" && (
+
+
+      case "paymentInfo":
+        return (
+          <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
+            {/* Order Payment Options */}
+            <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+              Order Payment Options
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+              {/* Paperless Billing */}
+              <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Paperless Billing?</h6>
+                <select
+                  name="paperless"
+                  value={formData.paperless}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="accepted">Yes</option>
+                  <option value="declined">No</option>
+                </select>
+                {errors.paperless && (
+                  <p className="text-danger text-sm">{errors.paperless}</p>
+                )}
+              </div>
+
+              {/* Bill to Mobile */}
+              <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Bill to Mobile?</h6>
+                <select
+                  name="billtomobile"
+                  value={formData.billtomobile}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                {errors.billtomobile && (
+                  <p className="text-danger text-sm">{errors.billtomobile}</p>
+                )}
+              </div>
+
+              {/* Credit Card Payment */}
+              <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Autopay?</h6>
+                <select
+                  name="creditcardpayment"
+                  value={formData.creditcardpayment}
+                  onChange={handleChange}
+                  className="border-b h-10 border-gray-300 py-2 w-full"
+                >
+                  <option value="select" selected>Select An Option</option>
+                  <option value="yes">Yes</option>
+                  <option value="no">No</option>
+                </select>
+                {errors.creditcardpayment && (
+                  <p className="text-danger text-sm">
+                    {errors.creditcardpayment}
+                  </p>
+                )}
+              </div>
+
+              {/* Credit Card Information */}
+              {/* {formData.creditcardpayment === "yes" && (
                   <div className="w-full md:col-span-3 mt-4">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                       <div className="w-full">
@@ -1378,11 +1384,191 @@ const Form: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
-            </div>
+                )} */}
 
-          );
+              {formData.creditcardpayment === "yes" && (
+                <div className="w-full md:col-span-3 mt-4">
+                  <div className="w-full">
+                    <label className="block text-sm font-medium mb-2" htmlFor="paymentMethod">
+                      Payment Method
+                    </label>
+                    <select
+                      name="paymentMethod"
+                      value={formData.paymentMethod}
+                      onChange={handleChange}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    >
+                      <option value="select">Select An Option</option>
+                      <option value="checkingAccount">Checking Account</option>
+                      <option value="debitCreditCard">Debit Card/Credit Card</option>
+                    </select>
+                  </div>
+                </div>
+              )}
+              {formData.paymentMethod === "checkingAccount" && (
+                <div className="w-full md:col-span-3 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="accountHolderName">
+                        Account Holder Name
+                      </label>
+                      <input
+                        type="text"
+                        name="accountHolderName"
+                        value={formData.accountHolderName}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Account Holder Name"
+                      />
+                      {errors.accountHolderName && (
+                        <p className="text-danger text-sm">{errors.accountHolderName}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="routingNumber">
+                        Routing Number
+                      </label>
+                      <input
+                        type="text"
+                        name="routingNumber"
+                        value={formData.routingNumber}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Routing Number"
+                      />
+                      {errors.routingNumber && (
+                        <p className="text-danger text-sm">{errors.routingNumber}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="checkingAccountNumber">
+                        Checking Account Number
+                      </label>
+                      <input
+                        type="text"
+                        name="checkingAccountNumber"
+                        value={formData.checkingAccountNumber}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Checking Account Number"
+                      />
+                      {errors.checkingAccountNumber && (
+                        <p className="text-danger text-sm">{errors.checkingAccountNumber}</p>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )}
+              {formData.paymentMethod === "debitCreditCard" && (
+                <div className="w-full md:col-span-3 mt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardHolderName">
+                        Card Holder Name
+                      </label>
+                      <input
+                        type="text"
+                        name="cardHolderName"
+                        value={formData.cardHolderName}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Card Holder Name"
+                      />
+                      {errors.cardHolderName && (
+                        <p className="text-danger text-sm">{errors.cardHolderName}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardNumber">
+                        Card Number
+                      </label>
+                      <input
+                        type="text"
+                        name="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Enter your card number"
+                      />
+                      {errors.cardNumber && (
+                        <p className="text-danger text-sm">{errors.cardNumber}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardExpiry">
+                        Expiry Date (MM/YY)
+                      </label>
+                      <input
+                        type="text"
+                        name="cardExpiry"
+                        value={formData.cardExpiry}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="MM/YY"
+                      />
+                      {errors.cardExpiry && (
+                        <p className="text-danger text-sm">{errors.cardExpiry}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardCVC">
+                        CVC
+                      </label>
+                      <input
+                        type="text"
+                        name="cardCVC"
+                        value={formData.cardCVC}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="CVC"
+                      />
+                      {errors.cardCVC && (
+                        <p className="text-danger text-sm">{errors.cardCVC}</p>
+                      )}
+                    </div>
+
+                    <div className="w-full">
+                      <label className="block text-sm font-medium mb-2" htmlFor="cardBillingAddress">
+                        Card Billing Address
+                      </label>
+                      <input
+                        type="text"
+                        name="cardBillingAddress"
+                        value={formData.cardBillingAddress}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        placeholder="Billing Address"
+                      />
+                      {errors.cardBillingAddress && (
+                        <p className="text-danger text-sm">{errors.cardBillingAddress}</p>
+                      )}
+                    </div>
+
+                    {/* <div className="w-full flex items-center">
+                      <input
+                        type="checkbox"
+                        name="sameAsCardAddress"
+                        checked={formData.sameAsCardAddress}
+                        onChange={handleCheckboxChange}
+                        className="mr-2"
+                      />
+                      <label htmlFor="sameAsCardAddress" className="text-sm">
+                        Use the same address as the card billing address
+                      </label>
+                    </div> */}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          </div>
+
+        );
 
       case "shippingInfo":
         return (
@@ -1776,8 +1962,8 @@ const Form: React.FC = () => {
                   setBuyPhoneNumber={setBuyPhoneNumber}
                   phoneUniqueCode={phoneUniqueCode} // Passed from parent
                   setPhoneUniqueCode={setPhoneUniqueCode} // Passed from parent
-                  promoCode = {promoCode} // Passed from parent
-                  setPromoCode = {setPromoCode} // Passed from parent
+                  promoCode={promoCode} // Passed from parent
+                  setPromoCode={setPromoCode} // Passed from parent
                   handleTradeSmartphoneChange={handleTradeSmartphoneChange} // Pass function as prop
                   handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange} // Pass function as prop
                   handleBuyPhoneNumberChange={handleBuyPhoneNumberChange} // Pass function as prop
@@ -2293,7 +2479,7 @@ const Form: React.FC = () => {
           {/* Tab Navigation */}
           <div className="flex flex-wrap justify-center space-x-0 md:space-x-4 mb-6 gap-2 md:gap-0">
             {[
-              { key: "sellerInfo", label: "Seller Information" },
+              // { key: "sellerInfo", label: "Seller Information" },
               { key: "accountInfo", label: "Account Information" },
               { key: "additionalInfo", label: "Line Configuration" },
               { key: "shippingInfo", label: "Shipping Information" },
@@ -2305,15 +2491,14 @@ const Form: React.FC = () => {
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 w-full md:w-auto ${
-                  activeTab === tab.key ? "text-white" : "bg-gray-300"
-                } rounded`}
+                className={`px-4 py-2 w-full md:w-auto ${activeTab === tab.key ? "text-white" : "bg-gray-300"
+                  } rounded`}
                 style={
                   activeTab === tab.key
                     ? {
-                        background:
-                          "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
-                      }
+                      background:
+                        "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
+                    }
                     : {}
                 }
               >
