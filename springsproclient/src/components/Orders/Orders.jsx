@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import {jwtDecode} from "jwt-decode";
 
 function Orders() {
   const navigate = useNavigate();
@@ -12,10 +14,47 @@ function Orders() {
     "https://springprobackend-production.up.railway.app/api/order/get-user-orders";
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+   if (!token) {
+         Swal.fire({
+           title: "Login Required",
+           text: "You need to log in first to place an order.",
+           icon: "warning",
+           confirmButtonText: "Go to Login",
+         }).then(() => {
+           navigate("/login");
+         });
+         return;
+       }
+
+    // Decode the token to check its expiry
+        try {
+          const decoded = jwtDecode(token); // Decode the JWT
+          const currentTime = Date.now() / 1000; // Current time in seconds
+          // Check if the token has expired
+          if (decoded.exp && decoded.exp < currentTime) {
+            Swal.fire({
+              title: "Session Expired",
+              text: "Your session has expired. Please log in again.",
+              icon: "warning",
+              confirmButtonText: "Go to Login",
+            }).then(() => {
+              // Redirect to login if the token is expired
+              navigate("/login");
+            });
+            return;
+          }
+        } catch (error) {
+          // If decoding the token fails, handle the error (e.g., invalid token)
+          Swal.fire({
+            title: "Invalid Token",
+            text: "The token is invalid. Please log in again.",
+            icon: "error",
+            confirmButtonText: "Go to Login",
+          }).then(() => {
+            navigate("/login");
+          });
+          return;
+        }
 
     const fetchOrders = async () => {
       try {

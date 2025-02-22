@@ -8,6 +8,7 @@ import Navbar from "./Navbar";
 import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is included
 import "./styles.css"; // Include your custom styles
 import HashLoader from "react-spinners/HashLoader";
+import Swal from "sweetalert2";
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
@@ -18,11 +19,49 @@ function AllUsers() {
   useEffect(() => {
     const token = localStorage.getItem("jwt_token");
 
-    if (!token) {
-      navigate("/login");
-      return;
-    }
 
+
+     if (!token) {
+          Swal.fire({
+            title: "Login Required",
+            text: "You need to log in first to place an order.",
+            icon: "warning",
+            confirmButtonText: "Go to Login",
+          }).then(() => {
+            navigate("/login");
+          });
+          return;
+        }
+
+     try {
+              const decoded = jwtDecode(token); // Decode the JWT
+              const currentTime = Date.now() / 1000; // Current time in seconds
+              // Check if the token has expired
+              if (decoded.exp && decoded.exp < currentTime) {
+                Swal.fire({
+                  title: "Session Expired",
+                  text: "Your session has expired. Please log in again.",
+                  icon: "warning",
+                  confirmButtonText: "Go to Login",
+                }).then(() => {
+                  // Redirect to login if the token is expired
+                  navigate("/login");
+                });
+                return;
+              }
+            } catch (error) {
+              // If decoding the token fails, handle the error (e.g., invalid token)
+              Swal.fire({
+                title: "Invalid Token",
+                text: "The token is invalid. Please log in again.",
+                icon: "error",
+                confirmButtonText: "Go to Login",
+              }).then(() => {
+                navigate("/login");
+              });
+              return;
+            }
+    
     const decodedToken = jwtDecode(token);
     const userRole = decodedToken.role;
 

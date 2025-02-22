@@ -8,6 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import HashLoader from "react-spinners/HashLoader";
+import Swal from "sweetalert2";
 
 function OrderDetails() {
   const { orderId } = useParams(); // Get the order ID from the URL
@@ -22,10 +23,47 @@ function OrderDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!token) {
-      navigate("/login");
+     if (!token) {
+          Swal.fire({
+            title: "Login Required",
+            text: "You need to log in first to place an order.",
+            icon: "warning",
+            confirmButtonText: "Go to Login",
+          }).then(() => {
+            navigate("/login");
+          });
+          return;
+        }
+
+    try {
+      const decoded = jwtDecode(token); // Decode the JWT
+      const currentTime = Date.now() / 1000; // Current time in seconds
+      // Check if the token has expired
+      if (decoded.exp && decoded.exp < currentTime) {
+        Swal.fire({
+          title: "Session Expired",
+          text: "Your session has expired. Please log in again.",
+          icon: "warning",
+          confirmButtonText: "Go to Login",
+        }).then(() => {
+          // Redirect to login if the token is expired
+          navigate("/login");
+        });
+        return;
+      }
+    } catch (error) {
+      // If decoding the token fails, handle the error (e.g., invalid token)
+      Swal.fire({
+        title: "Invalid Token",
+        text: "The token is invalid. Please log in again.",
+        icon: "error",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
       return;
     }
+
 
     if (userRole !== "admin") {
       setError("You do not have admin access");
@@ -64,10 +102,10 @@ function OrderDetails() {
         alert("No order data available");
         return;
       }
-  
+
       const workbook = new ExcelJS.Workbook();
       const sheet = workbook.addWorksheet("Order Details");
-  
+
       // ======================
       // COLUMN CONFIGURATION
       // ======================
@@ -75,7 +113,7 @@ function OrderDetails() {
         { header: "Field", key: "field", width: 25 },
         { header: "Values", key: "values", width: 50 },
       ];
-  
+
       // ======================
       // STYLING
       // ======================
@@ -86,7 +124,7 @@ function OrderDetails() {
         left: { style: "medium", color: blackBorder },
         right: { style: "medium", color: blackBorder },
       };
-  
+
       // Header Styling
       sheet.getRow(1).eachCell((cell) => {
         cell.fill = {
@@ -103,7 +141,7 @@ function OrderDetails() {
         };
         cell.alignment = { vertical: "middle", horizontal: "center" };
       });
-  
+
       // ======================
       // DATA POPULATION - FILLING COLUMNS INSTEAD OF ROWS
       // ======================
@@ -164,11 +202,11 @@ function OrderDetails() {
         { field: "Authorized Name", values: order.carrierInfos.map((carrier) => carrier.authorizedname).join(", ") || "N/A" },
         { field: "Unique Code", values: order.carrierInfos.map((carrier) => carrier.uniqueCode).join(", ") || "N/A" },
       ];
-  
+
       // Add data to the sheet (each entry is added as a row)
       data.forEach((item, index) => {
         const row = sheet.addRow([item.field, item.values]);
-  
+
         // Apply Cell Styling
         row.eachCell((cell, colNumber) => {
           cell.border = {
@@ -177,7 +215,7 @@ function OrderDetails() {
             left: { style: "medium", color: blackBorder },
             right: { style: "medium", color: blackBorder },
           };
-  
+
           cell.font = {
             name: "Calibri",
             size: 11,
@@ -187,8 +225,8 @@ function OrderDetails() {
         });
       });
 
-      
-  
+
+
       // ======================
       // BROWSER-FRIENDLY SAVE
       // ======================
@@ -203,7 +241,7 @@ function OrderDetails() {
     }
   };
 
-  
+
 
 
   // This is row wise
@@ -213,10 +251,10 @@ function OrderDetails() {
   //       alert("No order data available");
   //       return;
   //     }
-  
+
   //     const workbook = new ExcelJS.Workbook();
   //     const sheet = workbook.addWorksheet("Order Details");
-  
+
   //     // ======================
   //     // COLUMN CONFIGURATION
   //     // ======================
@@ -239,7 +277,7 @@ function OrderDetails() {
   //       { header: "Account Number", key: "accountNumber", width: 20 },
   //       { header: "Carrier Info", key: "carrierInfo", width: 20 },
   //     ];
-  
+
   //     // ======================
   //     // STYLING
   //     // ======================
@@ -250,7 +288,7 @@ function OrderDetails() {
   //       left: { style: "thin", color: blackBorder },
   //       right: { style: "thin", color: blackBorder },
   //     };
-  
+
   //     // Header Styling
   //     sheet.getRow(1).eachCell((cell) => {
   //       cell.fill = {
@@ -267,7 +305,7 @@ function OrderDetails() {
   //       };
   //       cell.alignment = { vertical: "middle", horizontal: "center" };
   //     });
-  
+
   //     // ======================
   //     // DATA POPULATION USING MAP
   //     // ======================
@@ -291,9 +329,9 @@ function OrderDetails() {
   //         accountNumber: order.accounts[index]?.accountNumber || "N/A",
   //         carrierInfo: order.carrierInfos[index]?.currentwirelesscarrier || "N/A",
   //       };
-  
+
   //       const row = sheet.addRow(rowData);
-  
+
   //       // Apply Cell Styling
   //       row.eachCell((cell, colNumber) => {
   //         cell.border = {
@@ -302,14 +340,14 @@ function OrderDetails() {
   //           left: { style: "medium", color: blackBorder },
   //           right: { style: "medium", color: blackBorder },
   //         };
-  
+
   //         cell.font = {
   //           name: "Calibri",
   //           size: 11,
   //           color: { argb: "FF333333" },
   //         };
   //         cell.alignment = { vertical: "top", horizontal: "left" };
-  
+
   //         // Explicitly set left and right borders
   //         if (colNumber === 1) {
   //           cell.border = { ...cell.border, left: { style: "medium", color: blackBorder } };
@@ -318,16 +356,16 @@ function OrderDetails() {
   //           cell.border = { ...cell.border, right: { style: "medium", color: blackBorder } };
   //         }
   //       });
-  
+
   //       return rowData; // Return row data after each iteration
   //     });
-  
+
   //     // ======================
   //     // FINAL BORDER TOUCH-UP
   //     // ======================
   //     const lastRowNumber = sheet.lastRow.number;
   //     const lastColNumber = sheet.columns.length;
-  
+
   //     sheet.eachRow((row, rowNumber) => {
   //       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
   //         if (colNumber === 1) {
@@ -341,7 +379,7 @@ function OrderDetails() {
   //         }
   //       });
   //     });
-  
+
   //     // ======================
   //     // BROWSER-FRIENDLY SAVE
   //     // ======================
@@ -350,17 +388,17 @@ function OrderDetails() {
   //       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
   //     });
   //     saveAs(blob, `Order_${order._id}_Details.xlsx`);
-  
+
   //   } catch (error) {
   //     console.error("Excel export failed:", error);
   //     alert("Failed to export Excel file. Check console for details.");
   //   }
   // };
-  
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
-       <HashLoader color="#002441" />
+        <HashLoader color="#002441" />
       </div>
     );
   }
@@ -441,13 +479,12 @@ function OrderDetails() {
                 <div>
                   <strong>Status:</strong>
                   <span
-                    className={`px-3 py-1 rounded-lg text-sm font-bold ${
-                      order.status === "Pending"
+                    className={`px-3 py-1 rounded-lg text-sm font-bold ${order.status === "Pending"
                         ? "bg-yellow-200 text-yellow-800"
                         : order.status === "Completed"
-                        ? "bg-green-200 text-green-800"
-                        : "bg-gray-200 text-gray-800"
-                    }`}
+                          ? "bg-green-200 text-green-800"
+                          : "bg-gray-200 text-gray-800"
+                      }`}
                   >
                     {order.status}
                   </span>

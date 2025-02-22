@@ -2,9 +2,21 @@ import React, { useState, FormEvent, useEffect } from "react";
 import { useForm } from "@formspree/react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import {jwtDecode} from "jwt-decode"; // Correct import
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
+import creditCardType from "credit-card-type";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCcVisa,
+  faCcMastercard,
+  faCcAmex,
+  faCcDiscover,
+  faCcJcb,
+  faCcDinersClub,
+  faCcStripe,
+} from "@fortawesome/free-brands-svg-icons";
 
 const Form: React.FC = () => {
   const [showExistingBAN, setShowExistingBAN] = useState(false);
@@ -14,6 +26,7 @@ const Form: React.FC = () => {
   const [promoCode, setPromoCode] = useState("");
   const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
   const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
+  const [cardType, setCardType] = useState("");
 
   const handleTradeSmartphoneChange = (value) => {
     console.log("Updating tradeSmartphone:", value);
@@ -34,7 +47,6 @@ const Form: React.FC = () => {
     console.log("Updating promo code change:", value);
     setPromoCode(value); // This updates the parent state
   };
-
 
   const handleBanFanDropdownChange = (e, fieldName) => {
     if (fieldName === "existingBAN") {
@@ -71,8 +83,6 @@ const Form: React.FC = () => {
       buyNewPhone: value,
     }));
   };
-
-
 
   const handleSmartphoneDetailsChange = (
     e: React.ChangeEvent<HTMLSelectElement>
@@ -331,6 +341,7 @@ const Form: React.FC = () => {
     cardExpiry: "",
     cardCVC: "",
     cardBillingAddress: "",
+    cardType,
     // sameAsCardAddress: false,
     accountHolderName: "",
     sameAddress: "",
@@ -362,7 +373,7 @@ const Form: React.FC = () => {
     tradeSmartphone: tradeSmartphone,
     buyPhoneNumber: buyPhoneNumber,
     phoneUniqueCode: phoneUniqueCode || "",
-    promoCode: promoCode
+    promoCode: promoCode,
   });
 
   const customerData = {
@@ -380,6 +391,7 @@ const Form: React.FC = () => {
     paymentMethod: formData.paymentMethod,
     cardHolderName: formData.cardHolderName,
     cardBillingAddress: formData.cardBillingAddress,
+    cardType: formData.cardType,
     // sameAsCardAddress: formData.sameAsCardAddress,
     accountHolderName: formData.accountHolderName,
     routingNumber: formData.routingNumber,
@@ -398,7 +410,39 @@ const Form: React.FC = () => {
     existingFAN: formData.existingFAN,
   };
 
+  const [debouncedCardNumber, setDebouncedCardNumber] = useState(
+    formData.cardNumber
+  );
+  const [debouncedCardType, setDebouncedCardType] = useState("");
 
+  // Debounce input change
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCardNumber(formData.cardNumber);
+    }, 500); // Delay for 500ms after typing stops
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [formData.cardNumber]);
+
+  useEffect(() => {
+    // Detect card type only when the input is long enough (e.g., more than 4 digits)
+    if (debouncedCardNumber.length >= 4) {
+      const types = creditCardType(debouncedCardNumber);
+      if (types.length > 0) {
+        const type = types[0].type;
+        setCardType(types[0].niceType); // Set the nice name for display
+        setFormData((prev) => ({
+          ...prev,
+          cardType: type, // Store the type for form submission
+        }));
+      } else {
+        setCardType("");
+        setFormData((prev) => ({ ...prev, cardType: "" }));
+      }
+    }
+  }, [debouncedCardNumber]);
   // const handleCheckboxChange = (e) => {
   //   const { checked } = e.target;
   //   if (checked) {
@@ -423,6 +467,36 @@ const Form: React.FC = () => {
         title: "Login Required",
         text: "You need to log in first to place an order.",
         icon: "warning",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
+
+    // Decode the token to check its expiry
+    try {
+      const decoded = jwtDecode(token); // Decode the JWT
+      const currentTime = Date.now() / 1000; // Current time in seconds
+      // Check if the token has expired
+      if (decoded.exp && decoded.exp < currentTime) {
+        Swal.fire({
+          title: "Session Expired",
+          text: "Your session has expired. Please log in again.",
+          icon: "warning",
+          confirmButtonText: "Go to Login",
+        }).then(() => {
+          // Redirect to login if the token is expired
+          navigate("/login");
+        });
+        return;
+      }
+    } catch (error) {
+      // If decoding the token fails, handle the error (e.g., invalid token)
+      Swal.fire({
+        title: "Invalid Token",
+        text: "The token is invalid. Please log in again.",
+        icon: "error",
         confirmButtonText: "Go to Login",
       }).then(() => {
         navigate("/login");
@@ -529,6 +603,41 @@ const Form: React.FC = () => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
+
+    if (name === "cardNumber") {
+      const types = creditCardType(value); // Get the card types based on the input
+      if (types.length > 0) {
+        setCardType(types[0].niceType); // Set the card type name
+      } else {
+        setCardType(""); // Clear the card type if invalid card number
+        console.log(cardType.toLowerCase());
+      }
+    }
+  };
+
+  // Function to map card type to FontAwesome icons
+  const getCardIcon = (cardType: string) => {
+    switch (cardType.toLowerCase()) {
+      case "visa":
+        return faCcVisa;
+      case "mastercard":
+        return faCcMastercard;
+      case "amex":
+      case "american express":
+        return faCcAmex;
+      case "discover":
+        return faCcDiscover;
+      case "jcb":
+        return faCcJcb;
+      case "dinersclub":
+        return faCcDinersClub;
+      case "unionpay":
+        return faCcStripe; // UnionPay doesn't have a specific FontAwesome icon, so we'll use the Stripe icon as a placeholder
+      case "maestro":
+        return faCcMastercard; // Maestro can be closely represented by MasterCard's icon
+      default:
+        return null; // Return null for invalid or unrecognized card types
+    }
   };
 
   const newErrors: any = {};
@@ -569,28 +678,33 @@ const Form: React.FC = () => {
     if (!formData.creditcardpayment)
       newErrors.creditcardpayment = "Please select an autopay option";
 
-
     if (formData.creditcardpayment === "yes") {
       if (!formData.paymentMethod || formData.paymentMethod === "select") {
         newErrors.paymentMethod = "Please select a payment method.";
       }
 
       if (formData.paymentMethod === "checkingAccount") {
-        if (!formData.accountHolderName) newErrors.accountHolderName = "Account Holder Name is required.";
-        if (!formData.routingNumber) newErrors.routingNumber = "Routing Number is required.";
-        if (!formData.checkingAccountNumber) newErrors.checkingAccountNumber = "Checking Account Number is required.";
+        if (!formData.accountHolderName)
+          newErrors.accountHolderName = "Account Holder Name is required.";
+        if (!formData.routingNumber)
+          newErrors.routingNumber = "Routing Number is required.";
+        if (!formData.checkingAccountNumber)
+          newErrors.checkingAccountNumber =
+            "Checking Account Number is required.";
       }
-
 
       if (formData.paymentMethod === "debitCreditCard") {
-        if (!formData.cardHolderName) newErrors.cardHolderName = "Card Holder Name is required.";
-        if (!formData.cardNumber) newErrors.cardNumber = "Card Number is required.";
-        if (!formData.cardExpiry) newErrors.cardExpiry = "Expiry Date is required.";
+        if (!formData.cardHolderName)
+          newErrors.cardHolderName = "Card Holder Name is required.";
+        if (!formData.cardNumber)
+          newErrors.cardNumber = "Card Number is required.";
+        if (!formData.cardExpiry)
+          newErrors.cardExpiry = "Expiry Date is required.";
         if (!formData.cardCVC) newErrors.cardCVC = "CVC is required.";
-        if (!formData.cardBillingAddress) newErrors.cardBillingAddress = "Billing Address is required.";
+        if (!formData.cardBillingAddress)
+          newErrors.cardBillingAddress = "Billing Address is required.";
       }
     }
-
 
     // if (!formData.singleormultiaddresshipment)
     //   newErrors.singleormultiaddresshipment =
@@ -722,10 +836,10 @@ const Form: React.FC = () => {
     const tabOrder = [
       // "sellerInfo",
       "accountInfo",
-      "paymentInfo",
       "shippingInfo",
       "carrierInfo",
       "additionalInfo",
+      "paymentInfo",
     ];
     const currentIndex = tabOrder.indexOf(activeTab);
     if (currentIndex < tabOrder.length - 1) {
@@ -740,7 +854,6 @@ const Form: React.FC = () => {
 
     // Validate fields based on the active tab
     switch (tab) {
-
       case "accountInfo":
         if (!formData.name) newErrors.name = "Name is required.";
         if (!formData.email) newErrors.email = "Email is required.";
@@ -901,10 +1014,10 @@ const Form: React.FC = () => {
       const tabOrder = [
         // "sellerInfo",
         "accountInfo",
-        "paymentInfo",
         "shippingInfo",
         "carrierInfo",
         "additionalInfo",
+        "paymentInfo",
       ];
       const currentIndex = tabOrder.indexOf(prevTab);
       if (currentIndex < tabOrder.length - 1) {
@@ -1034,7 +1147,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.name && <p className="text-red-500 text-sm">{errors.name}</p>}
+                  {errors.name && (
+                    <p className="text-red-500 text-sm">{errors.name}</p>
+                  )}
                 </div>
 
                 <div>
@@ -1047,7 +1162,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.email && <p className="text-red-500 text-sm">{errors.email}</p>}
+                  {errors.email && (
+                    <p className="text-red-500 text-sm">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -1059,7 +1176,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2"
                   />
-                  {errors.phonenumber && <p className="text-red-500 text-sm">{errors.phonenumber}</p>}
+                  {errors.phonenumber && (
+                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+                  )}
                 </div>
               </div>
 
@@ -1075,11 +1194,15 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.dealerCode && <p className="text-red-500 text-sm">{errors.dealerCode}</p>}
+                  {errors.dealerCode && (
+                    <p className="text-red-500 text-sm">{errors.dealerCode}</p>
+                  )}
                 </div>
 
                 <div>
-                  <h6 className="text-[#3C3C3C] text-start">SANS Partner ID:</h6>
+                  <h6 className="text-[#3C3C3C] text-start">
+                    SANS Partner ID:
+                  </h6>
                   <input
                     type="text"
                     name="agentCode"
@@ -1088,12 +1211,31 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.agentCode && <p className="text-red-500 text-sm">{errors.agentCode}</p>}
+                  {errors.agentCode && (
+                    <p className="text-red-500 text-sm">{errors.agentCode}</p>
+                  )}
+                </div>
+
+                <div className="mb-4">
+                  <h6 className="text-start font-medium text-gray-700">
+                    Company Name
+                  </h6>
+                  <input
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter Company Name"
+                    value={formData.companyname}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.companyname && (
+                    <p className="text-danger text-sm">{errors.companyname}</p>
+                  )}
                 </div>
               </div>
             </form>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
               {/* Agreement Type */}
               <div className="w-full">
                 <select
@@ -1106,7 +1248,9 @@ const Form: React.FC = () => {
                   <option value="amb">AMB</option>
                   <option value="acda">ACDA Attainment/MAC</option>
                 </select>
-                {errors.agreementtype && <p className="text-red-500 text-sm">{errors.agreementtype}</p>}
+                {errors.agreementtype && (
+                  <p className="text-red-500 text-sm">{errors.agreementtype}</p>
+                )}
               </div>
 
               {/* EIP Limit (Conditional Field) */}
@@ -1119,7 +1263,9 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="w-full border-b border-gray-300 py-2"
                   />
-                  {errors.eip && <p className="text-red-500 text-sm">{errors.eip}</p>}
+                  {errors.eip && (
+                    <p className="text-red-500 text-sm">{errors.eip}</p>
+                  )}
                 </div>
               )}
 
@@ -1135,12 +1281,16 @@ const Form: React.FC = () => {
                   <option value="accepted">Yes</option>
                   <option value="declined">No</option>
                 </select>
-                {errors.atntaccount && <p className="text-red-500 text-sm">{errors.atntaccount}</p>}
+                {errors.atntaccount && (
+                  <p className="text-red-500 text-sm">{errors.atntaccount}</p>
+                )}
               </div>
 
               {/* Special Instructions */}
               <div className="w-full">
-                <h4 className="text-lg text-gray-800 font-semibold mb-2">Special Instruction</h4>
+                <h4 className="text-lg text-gray-800 font-semibold mb-2">
+                  Special Instruction
+                </h4>
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
@@ -1149,55 +1299,114 @@ const Form: React.FC = () => {
                   placeholder="Type here..."
                   style={{ resize: "none" }}
                 ></textarea>
-                {errors.specialinstruction && <p className="text-red-500 text-sm">{errors.specialinstruction}</p>}
+                {errors.specialinstruction && (
+                  <p className="text-red-500 text-sm">
+                    {errors.specialinstruction}
+                  </p>
+                )}
               </div>
             </div>
 
             {/* Order Assignment */}
             {!isFirstOrder && (
-              <OrderAssignment token={token} formData={formData} setFormData={setFormData} />
+              <OrderAssignment
+                token={token}
+                formData={formData}
+                setFormData={setFormData}
+              />
             )}
 
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
               <div>
-                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">AT&T Account Information</h2>
+                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
+                  AT&T Account Information
+                </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   {[
-                    { name: "businesslegalname", label: "Business Legal Name", placeholder: "Enter Business Legal Name" },
-                    { name: "businessaddress", label: "Business Address", placeholder: "Enter Business Address" },
-                    { name: "businesscity", label: "Business City", placeholder: "Enter Business City" },
-                    { name: "businessstate", label: "Business State", placeholder: "Enter Business State" },
-                    { name: "businesszip", label: "Business Zip", placeholder: "Enter Business Zip" },
-                    { name: "taxid", label: "Tax ID", placeholder: "Enter Tax ID" },
-                    { name: "contactname", label: "Contact Name", placeholder: "Enter Contact Name" },
-                    { name: "contactphone", label: "Contact Phone", placeholder: "Enter Contact Phone" },
-                    { name: "contactemail", label: "Contact Email", placeholder: "Enter Contact Email" },
-                    { name: "existingBAN", label: "Existing BAN", placeholder: "Enter Existing BAN" },
-                    { name: "existingFAN", label: "Existing FAN", placeholder: "Enter Existing FAN" },
+                    {
+                      name: "businesslegalname",
+                      label: "Business Legal Name",
+                      placeholder: "Enter Business Legal Name",
+                    },
+                    {
+                      name: "businessaddress",
+                      label: "Business Address",
+                      placeholder: "Enter Business Address",
+                    },
+                    {
+                      name: "businesscity",
+                      label: "Business City",
+                      placeholder: "Enter Business City",
+                    },
+                    {
+                      name: "businessstate",
+                      label: "Business State",
+                      placeholder: "Enter Business State",
+                    },
+                    {
+                      name: "businesszip",
+                      label: "Business Zip",
+                      placeholder: "Enter Business Zip",
+                    },
+                    {
+                      name: "taxid",
+                      label: "Tax ID",
+                      placeholder: "Enter Tax ID",
+                    },
+                    {
+                      name: "contactname",
+                      label: "Contact Name",
+                      placeholder: "Enter Contact Name",
+                    },
+                    {
+                      name: "contactphone",
+                      label: "Contact Phone",
+                      placeholder: "Enter Contact Phone",
+                    },
+                    {
+                      name: "contactemail",
+                      label: "Contact Email",
+                      placeholder: "Enter Contact Email",
+                    },
+                    {
+                      name: "existingBAN",
+                      label: "Existing BAN",
+                      placeholder: "Enter Existing BAN",
+                    },
+                    {
+                      name: "existingFAN",
+                      label: "Existing FAN",
+                      placeholder: "Enter Existing FAN",
+                    },
                   ].map((field, index) => (
                     <div key={index} className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">{field.label}</h6>
+                      <h6 className="text-sm font-medium text-gray-700">
+                        {field.label}
+                      </h6>
 
                       {/* Exclude Existing BAN and FAN from regular input rendering */}
-                      {field.name !== "existingBAN" && field.name !== "existingFAN" && (
-                        <input
-                          type="text"
-                          name={field.name}
-                          placeholder={field.placeholder}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        />
-                      )}
+                      {field.name !== "existingBAN" &&
+                        field.name !== "existingFAN" && (
+                          <input
+                            type="text"
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          />
+                        )}
 
                       {/* Dropdown for Existing BAN */}
                       {field.name === "existingBAN" && (
                         <select
                           name={field.name}
                           value={formData[field.name]}
-                          onChange={(e) => handleBanFanDropdownChange(e, "existingBAN")}
+                          onChange={(e) =>
+                            handleBanFanDropdownChange(e, "existingBAN")
+                          }
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select</option>
@@ -1211,7 +1420,9 @@ const Form: React.FC = () => {
                         <select
                           name={field.name}
                           value={formData[field.name]}
-                          onChange={(e) => handleBanFanDropdownChange(e, "existingFAN")}
+                          onChange={(e) =>
+                            handleBanFanDropdownChange(e, "existingFAN")
+                          }
                           className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         >
                           <option value="">Select</option>
@@ -1242,7 +1453,11 @@ const Form: React.FC = () => {
                         />
                       )}
 
-                      {errors[field.name] && <p className="text-red-500 text-sm">{errors[field.name]}</p>}
+                      {errors[field.name] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[field.name]}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1250,8 +1465,6 @@ const Form: React.FC = () => {
             )}
           </div>
         );
-
-
 
       case "paymentInfo":
         return (
@@ -1263,7 +1476,9 @@ const Form: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
               {/* Paperless Billing */}
               <div className="w-full">
-                <h6 className="text-sm font-medium text-gray-700">Paperless Billing?</h6>
+                <h6 className="text-sm font-medium text-gray-700">
+                  Paperless Billing?
+                </h6>
                 <select
                   name="paperless"
                   value={formData.paperless}
@@ -1280,7 +1495,9 @@ const Form: React.FC = () => {
 
               {/* Bill to Mobile */}
               <div className="w-full">
-                <h6 className="text-sm font-medium text-gray-700">Bill to Mobile?</h6>
+                <h6 className="text-sm font-medium text-gray-700">
+                  Bill to Mobile?
+                </h6>
                 <select
                   name="billtomobile"
                   value={formData.billtomobile}
@@ -1304,7 +1521,9 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
-                  <option value="select" selected>Select An Option</option>
+                  <option value="select" selected>
+                    Select An Option
+                  </option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -1315,81 +1534,13 @@ const Form: React.FC = () => {
                 )}
               </div>
 
-              {/* Credit Card Information */}
-              {/* {formData.creditcardpayment === "yes" && (
-                  <div className="w-full md:col-span-3 mt-4">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                      <div className="w-full">
-                        <label
-                          className="block text-sm font-medium mb-2"
-                          htmlFor="cardNumber"
-                        >
-                          Card Number
-                        </label>
-                        <input
-                          type="text"
-                          name="cardNumber"
-                          value={formData.cardNumber}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          placeholder="Enter your card number"
-                        />
-                        {errors.cardNumber && (
-                          <p className="text-danger text-sm">
-                            {errors.cardNumber}
-                          </p>
-                        )}
-                      </div>
-  
-                      <div className="w-full">
-                        <label
-                          className="block text-sm font-medium mb-2"
-                          htmlFor="cardExpiry"
-                        >
-                          Expiry Date (MM/YY)
-                        </label>
-                        <input
-                          type="text"
-                          name="cardExpiry"
-                          value={formData.cardExpiry}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          placeholder="MM/YY"
-                        />
-                        {errors.cardExpiry && (
-                          <p className="text-danger text-sm">
-                            {errors.cardExpiry}
-                          </p>
-                        )}
-                      </div>
-  
-                      <div className="w-full">
-                        <label
-                          className="block text-sm font-medium mb-2"
-                          htmlFor="cardCVC"
-                        >
-                          CVC
-                        </label>
-                        <input
-                          type="text"
-                          name="cardCVC"
-                          value={formData.cardCVC}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          placeholder="CVC"
-                        />
-                        {errors.cardCVC && (
-                          <p className="text-danger text-sm">{errors.cardCVC}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )} */}
-
               {formData.creditcardpayment === "yes" && (
                 <div className="w-full md:col-span-3 mt-4">
                   <div className="w-full">
-                    <label className="block text-sm font-medium mb-2" htmlFor="paymentMethod">
+                    <label
+                      className="block text-sm font-medium mb-2"
+                      htmlFor="paymentMethod"
+                    >
                       Payment Method
                     </label>
                     <select
@@ -1400,7 +1551,9 @@ const Form: React.FC = () => {
                     >
                       <option value="select">Select An Option</option>
                       <option value="checkingAccount">Checking Account</option>
-                      <option value="debitCreditCard">Debit Card/Credit Card</option>
+                      <option value="debitCreditCard">
+                        Debit Card/Credit Card
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -1409,7 +1562,10 @@ const Form: React.FC = () => {
                 <div className="w-full md:col-span-3 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="accountHolderName">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="accountHolderName"
+                      >
                         Account Holder Name
                       </label>
                       <input
@@ -1421,12 +1577,17 @@ const Form: React.FC = () => {
                         placeholder="Account Holder Name"
                       />
                       {errors.accountHolderName && (
-                        <p className="text-danger text-sm">{errors.accountHolderName}</p>
+                        <p className="text-danger text-sm">
+                          {errors.accountHolderName}
+                        </p>
                       )}
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="routingNumber">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="routingNumber"
+                      >
                         Routing Number
                       </label>
                       <input
@@ -1438,12 +1599,17 @@ const Form: React.FC = () => {
                         placeholder="Routing Number"
                       />
                       {errors.routingNumber && (
-                        <p className="text-danger text-sm">{errors.routingNumber}</p>
+                        <p className="text-danger text-sm">
+                          {errors.routingNumber}
+                        </p>
                       )}
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="checkingAccountNumber">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="checkingAccountNumber"
+                      >
                         Checking Account Number
                       </label>
                       <input
@@ -1455,7 +1621,9 @@ const Form: React.FC = () => {
                         placeholder="Checking Account Number"
                       />
                       {errors.checkingAccountNumber && (
-                        <p className="text-danger text-sm">{errors.checkingAccountNumber}</p>
+                        <p className="text-danger text-sm">
+                          {errors.checkingAccountNumber}
+                        </p>
                       )}
                     </div>
                   </div>
@@ -1465,7 +1633,10 @@ const Form: React.FC = () => {
                 <div className="w-full md:col-span-3 mt-4">
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardHolderName">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardHolderName"
+                      >
                         Card Holder Name
                       </label>
                       <input
@@ -1477,29 +1648,66 @@ const Form: React.FC = () => {
                         placeholder="Card Holder Name"
                       />
                       {errors.cardHolderName && (
-                        <p className="text-danger text-sm">{errors.cardHolderName}</p>
+                        <p className="text-danger text-sm">
+                          {errors.cardHolderName}
+                        </p>
                       )}
                     </div>
-
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardNumber">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardNumber"
+                      >
                         Card Number
                       </label>
-                      <input
-                        type="text"
-                        name="cardNumber"
-                        value={formData.cardNumber}
-                        onChange={handleChange}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        placeholder="Enter your card number"
-                      />
-                      {errors.cardNumber && (
-                        <p className="text-danger text-sm">{errors.cardNumber}</p>
+                      <div className="flex items-center space-x-3">
+                        {" "}
+                        {/* Flex container for input and icon */}
+                        <input
+                          type="text"
+                          name="cardNumber"
+                          value={formData.cardNumber}
+                          onChange={handleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          placeholder="Enter your card number"
+                        />
+                        {/* Display card type icon side by side */}
+                        {cardType && (
+                          <FontAwesomeIcon
+                            icon={getCardIcon(cardType)} // Display the correct icon based on card type
+                            size="2x" // Adjust size as needed
+                            className={`text-${cardType.toLowerCase()}-500`} // Apply color based on card type
+                          />
+                        )}
+                      </div>
+
+                      {/* Display card type name */}
+                      {cardType && (
+                        <p className="text-sm mt-2">
+                          <strong>Card Type:</strong> {cardType}
+                        </p>
                       )}
+
+                      {/* Display error message */}
+                      {errors.cardNumber && (
+                        <p className="text-danger text-sm">
+                          {errors.cardNumber}
+                        </p>
+                      )}
+
+                      {/* Hidden input to store card type */}
+                      <input
+                        type="hidden"
+                        name="cardType"
+                        value={formData.cardType}
+                      />
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardExpiry">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardExpiry"
+                      >
                         Expiry Date (MM/YY)
                       </label>
                       <input
@@ -1511,12 +1719,17 @@ const Form: React.FC = () => {
                         placeholder="MM/YY"
                       />
                       {errors.cardExpiry && (
-                        <p className="text-danger text-sm">{errors.cardExpiry}</p>
+                        <p className="text-danger text-sm">
+                          {errors.cardExpiry}
+                        </p>
                       )}
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardCVC">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardCVC"
+                      >
                         CVC
                       </label>
                       <input
@@ -1533,7 +1746,10 @@ const Form: React.FC = () => {
                     </div>
 
                     <div className="w-full">
-                      <label className="block text-sm font-medium mb-2" htmlFor="cardBillingAddress">
+                      <label
+                        className="block text-sm font-medium mb-2"
+                        htmlFor="cardBillingAddress"
+                      >
                         Card Billing Address
                       </label>
                       <input
@@ -1545,7 +1761,9 @@ const Form: React.FC = () => {
                         placeholder="Billing Address"
                       />
                       {errors.cardBillingAddress && (
-                        <p className="text-danger text-sm">{errors.cardBillingAddress}</p>
+                        <p className="text-danger text-sm">
+                          {errors.cardBillingAddress}
+                        </p>
                       )}
                     </div>
 
@@ -1564,10 +1782,8 @@ const Form: React.FC = () => {
                   </div>
                 </div>
               )}
-
             </div>
           </div>
-
         );
 
       case "shippingInfo":
@@ -1905,25 +2121,9 @@ const Form: React.FC = () => {
             <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
               <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                Additional Information
+                Line Configuration
               </h3>
               <div className="grid grid-cols-1 mt-4 md:grid-cols-3 gap-4">
-                <div className="mb-4">
-                  <h6 className="text-sm md:text-center text-start font-medium text-gray-700">
-                    Company Name
-                  </h6>
-                  <input
-                    type="text"
-                    name="companyname"
-                    placeholder="Enter Company Name"
-                    value={formData.companyname}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.companyname && (
-                    <p className="text-danger text-sm">{errors.companyname}</p>
-                  )}
-                </div>
                 <div className="mb-4">
                   <h6 className="text-start md:text-center">Account Number</h6>
                   <input
@@ -2481,24 +2681,25 @@ const Form: React.FC = () => {
             {[
               // { key: "sellerInfo", label: "Seller Information" },
               { key: "accountInfo", label: "Account Information" },
-              { key: "additionalInfo", label: "Line Configuration" },
               { key: "shippingInfo", label: "Shipping Information" },
-              { key: "paymentInfo", label: "Payment Information" },
               { key: "carrierInfo", label: "Carrier Information" },
+              { key: "additionalInfo", label: "Line Configuration" },
+              { key: "paymentInfo", label: "Payment Information" },
               // { key: "additionalInfo", label: "Additional Information" },
             ].map((tab) => (
               <button
                 key={tab.key}
                 type="button"
                 onClick={() => setActiveTab(tab.key)}
-                className={`px-4 py-2 w-full md:w-auto ${activeTab === tab.key ? "text-white" : "bg-gray-300"
-                  } rounded`}
+                className={`px-4 py-2 w-full md:w-auto ${
+                  activeTab === tab.key ? "text-white" : "bg-gray-300"
+                } rounded`}
                 style={
                   activeTab === tab.key
                     ? {
-                      background:
-                        "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
-                    }
+                        background:
+                          "linear-gradient(90deg, rgba(65, 253, 254, 1) 0%, rgba(0, 210, 255, 1) 100%)",
+                      }
                     : {}
                 }
               >
@@ -2512,7 +2713,7 @@ const Form: React.FC = () => {
 
           {/* Conditional Button */}
           <div className="flex justify-center mt-6">
-            {activeTab === "additionalInfo" ? (
+            {activeTab === "paymentInfo" ? (
               <button
                 type="submit" // Submit button triggers the form's onSubmit handler
                 className="bg-green-500 text-white px-6 py-2 rounded"
