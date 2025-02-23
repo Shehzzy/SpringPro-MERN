@@ -2120,11 +2120,11 @@ const Form: React.FC = () => {
           <div className="flex justify-center items-start">
             <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
-              <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+              <h2 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
                 Line Configuration
-              </h3>
+              </h2>
               <div className="grid grid-cols-1 mt-4 md:grid-cols-3 gap-4">
-                <div className="mb-4">
+               {/*  <div className="mb-4">
                   <h6 className="text-start md:text-center">Account Number</h6>
                   <input
                     type="text"
@@ -2148,6 +2148,7 @@ const Form: React.FC = () => {
                     </div>
                   )}
                 </div>
+                */}
                 <IMEIForm
                   imeiNumbers={imeiNumbers}
                   onImeiNumbersChange={handleImeiNumbersChange}
