@@ -1,20 +1,41 @@
-import React, { useState, FormEvent } from "react";
+import React, { useState, FormEvent, useEffect } from "react";
 import { useForm, ValidationError } from "@formspree/react";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const Signup: React.FC = () => {
+  const token = localStorage.getItem("jwt_token");
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  useEffect(() => {
+    if (token) {
+      Swal.fire({
+        title: "You are already logged in",
+        text: "You will be redirected to the homepage",
+        icon: "info",
+      });
+
+      navigate("/"); // Redirect to homepage if user is already logged in
+    }
+  }, [navigate]);
   const [formData, setFormData] = useState({
-    name: "",
     email: "",
     password: "",
     confirmPassword: "",
+    fname: "",
+    lname: "",
+    phone: "",
+    companyname: "",
+    government_identification: "",
+    tax_id: "",
+    ssn: "",
+    dob: "",
   });
 
   const [errors, setErrors] = useState<string[]>([]);
   const [successMessage, setSuccessMessage] = useState("");
   const [state, handleSubmit] = useForm("xanykyav");
-  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -28,7 +49,15 @@ const Signup: React.FC = () => {
 
   const validateForm = (): boolean => {
     const missingFields: string[] = [];
-    if (!formData.name) missingFields.push("Name");
+    if (!formData.fname) missingFields.push("First Name");
+    if (!formData.lname) missingFields.push("Last Name");
+    if (!formData.phone) missingFields.push("Phone Number");
+    if (!formData.companyname) missingFields.push("Company Name");
+    if (!formData.government_identification)
+      missingFields.push("Government Identification");
+    if (!formData.dob) missingFields.push("Date Of Birth");
+    if (!formData.ssn) missingFields.push("Social Security Number");
+    if (!formData.tax_id) missingFields.push("EIN/TAX ID");
     if (!formData.email) missingFields.push("Email");
     if (!formData.password) missingFields.push("Password");
     if (!formData.confirmPassword) missingFields.push("Confirm Password");
@@ -53,7 +82,14 @@ const Signup: React.FC = () => {
         const response = await axios.post(
           "https://springprobackend-production.up.railway.app/api/auth/register",
           {
-            fullName: formData.name,
+            fname: formData.fname,
+            lname: formData.lname,
+            phone: formData.phone,
+            companyname: formData.companyname,
+            government_identification: formData.government_identification,
+            dob: formData.dob,
+            ssn: formData.ssn,
+            tax_id: formData.tax_id,
             email: formData.email,
             password: formData.password,
             role: "user",
@@ -100,17 +136,101 @@ const Signup: React.FC = () => {
           <div>
             <div className="grid grid-cols-1 gap-4">
               <div className="w-full">
-                <h6 className="text-black text-start">Full Name</h6>
+                <h6 className="text-black text-start">First Name</h6>
                 <input
                   type="text"
-                  name="name"
-                  placeholder="Enter your full name"
-                  value={formData.name}
+                  name="fname"
+                  placeholder="Enter your first name"
+                  value={formData.fname}
                   onChange={handleChange}
                   className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                 />
               </div>
 
+              <div className="w-full">
+                <h6 className="text-black text-start">Last Name</h6>
+                <input
+                  type="text"
+                  name="lname"
+                  placeholder="Enter your last name"
+                  value={formData.lname}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-black text-start">Phone Number</h6>
+                <input
+                  type="text"
+                  name="phone"
+                  placeholder="Enter your phone number"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-black text-start">Company Name</h6>
+                <input
+                  type="text"
+                  name="companyname"
+                  placeholder="Enter your company name"
+                  value={formData.companyname}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-black text-start">
+                  Government Identification
+                </h6>
+                <input
+                  type="text"
+                  name="government_identification"
+                  placeholder="Enter your government identification"
+                  value={formData.government_identification}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+              <div className="w-full">
+                <h6 className="text-black text-start">Date Of Birth</h6>
+                <input
+                  type="date"
+                  name="dob"
+                  placeholder="Enter your date of birth"
+                  value={formData.dob}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-black text-start">EIN/TAX ID</h6>
+                <input
+                  type="text"
+                  name="tax_id"
+                  placeholder="Enter your tax id"
+                  value={formData.tax_id}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-black text-start">SSN</h6>
+                <input
+                  type="text"
+                  name="ssn"
+                  placeholder="Enter your SSN"
+                  value={formData.ssn}
+                  onChange={handleChange}
+                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                />
+              </div>
               <div>
                 <h6 className="text-black text-start">Email</h6>
                 <input
