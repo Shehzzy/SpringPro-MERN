@@ -1138,7 +1138,7 @@ const Form: React.FC = () => {
               {/* Row 1 */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-[#3C3C3C] text-start">Name</h6>
+                  <h6 className="text-sm font-medium text-gray-700">Name</h6>
                   <input
                     type="text"
                     name="name"
@@ -1153,7 +1153,7 @@ const Form: React.FC = () => {
                 </div>
 
                 <div>
-                  <h6 className="text-[#3C3C3C] text-start">Email</h6>
+                  <h6 className="text-sm font-medium text-gray-700">Email</h6>
                   <input
                     type="text"
                     name="email"
@@ -1167,25 +1167,41 @@ const Form: React.FC = () => {
                   )}
                 </div>
 
-                <div>
-                  <h6 className="text-[#3C3C3C] text-start">Phone</h6>
+                <div className="">
+                  <h6 className="text-sm font-medium text-gray-700">Company Name</h6>
                   <input
-                    name="phonenumber"
-                    placeholder="Enter Phone"
-                    value={formData.phonenumber}
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter Company Name"
+                    value={formData.companyname}
                     onChange={handleChange}
-                    className="w-full border-b border-gray-300 py-2"
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.phonenumber && (
-                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
-                  )}
+                    {errors.companyname && (
+                      <p className="text-danger text-sm">{errors.companyname}</p>
+                    )}
                 </div>
               </div>
 
               {/* Row 2 */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+
+              <div>
+                <h6 className="text-sm font-medium text-gray-700">Phone</h6>
+                <input
+                  name="phonenumber"
+                  placeholder="Enter Phone"
+                  value={formData.phonenumber}
+                  onChange={handleChange}
+                  className="w-full border-b border-gray-300 py-2"
+                />
+                {errors.phonenumber && (
+                  <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+                )}
+              </div>
+
                 <div className="w-full">
-                  <h6 className="text-[#3C3C3C] text-start">Dealer Code</h6>
+                  <h6 className="text-sm font-medium text-gray-700">Dealer Code</h6>
                   <input
                     type="text"
                     name="dealerCode"
@@ -1200,9 +1216,7 @@ const Form: React.FC = () => {
                 </div>
 
                 <div>
-                  <h6 className="text-[#3C3C3C] text-start">
-                    SANS Partner ID:
-                  </h6>
+                  <h6 className="text-sm font-medium text-gray-700">SANS Partner ID</h6>
                   <input
                     type="text"
                     name="agentCode"
@@ -1216,35 +1230,19 @@ const Form: React.FC = () => {
                   )}
                 </div>
 
-                <div className="mb-4">
-                  <h6 className="text-start font-medium text-gray-700">
-                    Company Name
-                  </h6>
-                  <input
-                    type="text"
-                    name="companyname"
-                    placeholder="Enter Company Name"
-                    value={formData.companyname}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.companyname && (
-                    <p className="text-danger text-sm">{errors.companyname}</p>
-                  )}
-                </div>
               </div>
             </form>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
               {/* Agreement Type */}
               <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Select Agreement Type</h6>
                 <select
                   name="agreementtype"
                   value={formData.agreementtype}
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 w-full"
                 >
-                  <option value="">Select Agreement Type</option>
                   <option value="amb">AMB</option>
                   <option value="acda">ACDA Attainment/MAC</option>
                 </select>
@@ -1271,13 +1269,13 @@ const Form: React.FC = () => {
 
               {/* Add AT&T Account */}
               <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Add AT&T Account</h6>
                 <select
                   name="atntaccount"
                   value={formData.atntaccount}
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 w-full"
                 >
-                  <option value="">Add AT&T Account</option>
                   <option value="accepted">Yes</option>
                   <option value="declined">No</option>
                 </select>
@@ -1288,9 +1286,7 @@ const Form: React.FC = () => {
 
               {/* Special Instructions */}
               <div className="w-full">
-                <h4 className="text-lg text-gray-800 font-semibold mb-2">
-                  Special Instruction
-                </h4>
+                <h6 className="text-sm font-medium text-gray-700">Special Instruction</h6>
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
