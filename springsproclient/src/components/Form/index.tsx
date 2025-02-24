@@ -2,9 +2,28 @@ import React, { useState, FormEvent, useEffect } from "react";
 import { useForm } from "@formspree/react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+<<<<<<< HEAD
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
+=======
+import { jwtDecode } from "jwt-decode"; // Correct import
+import Swal from "sweetalert2";
+import OrderAssignment from "./OrderAssignment";
+import IMEIForm from "./IMEIForm";
+import creditCardType from "credit-card-type";
+import LineConfiguration from "./LineConfiguration";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCcVisa,
+  faCcMastercard,
+  faCcAmex,
+  faCcDiscover,
+  faCcJcb,
+  faCcDinersClub,
+  faCcStripe,
+} from "@fortawesome/free-brands-svg-icons";
+>>>>>>> parent of f7cfad0 (Update index.tsx)
 
 const Form: React.FC = () => {
   const [showExistingBAN, setShowExistingBAN] = useState(false);
@@ -14,6 +33,14 @@ const Form: React.FC = () => {
   const [promoCode, setPromoCode] = useState("");
   const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
   const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
+
+  const [linesData, setLinesData] = useState([]);
+  console.log("Lines data", linesData);
+
+    // Receive data from child component
+    const handleLinesChange = (updatedData) => {
+        setLinesData(updatedData);
+    };
 
   const handleTradeSmartphoneChange = (value) => {
     console.log("Updating tradeSmartphone:", value);
@@ -383,6 +410,54 @@ const Form: React.FC = () => {
     existingFAN: formData.existingFAN,
   };
 
+<<<<<<< HEAD
+=======
+  const [debouncedCardNumber, setDebouncedCardNumber] = useState(
+    formData.cardNumber
+  );
+  const [debouncedCardType, setDebouncedCardType] = useState("");
+
+  // Debounce input change
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCardNumber(formData.cardNumber);
+    }, 500); // Delay for 500ms after typing stops
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [formData.cardNumber]);
+
+  // useEffect(() => {
+  //   // Detect card type only when the input is long enough (e.g., more than 4 digits)
+  //   if (debouncedCardNumber.length >= 4) {
+  //     const types = creditCardType(debouncedCardNumber);
+  //     if (types.length > 0) {
+  //       const type = types[0].type;
+  //       setCardType(types[0].niceType); // Set the nice name for display
+  //       setFormData((prev) => ({
+  //         ...prev,
+  //         cardType: type, // Store the type for form submission
+  //       }));
+  //     } else {
+  //       setCardType("");
+  //       setFormData((prev) => ({ ...prev, cardType: "" }));
+  //     }
+  //   }
+  // }, [debouncedCardNumber]);
+  // const handleCheckboxChange = (e) => {
+  //   const { checked } = e.target;
+  //   if (checked) {
+  //     setFormData({
+  //       ...formData,
+  //       cardBillingAddress: formData.sameAddress ? formData.cardBillingAddress : "",
+  //     });
+  //   } else {
+  //     setFormData({ ...formData, sameAsCardAddress: checked });
+  //   }
+  // };
+
+>>>>>>> parent of f7cfad0 (Update index.tsx)
   const [errors, setErrors] = useState<any>({});
   const [state, handleSubmit] = useForm("xanykyav");
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -514,8 +589,8 @@ const Form: React.FC = () => {
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
     if (!formData.promotion) newErrors.promotion = "Promotion is required.";
-    if (!formData.atntaccount)
-      newErrors.atntaccount = "Select from add AT&T Account.";
+    // if (!formData.atntaccount)
+    //   newErrors.atntaccount = "Select from add AT&T Account.";
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
     if (!formData.businesslegalname)
@@ -645,6 +720,7 @@ const Form: React.FC = () => {
           "https://springprobackend-production.up.railway.app/api/order/create-order",
           {
             ...formData,
+            lines: linesData,
             imeiNumbers: imeiNumbers,
             customerData,
             carrierInfos: carrierInfos,
@@ -679,7 +755,12 @@ const Form: React.FC = () => {
       "accountInfo",
       "paymentShipping",
       "carrierInfo",
+<<<<<<< HEAD
       "additionalInfo",
+=======
+      "lineConfig",
+      "paymentInfo",
+>>>>>>> parent of f7cfad0 (Update index.tsx)
     ];
     const currentIndex = tabOrder.indexOf(activeTab);
     if (currentIndex < tabOrder.length - 1) {
@@ -835,7 +916,7 @@ const Form: React.FC = () => {
         });
         break;
 
-      case "additionalInfo":
+      case "lineConfig":
         if (!formData.companyname)
           newErrors.companyname = "Company Name is required.";
         if (!formData.dealerCode)
@@ -852,6 +933,7 @@ const Form: React.FC = () => {
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
+<<<<<<< HEAD
   const handleNext = () => {
     setActiveTab((prevTab) => {
       const tabOrder = [
@@ -867,6 +949,21 @@ const Form: React.FC = () => {
       }
       return prevTab;
     });
+=======
+  const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault(); // Prevent default behavior
+    const tabOrder = [
+      "accountInfo",
+      "shippingInfo",
+      "carrierInfo",
+      "lineConfig",
+      "paymentInfo",
+    ];
+    const currentIndex = tabOrder.indexOf(activeTab);
+    if (currentIndex < tabOrder.length - 1) {
+      setActiveTab(tabOrder[currentIndex + 1]);
+    }
+>>>>>>> parent of f7cfad0 (Update index.tsx)
   };
 
   const renderTabContent = () => {
@@ -876,12 +973,17 @@ const Form: React.FC = () => {
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
             {/* Heading */}
             <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+<<<<<<< HEAD
               SANS Agent Information
+=======
+              AT&T Account Option
+>>>>>>> parent of f7cfad0 (Update index.tsx)
             </h2>
 
             {/* Form */}
             <form onSubmit={onSubmit} className="space-y-6">
               {/* Row 1 */}
+              {/*
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <div className="w-full">
                   <h6 className="text-[#3C3C3C] text-start">Name</h6>
@@ -926,12 +1028,65 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.phonenumber}</p>
                   )}
                 </div>
-              </div>
+              </div>*/}
 
-              {/* Row 2 */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+<<<<<<< HEAD
                 <div className="w-full">
                   <h6 className="text-[#3C3C3C] text-start">Dealer Code</h6>
+=======
+                <input
+                  type="hidden"
+                  name="name"
+                  placeholder="Enter Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+
+                <input
+                  type="hidden"
+                  name="email"
+                  placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+
+                <div>
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Company Name
+                  </h6>
+                  <input
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter Company Name"
+                    value={formData.companyname}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.companyname && (
+                    <p className="text-danger text-sm">{errors.companyname}</p>
+                  )}
+                </div>
+                <div>
+                  <h6 className="text-sm font-medium text-gray-700">Phone</h6>
+                  <input
+                    name="phonenumber"
+                    placeholder="Enter Phone"
+                    value={formData.phonenumber}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-300 py-2"
+                  />
+                  {errors.phonenumber && (
+                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Dealer Code
+                  </h6>
+>>>>>>> parent of f7cfad0 (Update index.tsx)
                   <input
                     type="text"
                     name="dealerCode"
@@ -944,11 +1099,18 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.dealerCode}</p>
                   )}
                 </div>
-
+              </div>
+              {/* Row 2 */}
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <div>
+<<<<<<< HEAD
                   {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
                   <h6 className="text-[#3C3C3C] text-start">
                     SANS Partner ID:
+=======
+                  <h6 className="text-sm font-medium text-gray-700">
+                    SANS Partner ID
+>>>>>>> parent of f7cfad0 (Update index.tsx)
                   </h6>
                   <input
                     type="text"
@@ -962,11 +1124,69 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.agentCode}</p>
                   )}
                 </div>
+<<<<<<< HEAD
+=======
+                {/* Agreement Type */}
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Select Agreement Type
+                  </h6>
+                  <select
+                    name="agreementtype"
+                    value={formData.agreementtype}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="amb">AMB</option>
+                    <option value="acda">ACDA Attainment/MAC</option>
+                  </select>
+                  {errors.agreementtype && (
+                    <p className="text-red-500 text-sm">
+                      {errors.agreementtype}
+                    </p>
+                  )}
+                </div>
+                {/* EIP Limit (Conditional Field) */}
+                {formData.agreementtype === "acda" && (
+                  <div className="w-full">
+                    <input
+                      name="eip"
+                      placeholder="Enter What EIP Limit is needed"
+                      value={formData.eip}
+                      onChange={handleChange}
+                      className="w-full border-b border-gray-300 py-2"
+                    />
+                    {errors.eip && (
+                      <p className="text-red-500 text-sm">{errors.eip}</p>
+                    )}
+                  </div>
+                )}
+
+                {/* Add AT&T Account */}
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Add AT&T Account
+                  </h6>
+                  <select
+                    name="atntaccount"
+                    value={formData.atntaccount}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 w-full"
+                  >
+                    <option value="accepted">Yes</option>
+                    <option value="declined">No</option>
+                  </select>
+                  {errors.atntaccount && (
+                    <p className="text-red-500 text-sm">{errors.atntaccount}</p>
+                  )}
+                </div>
+>>>>>>> parent of f7cfad0 (Update index.tsx)
               </div>
             </form>
           </div>
         );
 
+<<<<<<< HEAD
       case "accountInfo":
         return (
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
@@ -1066,6 +1286,14 @@ const Form: React.FC = () => {
                 <h4 className="text-lg text-gray-800 font-semibold mb-2">
                   Special Instruction
                 </h4>
+=======
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+              {/* Special Instructions */}
+              <div className="w-full mb-5">
+                <h6 className="text-sm font-medium text-gray-700">
+                  Special Instruction
+                </h6>
+>>>>>>> parent of f7cfad0 (Update index.tsx)
                 <textarea
                   name="specialinstruction"
                   value={formData.specialinstruction}
@@ -1704,11 +1932,12 @@ const Form: React.FC = () => {
             </button>
           </div>
         );
-      case "additionalInfo":
+      case "lineConfig":
         return (
           <div className="flex justify-center items-start">
             <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
+<<<<<<< HEAD
               <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
                 Additional Information
               </h3>
@@ -1775,6 +2004,40 @@ const Form: React.FC = () => {
                   handlePromoCodeChange={handlePromoCodeChange}
                 />
               </div>
+=======
+              <h2 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                Line Configuration
+              </h2>
+              <div className="flex flex-col md:flex-row items-start justify-center gap-6 mt-4">
+  <IMEIForm
+    imeiNumbers={imeiNumbers}
+    onImeiNumbersChange={handleImeiNumbersChange}
+    onAccountFieldsChange={handleAccountFieldsChange}
+    onPhoneNumbersChange={handlePhoneNumbersChange}
+    onShippingAddressesChange={handleShippingAddressesChange}
+    shippingInfos={shippingInfos}
+    carrierInfos={carrierInfos}
+    tradeSmartphone={tradeSmartphone}
+    setTradeSmartphone={setTradeSmartphone}
+    buyPhoneNumber={buyPhoneNumber}
+    setBuyPhoneNumber={setBuyPhoneNumber}
+    phoneUniqueCode={phoneUniqueCode}
+    setPhoneUniqueCode={setPhoneUniqueCode}
+    promoCode={promoCode}
+    setPromoCode={setPromoCode}
+    handleTradeSmartphoneChange={handleTradeSmartphoneChange}
+    handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange}
+    handleBuyPhoneNumberChange={handleBuyPhoneNumberChange}
+    handlePromoCodeChange={handlePromoCodeChange}
+  />
+
+  <LineConfiguration 
+    shippingInfos={shippingInfos}
+    carrierInfos={carrierInfos}
+    onLinesChange={handleLinesChange}
+  />
+</div>
+>>>>>>> parent of f7cfad0 (Update index.tsx)
 
               <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
                 {/* Rate Plan Selection */}
@@ -2288,7 +2551,13 @@ const Form: React.FC = () => {
               { key: "accountInfo", label: "Account Information" },
               { key: "paymentShipping", label: "Payment & Shipping" },
               { key: "carrierInfo", label: "Carrier Information" },
+<<<<<<< HEAD
               { key: "additionalInfo", label: "Additional Information" },
+=======
+              { key: "lineConfig", label: "Line Configuration" },
+              { key: "paymentInfo", label: "Payment Information" },
+              // { key: "additionalInfo", label: "Additional Information" },
+>>>>>>> parent of f7cfad0 (Update index.tsx)
             ].map((tab) => (
               <button
                 key={tab.key}
