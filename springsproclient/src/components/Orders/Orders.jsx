@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
-import {jwtDecode} from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 
 function Orders() {
   const navigate = useNavigate();
@@ -14,47 +14,47 @@ function Orders() {
     "https://springprobackend-production.up.railway.app/api/order/get-user-orders";
 
   useEffect(() => {
-   if (!token) {
-         Swal.fire({
-           title: "Login Required",
-           text: "You need to log in first to place an order.",
-           icon: "warning",
-           confirmButtonText: "Go to Login",
-         }).then(() => {
-           navigate("/login");
-         });
-         return;
-       }
+    if (!token) {
+      Swal.fire({
+        title: "Login Required",
+        text: "You need to log in first to place an order.",
+        icon: "warning",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
 
     // Decode the token to check its expiry
-        try {
-          const decoded = jwtDecode(token); // Decode the JWT
-          const currentTime = Date.now() / 1000; // Current time in seconds
-          // Check if the token has expired
-          if (decoded.exp && decoded.exp < currentTime) {
-            Swal.fire({
-              title: "Session Expired",
-              text: "Your session has expired. Please log in again.",
-              icon: "warning",
-              confirmButtonText: "Go to Login",
-            }).then(() => {
-              // Redirect to login if the token is expired
-              navigate("/login");
-            });
-            return;
-          }
-        } catch (error) {
-          // If decoding the token fails, handle the error (e.g., invalid token)
-          Swal.fire({
-            title: "Invalid Token",
-            text: "The token is invalid. Please log in again.",
-            icon: "error",
-            confirmButtonText: "Go to Login",
-          }).then(() => {
-            navigate("/login");
-          });
-          return;
-        }
+    try {
+      const decoded = jwtDecode(token); // Decode the JWT
+      const currentTime = Date.now() / 1000; // Current time in seconds
+      // Check if the token has expired
+      if (decoded.exp && decoded.exp < currentTime) {
+        Swal.fire({
+          title: "Session Expired",
+          text: "Your session has expired. Please log in again.",
+          icon: "warning",
+          confirmButtonText: "Go to Login",
+        }).then(() => {
+          // Redirect to login if the token is expired
+          navigate("/login");
+        });
+        return;
+      }
+    } catch (error) {
+      // If decoding the token fails, handle the error (e.g., invalid token)
+      Swal.fire({
+        title: "Invalid Token",
+        text: "The token is invalid. Please log in again.",
+        icon: "error",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
 
     const fetchOrders = async () => {
       try {
@@ -135,15 +135,14 @@ function Orders() {
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
                     <span
-                      className={`px-3 py-1 rounded-full text-sm ${
-                        order.status === "Pending"
-                          ? "bg-yellow-200 text-yellow-800"
-                          : order.status === "Completed"
+                      className={`px-3 py-1 rounded-full text-sm ${order.status === "Pending"
+                        ? "bg-yellow-200 text-yellow-800"
+                        : order.status === "Completed"
                           ? "bg-green-200 text-green-800"
                           : order.status === "In Progress"
-                          ? "bg-blue-200 text-blue-800" // New style for In Progress
-                          : "bg-red-200 text-red-800" // Default for other statuses
-                      }`}
+                            ? "bg-blue-200 text-blue-800" // New style for In Progress
+                            : "bg-red-200 text-red-800" // Default for other statuses
+                        }`}
                     >
                       {order.status}
                     </span>
@@ -191,168 +190,127 @@ function Orders() {
             <div className="max-h-[250px] overflow-y-auto border-t border-gray-300 pt-4 space-y-2">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <span className="font-semibold">Name:</span>{" "}
-                  {selectedOrder.name}
+                  <span className="font-semibold">Name:</span> {selectedOrder.name}
                 </div>
                 <div>
-                  <span className="font-semibold">Email:</span>{" "}
-                  {selectedOrder.email}
+                  <span className="font-semibold">Email:</span> {selectedOrder.email}
                 </div>
                 <div>
-                  <span className="font-semibold">Phone:</span>{" "}
-                  {selectedOrder.phonenumber}
+                  <span className="font-semibold">Phone:</span> {selectedOrder.phonenumber}
                 </div>
                 <div>
-                  <span className="font-semibold">Agreement Type:</span>{" "}
-                  {selectedOrder.agreementtype}
+                  <span className="font-semibold">Agreement Type:</span> {selectedOrder.agreementtype}
                 </div>
                 <div>
-                  <span className="font-semibold">EIP:</span>{" "}
-                  {selectedOrder.eip ? selectedOrder.eip : "N/A"}
+                  <span className="font-semibold">EIP:</span> {selectedOrder.eip || "N/A"}
                 </div>
                 <div>
-                  <span className="font-semibold">Promotion:</span>{" "}
-                  {selectedOrder.promotion}
+                  <span className="font-semibold">Promotion:</span> {selectedOrder.promotion}
                 </div>
                 <div>
-                  <span className="font-semibold">Paperless:</span>{" "}
-                  {selectedOrder.paperless}
+                  <span className="font-semibold">Paperless:</span> {selectedOrder.paperless}
                 </div>
                 <div>
-                  <span className="font-semibold">Special Instruction:</span>{" "}
-                  {selectedOrder.specialinstruction}
+                  <span className="font-semibold">Special Instruction:</span> {selectedOrder.specialinstruction}
                 </div>
-                <div>
-                  <span className="font-semibold">Business Legal Name:</span>{" "}
-                  {selectedOrder.customerId.businesslegalname}
-                </div>
-                <div>
-                  <span className="font-semibold">Business Address:</span>{" "}
-                  {selectedOrder.customerId.businessaddress}
-                </div>
-                <div>
-                  <span className="font-semibold">Business City:</span>{" "}
-                  {selectedOrder.customerId.businesscity}
-                </div>
-                <div>
-                  <span className="font-semibold">Business State:</span>{" "}
-                  {selectedOrder.customerId.businessstate}
-                </div>
-                <div>
-                  <span className="font-semibold">Business ZIP:</span>{" "}
-                  {selectedOrder.customerId.businesszip}
-                </div>
-                <div>
-                  <span className="font-semibold">Tax ID:</span>{" "}
-                  {selectedOrder.customerId.taxid}
-                </div>
-                <div>
-                  <span className="font-semibold">Contact Name:</span>{" "}
-                  {selectedOrder.customerId.contactname}
-                </div>
-                <div>
-                  <span className="font-semibold">Contact Phone:</span>{" "}
-                  {selectedOrder.customerId.contactphone}
-                </div>
-                <div>
-                  <span className="font-semibold">Contact Email:</span>{" "}
-                  {selectedOrder.customerId.contactemail}
-                </div>
-                <div>
-                  <span className="font-semibold">Location ID:</span>{" "}
-                  {selectedOrder.customerId.locationid}
-                </div>
-                <div>
-                  <span className="font-semibold">Bill to Mobile:</span>{" "}
-                  {selectedOrder.customerId.billtomobile}
-                </div>
-                <div>
-                  <span className="font-semibold">Credit Card Payment:</span>{" "}
-                  {selectedOrder.customerId.creditcardpayment}
-                </div>
-                {/* <div>
-                  <span className="font-semibold">
-                    Single or Multi Address Shipment:
-                  </span>{" "}
-                  {selectedOrder.customerId.singleormultiaddresshipment}
-                </div> */}
 
-                {
-                  selectedOrder.shippingAddresses && selectedOrder.shippingAddresses.length > 0 ? (
-                    selectedOrder.shippingAddresses.map((shippingAddress, index) => (
-                      <div key={index}>
+                {/* Customer Data */}
+                <div>
+                  <span className="font-semibold">Business Legal Name:</span> {selectedOrder.customerId.businesslegalname}
+                </div>
+                <div>
+                  <span className="font-semibold">Business Address:</span> {selectedOrder.customerId.businessaddress}
+                </div>
+                <div>
+                  <span className="font-semibold">Business City:</span> {selectedOrder.customerId.businesscity}
+                </div>
+                <div>
+                  <span className="font-semibold">Business State:</span> {selectedOrder.customerId.businessstate}
+                </div>
+                <div>
+                  <span className="font-semibold">Business ZIP:</span> {selectedOrder.customerId.businesszip}
+                </div>
+                <div>
+                  <span className="font-semibold">Tax ID:</span> {selectedOrder.customerId.taxid}
+                </div>
+                <div>
+                  <span className="font-semibold">Contact Name:</span> {selectedOrder.customerId.contactname}
+                </div>
+                <div>
+                  <span className="font-semibold">Contact Phone:</span> {selectedOrder.customerId.contactphone}
+                </div>
+                <div>
+                  <span className="font-semibold">Contact Email:</span> {selectedOrder.customerId.contactemail}
+                </div>
+                <div>
+                  <span className="font-semibold">Location ID:</span> {selectedOrder.customerId.locationid}
+                </div>
+                <div>
+                  <span className="font-semibold">Bill to Mobile:</span> {selectedOrder.customerId.billtomobile}
+                </div>
+                <div>
+                  <span className="font-semibold">Credit Card Payment:</span> {selectedOrder.customerId.creditcardpayment}
+                </div>
 
+                {/* Shipping Addresses */}
+                {selectedOrder.shippingAddresses && selectedOrder.shippingAddresses.length > 0 ? (
+                  selectedOrder.shippingAddresses.map((shippingAddress, index) => (
+                    <div key={index}>
+                      <h6>Shipping Addresses: </h6>
                       <div>
-                  <span className="font-semibold">Attention Name:</span>{" "}
-                  {shippingAddress.attentionname}
-                </div>
-                <div>
-                  <span className="font-semibold">Shipping Address:</span>{" "}
-                  {shippingAddress.shippingaddress}
-                </div>
-                <div>
-                  <span className="font-semibold">Shipping City:</span>{" "}
-                  {shippingAddress.shippingcity}
-                </div>
-                <div>
-                  <span className="font-semibold">Shipping State:</span>{" "}
-                  {shippingAddress.shippingstate}
-                </div>
-                <div>
-                  <span className="font-semibold">Shipping ZIP:</span>{" "}
-                  {shippingAddress.shippingzip}
-                </div>
+                        <span className="font-semibold">Attention Name:</span> {shippingAddress.attentionname}
                       </div>
-                  ))) :  (
-                    <p>No shipping addresses available</p>
-                  )
-                }
+                      <div>
+                        <span className="font-semibold">Shipping Address:</span> {shippingAddress.shippingaddress}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Shipping City:</span> {shippingAddress.shippingcity}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Shipping State:</span> {shippingAddress.shippingstate}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Shipping ZIP:</span> {shippingAddress.shippingzip}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p>No shipping addresses available</p>
+                )}
 
-                {selectedOrder.carrierInfos &&
-                selectedOrder.carrierInfos.length > 0 ? (
+                {/* Carrier Infos */}
+                {selectedOrder.carrierInfos && selectedOrder.carrierInfos.length > 0 ? (
                   selectedOrder.carrierInfos.map((carrierInfo, index) => (
                     <div key={index}>
                       <div>
-                        <span className="font-semibold">
-                          Current Wireless Carrier:
-                        </span>{" "}
-                        {carrierInfo.currentwirelesscarrier}
+                        <span className="font-semibold">Current Wireless Carrier:</span> {carrierInfo.currentwirelesscarrier}
                       </div>
                       <div>
-                        <span className="font-semibold">Account Number:</span>{" "}
-                        {carrierInfo.accountnumber}
+                        <span className="font-semibold">Account Number:</span> {carrierInfo.accountnumber}
                       </div>
                       <div>
-                        <span className="font-semibold">PIN or Password:</span>{" "}
-                        {carrierInfo.pinorpassword}
+                        <span className="font-semibold">PIN or Password:</span> {carrierInfo.pinorpassword}
                       </div>
                       <div>
-                        <span className="font-semibold">SSN or Tax ID:</span>{" "}
-                        {carrierInfo.ssnortaxid}
+                        <span className="font-semibold">SSN or Tax ID:</span> {carrierInfo.ssnortaxid}
                       </div>
                       <div>
-                        <span className="font-semibold">Billing Name:</span>{" "}
-                        {carrierInfo.billingname}
+                        <span className="font-semibold">Billing Name:</span> {carrierInfo.billingname}
                       </div>
                       <div>
-                        <span className="font-semibold">Billing Address:</span>{" "}
-                        {carrierInfo.billingaddress}
+                        <span className="font-semibold">Billing Address:</span> {carrierInfo.billingaddress}
                       </div>
                       <div>
-                        <span className="font-semibold">Billing City:</span>{" "}
-                        {carrierInfo.billingcity}
+                        <span className="font-semibold">Billing City:</span> {carrierInfo.billingcity}
                       </div>
                       <div>
-                        <span className="font-semibold">Billing State:</span>{" "}
-                        {carrierInfo.billingstate || "N/A"}
+                        <span className="font-semibold">Billing State:</span> {carrierInfo.billingstate || "N/A"}
                       </div>
                       <div>
-                        <span className="font-semibold">Billing ZIP:</span>{" "}
-                        {carrierInfo.billingzip}
+                        <span className="font-semibold">Billing ZIP:</span> {carrierInfo.billingzip}
                       </div>
                       <div>
-                        <span className="font-semibold">Authorized Name:</span>{" "}
-                        {carrierInfo.authorizedname}
+                        <span className="font-semibold">Authorized Name:</span> {carrierInfo.authorizedname}
                       </div>
                     </div>
                   ))
@@ -360,24 +318,77 @@ function Orders() {
                   <div>No carrier information available.</div>
                 )}
 
+                {/* IMEI Numbers */}
                 <div>
-                  <span className="font-semibold">IMEI Numbers:</span>{" "}
-                  {selectedOrder.imeiNumbers
-                    ?.map((imei) => imei.imei)
-                    .join(", ")}
+                  <span className="font-semibold">IMEI Numbers:</span>
+                  {selectedOrder.imeiNumbers?.map((imei, index) => (
+                    <span key={index}>{imei.imei}{index < selectedOrder.imeiNumbers.length - 1 && ", "}</span>
+                  ))}
                 </div>
+
+                {/* Lines */}
+                {selectedOrder.lines && selectedOrder.lines.length > 0 ? (
+                  selectedOrder.lines.map((line, index) => (
+                    <div key={index} className="mt-2">
+                      <div>
+                        <h6>Line Configuration: </h6>
+                        <span className="font-semibold">Account Number:</span> {line.accountNumber}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Port Out Pin:</span> {line.portOutPin}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Phone Number:</span> {line.phoneNumber}
+                      </div>
+                      <div>
+                        <span className="font-semibold">Carrier:</span> {line.carrier}
+                      </div>
+                      <div>
+                        <span className="font-semibold">IMEI:</span> {line.imei}
+                      </div>
+
+                      {/* Check if shippingAddress exists before rendering */}
+                      {line.shippingAddress ? (
+                        <div>
+                          <span className="font-semibold">Shipping Address:</span>
+                          <div>
+                            <span className="font-semibold">Attention Name:</span> {line.shippingAddress.attentionName}
+                          </div>
+                          <div>
+                            <span className="font-semibold">Address:</span> {line.shippingAddress.address}
+                          </div>
+                          <div>
+                            <span className="font-semibold">City:</span> {line.shippingAddress.city}
+                          </div>
+                          <div>
+                            <span className="font-semibold">State:</span> {line.shippingAddress.state}
+                          </div>
+                          <div>
+                            <span className="font-semibold">ZIP:</span> {line.shippingAddress.zip}
+                          </div>
+                        </div>
+                      ) : (
+                        <div>No shipping address available.</div>
+                      )}
+                    </div>
+                  ))
+                ) : (
+                  <div>No lines available.</div>
+                )}
+
+
+                {/* Order Status */}
                 <div>
                   <span className="font-semibold">Status:</span>{" "}
                   <span
-                    className={`px-3 py-1 rounded-full text-sm ${
-                      selectedOrder.status === "Pending"
-                        ? "bg-yellow-200 text-yellow-800"
-                        : selectedOrder.status === "Completed"
+                    className={`px-3 py-1 rounded-full text-sm ${selectedOrder.status === "Pending"
+                      ? "bg-yellow-200 text-yellow-800"
+                      : selectedOrder.status === "Completed"
                         ? "bg-green-200 text-green-800"
                         : selectedOrder.status === "In Progress"
-                        ? "bg-blue-200 text-blue-800"
-                        : "text-black"
-                    }`}
+                          ? "bg-blue-200 text-blue-800"
+                          : "text-black"
+                      }`}
                   >
                     {selectedOrder.status}
                   </span>
@@ -397,6 +408,7 @@ function Orders() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

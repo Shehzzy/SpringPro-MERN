@@ -30,7 +30,7 @@ const Form: React.FC = () => {
   const [cardType, setCardType] = useState("");
 
   const [linesData, setLinesData] = useState([]);
-  console.log("Lines data", linesData);
+  // console.log("Lines data", linesData);
 
     // Receive data from child component
     const handleLinesChange = (updatedData) => {
@@ -38,22 +38,22 @@ const Form: React.FC = () => {
     };
 
   const handleTradeSmartphoneChange = (value) => {
-    console.log("Updating tradeSmartphone:", value);
+    // console.log("Updating tradeSmartphone:", value);
     setTradeSmartphone(value); // This updates the parent state
   };
 
   const handlePhoneUniqueCodeChange = (value) => {
-    console.log("Updating phone unique code:", value);
+    // console.log("Updating phone unique code:", value);
     setPhoneUniqueCode(value); // This updates the parent state
   };
 
   const handleBuyPhoneNumberChange = (value) => {
-    console.log("Updating phone number change:", value);
+    // console.log("Updating phone number change:", value);
     setBuyPhoneNumber(value); // This updates the parent state
   };
 
   const handlePromoCodeChange = (value) => {
-    console.log("Updating promo code change:", value);
+    // console.log("Updating promo code change:", value);
     setPromoCode(value); // This updates the parent state
   };
 
@@ -320,7 +320,7 @@ const Form: React.FC = () => {
 
     name: "",
     email: "",
-    phonenumber: "",
+    // phonenumber: "",
     agreementtype: "",
     eip: "",
     promotion: "",
@@ -372,7 +372,7 @@ const Form: React.FC = () => {
     // billingstate: "",
     // billingzip: "",
     // authorizedname: "",
-    companyname: "",
+    // companyname: "",
     imeiNumbers: imeiNumbers,
     carrierInfos: [],
     dealerCode: "",
@@ -556,7 +556,7 @@ const Form: React.FC = () => {
             const {
               name,
               email,
-              phonenumber,
+              // phonenumber,
               agreementtype,
               eip,
               promotion,
@@ -575,7 +575,7 @@ const Form: React.FC = () => {
               ...prev,
               name: name || "",
               email: email || "",
-              phonenumber: phonenumber || "",
+              // phonenumber: phonenumber || "",
               agreementtype: agreementtype || "",
               eip: eip || "",
               promotion: promotion || "",
@@ -653,8 +653,8 @@ const Form: React.FC = () => {
   const validateForm = (): boolean => {
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.email) newErrors.email = "Email is required.";
-    if (!formData.phonenumber)
-      newErrors.phonenumber = "Phone Number is required.";
+    // if (!formData.phonenumber)
+    //   newErrors.phonenumber = "Phone Number is required.";
     if (!formData.agreementtype)
       newErrors.agreementtype = "Agreement Type is required.";
     if (formData.agreementtype === "acda" && !formData.eip)
@@ -750,8 +750,8 @@ const Form: React.FC = () => {
     // if (!formData.billingzip) newErrors.billingzip = "Billing Zip is required.";
     // if (!formData.authorizedname)
     //   newErrors.authorizedname = "Authorized Name is required.";
-    if (!formData.companyname)
-      newErrors.companyname = "Company Name is required.";
+    // if (!formData.companyname)
+    //   newErrors.companyname = "Company Name is required.";
     if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
     if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
     // if (!formData.existingBAN)
@@ -869,8 +869,8 @@ const Form: React.FC = () => {
       case "accountInfo":
         if (!formData.name) newErrors.name = "Name is required.";
         if (!formData.email) newErrors.email = "Email is required.";
-        if (!formData.phonenumber)
-          newErrors.phonenumber = "Phone Number is required.";
+        // if (!formData.phonenumber)
+        //   newErrors.phonenumber = "Phone Number is required.";
         if (!formData.agreementtype)
           newErrors.agreementtype = "Agreement Type is required.";
         if (formData.agreementtype === "acda" && !formData.eip)
@@ -939,8 +939,8 @@ const Form: React.FC = () => {
           newErrors.shippingstate = "Shipping State is required.";
         if (!formData.shippingzip)
           newErrors.shippingzip = "Shipping Zip is required.";
-        if (!formData.companyname)
-          newErrors.companyname = "Company Name is required.";
+        // if (!formData.companyname)
+        //   newErrors.companyname = "Company Name is required.";
         if (!formData.dealerCode)
           newErrors.dealerCode = "Dealer Code is required.";
         if (!formData.agentCode)
@@ -1006,8 +1006,8 @@ const Form: React.FC = () => {
 
       case "additionalInfo":
       case "lineConfig":
-        if (!formData.companyname)
-          newErrors.companyname = "Company Name is required.";
+        // if (!formData.companyname)
+        //   newErrors.companyname = "Company Name is required.";
         if (!formData.dealerCode)
           newErrors.dealerCode = "Dealer Code is required.";
         if (!formData.agentCode)
@@ -1214,37 +1214,15 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
+                
 
-                <div>
-                  <h6 className="text-sm font-medium text-gray-700">
-                    Company Name
-                  </h6>
-                  <input
-                    type="text"
-                    name="companyname"
-                    placeholder="Enter Company Name"
-                    value={formData.companyname}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.companyname && (
-                    <p className="text-danger text-sm">{errors.companyname}</p>
-                  )}
-                </div>
-                <div>
-                  <h6 className="text-sm font-medium text-gray-700">Phone</h6>
-                  <input
-                    name="phonenumber"
-                    placeholder="Enter Phone"
-                    value={formData.phonenumber}
-                    onChange={handleChange}
-                    className="w-full border-b border-gray-300 py-2"
-                  />
-                  {errors.phonenumber && (
-                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
-                  )}
-                </div>
-                <div className="w-full">
+              </div>
+              {/* Row 2 */}
+
+              
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+
+              <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
                     Dealer Code
                   </h6>
@@ -1261,9 +1239,6 @@ const Form: React.FC = () => {
                   )}
                 </div>
 
-              </div>
-              {/* Row 2 */}
-              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <div>
                   <h6 className="text-sm font-medium text-gray-700">
                     SANS Partner ID
@@ -1317,6 +1292,12 @@ const Form: React.FC = () => {
                   </div>
                 )}
               
+              </div>
+            </form>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+
+              
                 {/* Add AT&T Account */}
                 <div className="w-full">
                   
@@ -1336,10 +1317,7 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.atntaccount}</p>
                   )}
                 </div>
-              </div>
-            </form>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
               {/* Special Instructions */}
               <div className="w-full mb-5">
                 <h6 className="text-sm font-medium text-gray-700">
@@ -1575,7 +1553,7 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
-                  <option value="select" selected>
+                  <option value="select">
                     Select An Option
                   </option>
                   <option value="yes">Yes</option>
