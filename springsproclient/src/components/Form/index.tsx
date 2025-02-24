@@ -3,10 +3,13 @@ import { useForm } from "@formspree/react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 <<<<<<< HEAD
+<<<<<<< HEAD
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
 import { jwtDecode } from "jwt-decode"; // Correct import
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
@@ -33,6 +36,14 @@ const Form: React.FC = () => {
   const [promoCode, setPromoCode] = useState("");
   const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
   const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
+
+  const [linesData, setLinesData] = useState([]);
+  console.log("Lines data", linesData);
+
+    // Receive data from child component
+    const handleLinesChange = (updatedData) => {
+        setLinesData(updatedData);
+    };
 
   const [linesData, setLinesData] = useState([]);
   console.log("Lines data", linesData);
@@ -756,8 +767,11 @@ const Form: React.FC = () => {
       "paymentShipping",
       "carrierInfo",
 <<<<<<< HEAD
+<<<<<<< HEAD
       "additionalInfo",
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
       "lineConfig",
       "paymentInfo",
 >>>>>>> parent of f7cfad0 (Update index.tsx)
@@ -934,6 +948,7 @@ const Form: React.FC = () => {
   };
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   const handleNext = () => {
     setActiveTab((prevTab) => {
       const tabOrder = [
@@ -950,6 +965,8 @@ const Form: React.FC = () => {
       return prevTab;
     });
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
   const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent default behavior
     const tabOrder = [
@@ -963,6 +980,9 @@ const Form: React.FC = () => {
     if (currentIndex < tabOrder.length - 1) {
       setActiveTab(tabOrder[currentIndex + 1]);
     }
+<<<<<<< HEAD
+>>>>>>> parent of f7cfad0 (Update index.tsx)
+=======
 >>>>>>> parent of f7cfad0 (Update index.tsx)
   };
 
@@ -974,7 +994,11 @@ const Form: React.FC = () => {
             {/* Heading */}
             <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
 <<<<<<< HEAD
+<<<<<<< HEAD
               SANS Agent Information
+=======
+              AT&T Account Option
+>>>>>>> parent of f7cfad0 (Update index.tsx)
 =======
               AT&T Account Option
 >>>>>>> parent of f7cfad0 (Update index.tsx)
@@ -1082,10 +1106,66 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.phonenumber}</p>
                   )}
                 </div>
+<<<<<<< HEAD
+=======
+              </div>*/}
+
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+                <input
+                  type="hidden"
+                  name="name"
+                  placeholder="Enter Name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+
+                <input
+                  type="hidden"
+                  name="email"
+                  placeholder="Enter Email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+
+                <div>
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Company Name
+                  </h6>
+                  <input
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter Company Name"
+                    value={formData.companyname}
+                    onChange={handleChange}
+                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                  />
+                  {errors.companyname && (
+                    <p className="text-danger text-sm">{errors.companyname}</p>
+                  )}
+                </div>
+                <div>
+                  <h6 className="text-sm font-medium text-gray-700">Phone</h6>
+                  <input
+                    name="phonenumber"
+                    placeholder="Enter Phone"
+                    value={formData.phonenumber}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-300 py-2"
+                  />
+                  {errors.phonenumber && (
+                    <p className="text-red-500 text-sm">{errors.phonenumber}</p>
+                  )}
+                </div>
+>>>>>>> parent of f7cfad0 (Update index.tsx)
                 <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
                     Dealer Code
                   </h6>
+<<<<<<< HEAD
+>>>>>>> parent of f7cfad0 (Update index.tsx)
+=======
 >>>>>>> parent of f7cfad0 (Update index.tsx)
                   <input
                     type="text"
@@ -1104,9 +1184,14 @@ const Form: React.FC = () => {
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <div>
 <<<<<<< HEAD
+<<<<<<< HEAD
                   {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
                   <h6 className="text-[#3C3C3C] text-start">
                     SANS Partner ID:
+=======
+                  <h6 className="text-sm font-medium text-gray-700">
+                    SANS Partner ID
+>>>>>>> parent of f7cfad0 (Update index.tsx)
 =======
                   <h6 className="text-sm font-medium text-gray-700">
                     SANS Partner ID
@@ -1125,7 +1210,10 @@ const Form: React.FC = () => {
                   )}
                 </div>
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
                 {/* Agreement Type */}
                 <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
@@ -1180,12 +1268,16 @@ const Form: React.FC = () => {
                     <p className="text-red-500 text-sm">{errors.atntaccount}</p>
                   )}
                 </div>
+<<<<<<< HEAD
+>>>>>>> parent of f7cfad0 (Update index.tsx)
+=======
 >>>>>>> parent of f7cfad0 (Update index.tsx)
               </div>
             </form>
           </div>
         );
 
+<<<<<<< HEAD
 <<<<<<< HEAD
       case "accountInfo":
         return (
@@ -1289,10 +1381,17 @@ const Form: React.FC = () => {
 =======
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
               {/* Special Instructions */}
+=======
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+              {/* Special Instructions */}
+>>>>>>> parent of f7cfad0 (Update index.tsx)
               <div className="w-full mb-5">
                 <h6 className="text-sm font-medium text-gray-700">
                   Special Instruction
                 </h6>
+<<<<<<< HEAD
+>>>>>>> parent of f7cfad0 (Update index.tsx)
+=======
 >>>>>>> parent of f7cfad0 (Update index.tsx)
                 <textarea
                   name="specialinstruction"
@@ -1938,6 +2037,7 @@ const Form: React.FC = () => {
             <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
 <<<<<<< HEAD
+<<<<<<< HEAD
               <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
                 Additional Information
               </h3>
@@ -2005,6 +2105,8 @@ const Form: React.FC = () => {
                 />
               </div>
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
               <h2 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
                 Line Configuration
               </h2>
@@ -2037,6 +2139,9 @@ const Form: React.FC = () => {
     onLinesChange={handleLinesChange}
   />
 </div>
+<<<<<<< HEAD
+>>>>>>> parent of f7cfad0 (Update index.tsx)
+=======
 >>>>>>> parent of f7cfad0 (Update index.tsx)
 
               <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
@@ -2552,8 +2657,11 @@ const Form: React.FC = () => {
               { key: "paymentShipping", label: "Payment & Shipping" },
               { key: "carrierInfo", label: "Carrier Information" },
 <<<<<<< HEAD
+<<<<<<< HEAD
               { key: "additionalInfo", label: "Additional Information" },
 =======
+=======
+>>>>>>> parent of f7cfad0 (Update index.tsx)
               { key: "lineConfig", label: "Line Configuration" },
               { key: "paymentInfo", label: "Payment Information" },
               // { key: "additionalInfo", label: "Additional Information" },
