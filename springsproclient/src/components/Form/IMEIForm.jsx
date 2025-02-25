@@ -60,7 +60,9 @@ function IMEIForm({
 
   return (
     <div>
-      <div className="flex items-center justify-center gap-4 mb-4">
+      <div className="flex gap-2 mb-2 flex-col">
+        <h6 className="text-md font-medium text-gray-700">Enter number of lines you want to generate</h6>
+        <div className="flex flex-row gap-2">
         {/* Input for number of rows */}
         <input
           type="number"
@@ -73,10 +75,11 @@ function IMEIForm({
         <button
           onClick={() => setShowModal(true)}
           type="button"
-          className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
+          className="text-md bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
         >
-          Open IMEI Form
+          Generate
         </button>
+        </div>
       </div>
 
       {showModal && (

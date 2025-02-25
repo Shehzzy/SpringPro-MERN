@@ -2153,38 +2153,38 @@ const Form: React.FC = () => {
           <div className="flex justify-center items-start">
             <div className="bg-white max-w-4xl mx-auto p-8 w-full shadow-lg rounded-lg border text-left">
               {/* Additional Information */}
-              <h2 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+              <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mb-4">
                 Line Configuration
-              </h2>
-              <div className="flex flex-col md:flex-row items-start justify-center gap-6 mt-4">
-  <IMEIForm
-    imeiNumbers={imeiNumbers}
-    onImeiNumbersChange={handleImeiNumbersChange}
-    onAccountFieldsChange={handleAccountFieldsChange}
-    onPhoneNumbersChange={handlePhoneNumbersChange}
-    onShippingAddressesChange={handleShippingAddressesChange}
-    shippingInfos={shippingInfos}
-    carrierInfos={carrierInfos}
-    tradeSmartphone={tradeSmartphone}
-    setTradeSmartphone={setTradeSmartphone}
-    buyPhoneNumber={buyPhoneNumber}
-    setBuyPhoneNumber={setBuyPhoneNumber}
-    phoneUniqueCode={phoneUniqueCode}
-    setPhoneUniqueCode={setPhoneUniqueCode}
-    promoCode={promoCode}
-    setPromoCode={setPromoCode}
-    handleTradeSmartphoneChange={handleTradeSmartphoneChange}
-    handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange}
-    handleBuyPhoneNumberChange={handleBuyPhoneNumberChange}
-    handlePromoCodeChange={handlePromoCodeChange}
-  />
+              </h3>
+              <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
+                <IMEIForm
+                  imeiNumbers={imeiNumbers}
+                  onImeiNumbersChange={handleImeiNumbersChange}
+                  onAccountFieldsChange={handleAccountFieldsChange}
+                  onPhoneNumbersChange={handlePhoneNumbersChange}
+                  onShippingAddressesChange={handleShippingAddressesChange}
+                  shippingInfos={shippingInfos}
+                  carrierInfos={carrierInfos}
+                  tradeSmartphone={tradeSmartphone}
+                  setTradeSmartphone={setTradeSmartphone}
+                  buyPhoneNumber={buyPhoneNumber}
+                  setBuyPhoneNumber={setBuyPhoneNumber}
+                  phoneUniqueCode={phoneUniqueCode}
+                  setPhoneUniqueCode={setPhoneUniqueCode}
+                  promoCode={promoCode}
+                  setPromoCode={setPromoCode}
+                  handleTradeSmartphoneChange={handleTradeSmartphoneChange}
+                  handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange}
+                  handleBuyPhoneNumberChange={handleBuyPhoneNumberChange}
+                  handlePromoCodeChange={handlePromoCodeChange}
+                />
 
-  <LineConfiguration 
-    shippingInfos={shippingInfos}
-    carrierInfos={carrierInfos}
-    onLinesChange={handleLinesChange}
-  />
-</div>
+                {/* <LineConfiguration 
+                  shippingInfos={shippingInfos}
+                  carrierInfos={carrierInfos}
+                  onLinesChange={handleLinesChange}
+                /> */}
+              </div>
 
               <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
                 {/* Rate Plan Selection */}
@@ -2436,7 +2436,9 @@ const Form: React.FC = () => {
 
               {buyNewPhone === "yes" && (
                 <div>
+                  <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
                   <div className="mb-4">
+                    <h6 className="text-sm font-medium text-gray-700">Select Brand</h6>
                     <select
                       name="brand"
                       value={smartphoneDetails.brand}
@@ -2455,6 +2457,7 @@ const Form: React.FC = () => {
 
                   {smartphoneDetails.brand === "apple" && (
                     <div className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">Select Apple Model</h6>
                       <select
                         name="model"
                         value={smartphoneDetails.model}
@@ -2471,6 +2474,7 @@ const Form: React.FC = () => {
 
                   {smartphoneDetails.brand === "samsung" && (
                     <div className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">Select Samsung Model</h6>
                       <select
                         name="model"
                         value={smartphoneDetails.model}
@@ -2485,38 +2489,42 @@ const Form: React.FC = () => {
                       </select>
                     </div>
                   )}
-
-                  <div className="mb-4">
-                    <select
-                      name="color"
-                      value={smartphoneDetails.color}
-                      onChange={handleSmartphoneDetailsChange}
-                      className="border-b h-10 border-gray-300 w-full"
-                    >
-                      <option value="">Select Color</option>
-                      <option value="black">Black</option>
-                      <option value="white">White</option>
-                      <option value="blue">Blue</option>
-                      <option value="red">Red</option>
-                      <option value="green">Green</option>
-                    </select>
                   </div>
+                  <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
+                    <div className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">Select Color</h6>
+                      <select
+                        name="color"
+                        value={smartphoneDetails.color}
+                        onChange={handleSmartphoneDetailsChange}
+                        className="border-b h-10 border-gray-300 w-full"
+                      >
+                        <option value="">Select Color</option>
+                        <option value="black">Black</option>
+                        <option value="white">White</option>
+                        <option value="blue">Blue</option>
+                        <option value="red">Red</option>
+                        <option value="green">Green</option>
+                      </select>
+                    </div>
 
-                  <div className="mb-4">
-                    <select
-                      name="size"
-                      value={smartphoneDetails.size}
-                      onChange={handleSmartphoneDetailsChange}
-                      className="border-b h-10 border-gray-300 w-full"
-                    >
-                      <option value="">Select Size</option>
-                      <option value="64gb">64GB</option>
-                      <option value="128gb">128GB</option>
-                      <option value="256gb">256GB</option>
-                      <option value="512gb">512GB</option>
-                      <option value="1tb">1TB</option>
-                      <option value="2tb">2TB</option>
-                    </select>
+                    <div className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">Select Data Storage Capacity</h6>
+                      <select
+                        name="size"
+                        value={smartphoneDetails.size}
+                        onChange={handleSmartphoneDetailsChange}
+                        className="border-b h-10 border-gray-300 w-full"
+                      >
+                        <option value="">Select Storage</option>
+                        <option value="64gb">64GB</option>
+                        <option value="128gb">128GB</option>
+                        <option value="256gb">256GB</option>
+                        <option value="512gb">512GB</option>
+                        <option value="1tb">1TB</option>
+                        <option value="2tb">2TB</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               )}
