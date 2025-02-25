@@ -219,7 +219,7 @@ function App() {
         <Route
           path="/signup"
           element={
-            <div className="overflow-x-hidden ">
+            <div className="overflow-hidden">
               <Signup />
             </div>
           }

@@ -123,148 +123,153 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <section className="mt-[80px] px-8 text-center bg-white">
-      <div className="container mx-auto w-full ">
+    <section className="m-[80px] px-8 text-center bg-white overflow-hidden">
+      <div className="container w-full ">
         <h2 className="text-4xl sm:text-5xl font-bold text-black mb-2">
           Create Your Account
         </h2>
-        <p className="text-md text-black mt-4 mb-6">
+        <p className="text-md text-black mt-2 mb-6">
           Please enter your details to sign up.
         </p>
 
-        <form onSubmit={onSubmit} className="max-w-2xl mx-auto space-y-6">
+        <form onSubmit={onSubmit} className="max-w-4xl mx-auto space-y-6">
           <div>
-            <div className="grid grid-cols-1 gap-4">
-              <div className="w-full">
-                <h6 className="text-black text-start">First Name</h6>
-                <input
-                  type="text"
-                  name="fname"
-                  placeholder="Enter your first name"
-                  value={formData.fname}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
+            <div className="grid grid-cols-1 gap-4 my-16">
+            <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <h6 className="text-black text-start">First Name</h6>
+                  <input
+                    type="text"
+                    name="fname"
+                    placeholder="Enter your first name"
+                    value={formData.fname}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+
+                <div className="w-full">
+                  <h6 className="text-black text-start">Last Name</h6>
+                  <input
+                    type="text"
+                    name="lname"
+                    placeholder="Enter your last name"
+                    value={formData.lname}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+
+                <div className="w-full">
+                  <h6 className="text-black text-start">Company Name</h6>
+                  <input
+                    type="text"
+                    name="companyname"
+                    placeholder="Enter your company name"
+                    value={formData.companyname}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <h6 className="text-black text-start">Phone Number</h6>
+                  <input
+                    type="text"
+                    name="phone"
+                    placeholder="Enter your phone number"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+                <div>
+                  <h6 className="text-black text-start">Email</h6>
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+                <div className="w-full">
+                  <h6 className="text-black text-start">Date Of Birth</h6>
+                  <input
+                    type="date"
+                    name="dob"
+                    placeholder="Enter your date of birth"
+                    value={formData.dob}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+              </div>
+              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">                
+                <div className="w-full">
+                  <h6 className="text-black text-start">
+                    Government Identification
+                  </h6>
+                  <input
+                    type="text"
+                    name="government_identification"
+                    placeholder="Enter your government identification"
+                    value={formData.government_identification}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+                <div className="w-full">
+                  <h6 className="text-black text-start">EIN/TAX ID</h6>
+                  <input
+                    type="text"
+                    name="tax_id"
+                    placeholder="Enter your tax id"
+                    value={formData.tax_id}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
+
+                <div className="w-full">
+                  <h6 className="text-black text-start">SSN</h6>
+                  <input
+                    type="text"
+                    name="ssn"
+                    placeholder="Enter your SSN"
+                    value={formData.ssn}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
               </div>
 
-              <div className="w-full">
-                <h6 className="text-black text-start">Last Name</h6>
-                <input
-                  type="text"
-                  name="lname"
-                  placeholder="Enter your last name"
-                  value={formData.lname}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
+              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+                <div>
+                  <h6 className="text-black text-start">Password</h6>
+                  <input
+                    type="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
 
-              <div className="w-full">
-                <h6 className="text-black text-start">Phone Number</h6>
-                <input
-                  type="text"
-                  name="phone"
-                  placeholder="Enter your phone number"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div className="w-full">
-                <h6 className="text-black text-start">Company Name</h6>
-                <input
-                  type="text"
-                  name="companyname"
-                  placeholder="Enter your company name"
-                  value={formData.companyname}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div className="w-full">
-                <h6 className="text-black text-start">
-                  Government Identification
-                </h6>
-                <input
-                  type="text"
-                  name="government_identification"
-                  placeholder="Enter your government identification"
-                  value={formData.government_identification}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-              <div className="w-full">
-                <h6 className="text-black text-start">Date Of Birth</h6>
-                <input
-                  type="date"
-                  name="dob"
-                  placeholder="Enter your date of birth"
-                  value={formData.dob}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div className="w-full">
-                <h6 className="text-black text-start">EIN/TAX ID</h6>
-                <input
-                  type="text"
-                  name="tax_id"
-                  placeholder="Enter your tax id"
-                  value={formData.tax_id}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div className="w-full">
-                <h6 className="text-black text-start">SSN</h6>
-                <input
-                  type="text"
-                  name="ssn"
-                  placeholder="Enter your SSN"
-                  value={formData.ssn}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-              <div>
-                <h6 className="text-black text-start">Email</h6>
-                <input
-                  type="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div>
-                <h6 className="text-black text-start">Password</h6>
-                <input
-                  type="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
-              </div>
-
-              <div>
-                <h6 className="text-black text-start">Confirm Password</h6>
-                <input
-                  type="password"
-                  name="confirmPassword"
-                  placeholder="Confirm your password"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
-                />
+                <div>
+                  <h6 className="text-black text-start">Confirm Password</h6>
+                  <input
+                    type="password"
+                    name="confirmPassword"
+                    placeholder="Confirm your password"
+                    value={formData.confirmPassword}
+                    onChange={handleChange}
+                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                </div>
               </div>
             </div>
 
@@ -297,7 +302,7 @@ const Signup: React.FC = () => {
             <div>
               <Link
                 to={"/login"}
-                className="transition-all text-black hover:bg-black hover:text-white inter text-md px-4 py-3"
+                className="transition-all text-black hover:text-[#41FDFE] inter text-md px-4 py-3"
               >
                 Already have an account? Login
               </Link>

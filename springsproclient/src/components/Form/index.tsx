@@ -1944,7 +1944,7 @@ const Form: React.FC = () => {
             {shippingInfos.map((info, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 border-b pb-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 pb-6"
               >
                 {/* Header with Remove Button */}
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
@@ -2036,13 +2036,13 @@ const Form: React.FC = () => {
             {carrierInfos.map((info, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 border-b pb-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pb-6"
               >
                 {/* Header with Remove Button */}
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
                   {index > 0 && (
                     <h4 className="text-lg font-semibold">
-                      Carrier Port Info {index + 1}
+                      Carrier Port Information {index + 1}
                     </h4>
                   )}
                   {index > 0 && (
