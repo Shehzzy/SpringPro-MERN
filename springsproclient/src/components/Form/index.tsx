@@ -31,11 +31,10 @@ const Form: React.FC = () => {
 
   const [linesData, setLinesData] = useState([]);
   // console.log("Lines data", linesData);
-
-    // Receive data from child component
-    const handleLinesChange = (updatedData) => {
-        setLinesData(updatedData);
-    };
+  // // Receive data from child component
+  const handleLinesChange = (updatedData) => {
+    setLinesData(updatedData);
+  };
 
   const handleTradeSmartphoneChange = (value) => {
     // console.log("Updating tradeSmartphone:", value);
@@ -106,7 +105,58 @@ const Form: React.FC = () => {
       return updatedDetails;
     });
   };
-
+  const states = [
+    { code: 'AL', name: 'Alabama' },
+    { code: 'AK', name: 'Alaska' },
+    { code: 'AZ', name: 'Arizona' },
+    { code: 'AR', name: 'Arkansas' },
+    { code: 'CA', name: 'California' },
+    { code: 'CO', name: 'Colorado' },
+    { code: 'CT', name: 'Connecticut' },
+    { code: 'DE', name: 'Delaware' },
+    { code: 'FL', name: 'Florida' },
+    { code: 'GA', name: 'Georgia' },
+    { code: 'HI', name: 'Hawaii' }, // Fixed typo here (was 'nametab')
+    { code: 'ID', name: 'Idaho' },
+    { code: 'IL', name: 'Illinois' },
+    { code: 'IN', name: 'Indiana' },
+    { code: 'IA', name: 'Iowa' },
+    { code: 'KS', name: 'Kansas' },
+    { code: 'KY', name: 'Kentucky' },
+    { code: 'LA', name: 'Louisiana' },
+    { code: 'ME', name: 'Maine' },
+    { code: 'MD', name: 'Maryland' },
+    { code: 'MA', name: 'Massachusetts' },
+    { code: 'MI', name: 'Michigan' },
+    { code: 'MN', name: 'Minnesota' },
+    { code: 'MS', name: 'Mississippi' },
+    { code: 'MO', name: 'Missouri' },
+    { code: 'MT', name: 'Montana' },
+    { code: 'NE', name: 'Nebraska' },
+    { code: 'NV', name: 'Nevada' },
+    { code: 'NH', name: 'New Hampshire' },
+    { code: 'NJ', name: 'New Jersey' },
+    { code: 'NM', name: 'New Mexico' },
+    { code: 'NY', name: 'New York' },
+    { code: 'NC', name: 'North Carolina' },
+    { code: 'ND', name: 'North Dakota' },
+    { code: 'OH', name: 'Ohio' },
+    { code: 'OK', name: 'Oklahoma' },
+    { code: 'OR', name: 'Oregon' },
+    { code: 'PA', name: 'Pennsylvania' },
+    { code: 'RI', name: 'Rhode Island' },
+    { code: 'SC', name: 'South Carolina' },
+    { code: 'SD', name: 'South Dakota' },
+    { code: 'TN', name: 'Tennessee' },
+    { code: 'TX', name: 'Texas' },
+    { code: 'UT', name: 'Utah' },
+    { code: 'VT', name: 'Vermont' },
+    { code: 'VA', name: 'Virginia' },
+    { code: 'WA', name: 'Washington' },
+    { code: 'WV', name: 'West Virginia' },
+    { code: 'WI', name: 'Wisconsin' },
+    { code: 'WY', name: 'Wyoming' }
+  ];
   // State to manage multiple carrier information entries
   const carrierOptions = [
     {
@@ -1222,7 +1272,7 @@ const Form: React.FC = () => {
               
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
 
-              <div className="w-full">
+              {/* <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
                     Dealer Code
                   </h6>
@@ -1237,7 +1287,7 @@ const Form: React.FC = () => {
                   {errors.dealerCode && (
                     <p className="text-red-500 text-sm">{errors.dealerCode}</p>
                   )}
-                </div>
+                </div> */}
 
                 <div>
                   <h6 className="text-sm font-medium text-gray-700">
@@ -1276,33 +1326,10 @@ const Form: React.FC = () => {
                     </p>
                   )}
                 </div>
-                {/* EIP Limit (Conditional Field) */}
-                {formData.agreementtype === "acda" && (
-                  <div className="w-full">
-                    <input
-                      name="eip"
-                      placeholder="Enter What EIP Limit is needed"
-                      value={formData.eip}
-                      onChange={handleChange}
-                      className="w-full border-b border-gray-300 py-2"
-                    />
-                    {errors.eip && (
-                      <p className="text-red-500 text-sm">{errors.eip}</p>
-                    )}
-                  </div>
-                )}
-              
-              </div>
-            </form>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
-
-              
                 {/* Add AT&T Account */}
-                <div className="w-full">
-                  
+                <div className="w-full">                  
                   <h6 className="text-sm font-medium text-gray-700">
-                    Add AT&T Account
+                    Create AT&T Account?
                   </h6>
                   <select
                     name="atntaccount"
@@ -1316,8 +1343,53 @@ const Form: React.FC = () => {
                   {/* {errors.atntaccount && (
                     <p className="text-red-500 text-sm">{errors.atntaccount}</p>
                   )} */}
-                </div>
+                </div>              
+              </div>
+            </form>
 
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
+              {/* EIP Limit (Conditional Field) */}
+              {formData.agreementtype === "acda" && (
+                  <div className="w-full">
+                    <h6 className="text-sm font-medium text-gray-700">Please, specify EIP Limit</h6>                    
+                    <input
+                      name="eip"
+                      placeholder="Enter EIP Limit"
+                      value={formData.eip}
+                      onChange={handleChange}
+                      className="w-full border-b border-gray-300 py-2"
+                    />
+                    {errors.eip && (
+                      <p className="text-red-500 text-sm">{errors.eip}</p>
+                    )}
+                  </div>
+                )}
+                {formData.atntaccount === "declined" && (
+                <div>
+                    {[
+                      {
+                        name: "existingBAN",
+                        label: "Existing BAN (AT&T Account)",
+                        placeholder: "Enter Existing BAN",
+                      },
+                    ].map((field, index) => (
+                      <div key={index} className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          {field.label}
+                        </h6>
+                          <input
+                            type="text"
+                            name={field.name}
+                            placeholder={field.placeholder}
+                            value={formData[field.name]}
+                            onChange={handleChange}
+                            className="w-full border-b border-gray-300 py-2"
+                          />
+                      </div>
+                    ))}
+                  
+                </div>
+              )}                
               {/* Special Instructions */}
               <div className="w-full mb-5">
                 <h6 className="text-sm font-medium text-gray-700">
@@ -1351,8 +1423,8 @@ const Form: React.FC = () => {
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
               <div>
-                <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
-                  AT&T Account Information
+                <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+                  New Account Information
                 </h2>
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -1402,16 +1474,16 @@ const Form: React.FC = () => {
                       label: "Contact Email",
                       placeholder: "Enter Contact Email",
                     },
-                    {
-                      name: "existingBAN",
-                      label: "Existing BAN",
-                      placeholder: "Enter Existing BAN",
-                    },
-                    {
-                      name: "existingFAN",
-                      label: "Existing FAN",
-                      placeholder: "Enter Existing FAN",
-                    },
+                    // {
+                    //   name: "existingBAN",
+                    //   label: "Existing BAN",
+                    //   placeholder: "Enter Existing BAN",
+                    // },
+                    // {
+                    //   name: "existingFAN",
+                    //   label: "Existing FAN",
+                    //   placeholder: "Enter Existing FAN",
+                    // },
                   ].map((field, index) => (
                     <div key={index} className="mb-4">
                       <h6 className="text-sm font-medium text-gray-700">
@@ -1432,7 +1504,7 @@ const Form: React.FC = () => {
                         )}
 
                       {/* Dropdown for Existing BAN */}
-                      {field.name === "existingBAN" && (
+                      {/* {field.name === "existingBAN" && (
                         <select
                           name={field.name}
                           value={formData[field.name]}
@@ -1445,10 +1517,10 @@ const Form: React.FC = () => {
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
                         </select>
-                      )}
+                      )} */}
 
                       {/* Dropdown for Existing FAN */}
-                      {field.name === "existingFAN" && (
+                      {/* {field.name === "existingFAN" && (
                         <select
                           name={field.name}
                           value={formData[field.name]}
@@ -1461,10 +1533,10 @@ const Form: React.FC = () => {
                           <option value="yes">Yes</option>
                           <option value="no">No</option>
                         </select>
-                      )}
+                      )} */}
 
                       {/* Input fields for Existing BAN and FAN */}
-                      {showExistingBAN && field.name === "existingBAN" && (
+                      {/* {showExistingBAN && field.name === "existingBAN" && (
                         <input
                           type="text"
                           name={field.name}
@@ -1473,8 +1545,8 @@ const Form: React.FC = () => {
                           onChange={handleChange}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
                         />
-                      )}
-                      {showExistingFAN && field.name === "existingFAN" && (
+                      )} */}
+                      {/* {showExistingFAN && field.name === "existingFAN" && (
                         <input
                           type="text"
                           name={field.name}
@@ -1483,7 +1555,7 @@ const Form: React.FC = () => {
                           onChange={handleChange}
                           className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
                         />
-                      )}
+                      )} */}
 
                       {errors[field.name] && (
                         <p className="text-red-500 text-sm">
@@ -1494,7 +1566,7 @@ const Form: React.FC = () => {
                   ))}
                 </div>
               </div>
-            )}
+            )}            
           </div>
         );
 
@@ -1972,22 +2044,38 @@ const Form: React.FC = () => {
                 {[
                   { name: "attentionname", label: "Attention Name" },
                   { name: "shippingaddress", label: "Shipping Address" },
-                  { name: "shippingstate", label: "Shipping State" },
+                  { name: "shippingstate", label: "Shipping State", isDropdown: true },
                   { name: "shippingzip", label: "Shipping Zip" },
                   { name: "shippingcity", label: "Shipping City" },
-                ].map(({ name, label }) => (
+                ].map(({ name, label, isDropdown }) => (
                   <div className="mb-4" key={name}>
                     <h6 className="text-sm font-medium text-gray-700 mb-2">
                       {label}
                     </h6>
-                    <input
-                      type="text"
-                      name={name}
-                      placeholder={`Enter ${label}`}
-                      value={info[name]}
-                      onChange={(e) => handleShippingInfoChange(e, index)}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                    />
+                    {isDropdown ? (
+                      <select
+                        name={name}
+                        value={info[name]}
+                        onChange={(e) => handleShippingInfoChange(e, index)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                      >
+                        <option value="" className="py-2">Select a state</option>
+                        {states.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {state.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        name={name}
+                        placeholder={`Enter ${label}`}
+                        value={info[name]}
+                        onChange={(e) => handleShippingInfoChange(e, index)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      />
+                    )}
                     {errors[`${name}_${index}`] && (
                       <p className="text-red-500 text-sm">
                         {errors[`${name}_${index}`]}
@@ -2189,7 +2277,7 @@ const Form: React.FC = () => {
               <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
                 {/* Rate Plan Selection */}
                 <div>
-                  <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                  <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
                     Rate Plan Selection
                   </h3>
                   <div className="mb-4">
@@ -2224,7 +2312,7 @@ const Form: React.FC = () => {
 
                 {/* Smartphone Purchase Options */}
                 <div>
-                  <h3 className="text-xl text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                  <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
                     Smartphone Purchase/Trade Options
                   </h3>
 
