@@ -326,57 +326,6 @@ function Orders() {
                   ))}
                 </div>
 
-                {/* Lines */}
-                {selectedOrder.lines && selectedOrder.lines.length > 0 ? (
-                  selectedOrder.lines.map((line, index) => (
-                    <div key={index} className="mt-2">
-                      <div>
-                        <h6>Line Configuration: </h6>
-                        <span className="font-semibold">Account Number:</span> {line.accountNumber}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Port Out Pin:</span> {line.portOutPin}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Phone Number:</span> {line.phoneNumber}
-                      </div>
-                      <div>
-                        <span className="font-semibold">Carrier:</span> {line.carrier}
-                      </div>
-                      <div>
-                        <span className="font-semibold">IMEI:</span> {line.imei}
-                      </div>
-
-                      {/* Check if shippingAddress exists before rendering */}
-                      {line.shippingAddress ? (
-                        <div>
-                          <span className="font-semibold">Shipping Address:</span>
-                          <div>
-                            <span className="font-semibold">Attention Name:</span> {line.shippingAddress.attentionName}
-                          </div>
-                          <div>
-                            <span className="font-semibold">Address:</span> {line.shippingAddress.address}
-                          </div>
-                          <div>
-                            <span className="font-semibold">City:</span> {line.shippingAddress.city}
-                          </div>
-                          <div>
-                            <span className="font-semibold">State:</span> {line.shippingAddress.state}
-                          </div>
-                          <div>
-                            <span className="font-semibold">ZIP:</span> {line.shippingAddress.zip}
-                          </div>
-                        </div>
-                      ) : (
-                        <div>No shipping address available.</div>
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  <div>No lines available.</div>
-                )}
-
-
                 {/* Order Status */}
                 <div>
                   <span className="font-semibold">Status:</span>{" "}

@@ -649,7 +649,7 @@ const Form: React.FC = () => {
     }
   };
 
-  const newErrors: any = {};
+  const newErrors: any = {};  
   const validateForm = (): boolean => {
     if (!formData.name) newErrors.name = "Name is required.";
     if (!formData.email) newErrors.email = "Email is required.";
@@ -660,8 +660,8 @@ const Form: React.FC = () => {
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
     if (!formData.promotion) newErrors.promotion = "Promotion is required.";
-    if (!formData.atntaccount)
-      newErrors.atntaccount = "Select from add AT&T Account.";
+    // if (!formData.atntaccount)
+    //   newErrors.atntaccount = "Select from add AT&T Account.";
     // if (!formData.atntaccount)
     //   newErrors.atntaccount = "Select from add AT&T Account.";
     if (!formData.paperless)
@@ -1313,9 +1313,9 @@ const Form: React.FC = () => {
                     <option value="accepted">Yes</option>
                     <option value="declined">No</option>
                   </select>
-                  {errors.atntaccount && (
+                  {/* {errors.atntaccount && (
                     <p className="text-red-500 text-sm">{errors.atntaccount}</p>
-                  )}
+                  )} */}
                 </div>
 
               {/* Special Instructions */}

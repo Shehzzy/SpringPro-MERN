@@ -32,6 +32,8 @@ function IMEIForm({
   const handleNumRowsChange = (e) => {
     const value = parseInt(e.target.value, 10) || 1;
     setNumRows(value);
+
+    // Create an array of objects for the number of rows specified
     const newFields = Array.from({ length: value }, () => ({
       accountNumber: "",
       portOutPin: "",
@@ -40,7 +42,7 @@ function IMEIForm({
       imei: "",
       shippingAddress: "",
     }));
-    setAccountFields(newFields);
+    setAccountFields(newFields); // Update accountFields with new rows
   };
 
   // Handle field changes (to update the parent component if necessary)
@@ -58,11 +60,40 @@ function IMEIForm({
     }
   };
 
+  // Open Modal logic
+  const handleModalOpen = () => {
+    if (accountFields.length === 0) {
+      const initialFields = Array.from({ length: numRows }, () => ({
+        accountNumber: "",
+        portOutPin: "",
+        phoneNumber: "",
+        carrier: "",
+        imei: "",
+        shippingAddress: "",
+      }));
+      setAccountFields(initialFields);
+    }
+    setShowModal(true);
+  };
+
+  // Add a new row dynamically
+  const handleAddNewRow = () => {
+    setAccountFields([
+      ...accountFields,
+      {
+        accountNumber: "",
+        portOutPin: "",
+        phoneNumber: "",
+        carrier: "",
+        imei: "",
+        shippingAddress: "",
+      },
+    ]);
+  };
+
   return (
     <div>
-      <div className="flex gap-2 mb-2 flex-col">
-        <h6 className="text-md font-medium text-gray-700">Enter number of lines you want to generate</h6>
-        <div className="flex flex-row gap-2">
+      <div className="flex items-center justify-center gap-4 mb-4">
         {/* Input for number of rows */}
         <input
           type="number"
@@ -73,13 +104,12 @@ function IMEIForm({
           placeholder="Enter number of rows"
         />
         <button
-          onClick={() => setShowModal(true)}
+          onClick={handleModalOpen}
           type="button"
-          className="text-md bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
+          className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
         >
           Generate
         </button>
-        </div>
       </div>
 
       {showModal && (
@@ -235,6 +265,17 @@ function IMEIForm({
                   </div>
                 </div>
               ))}
+            </div>
+
+            {/* Add New Row Button */}
+            <div className="flex justify-center mt-6">
+              <button
+                type="button"
+                onClick={handleAddNewRow}
+                className="bg-gradient-to-r from-teal-400 to-cyan-500 text-white px-6 py-3 rounded-xl shadow-md hover:bg-teal-600 transition duration-200"
+              >
+                Add New
+              </button>
             </div>
           </div>
         </div>
