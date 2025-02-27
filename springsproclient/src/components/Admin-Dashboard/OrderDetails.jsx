@@ -1,3 +1,5 @@
+
+
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -23,17 +25,17 @@ function OrderDetails() {
   const navigate = useNavigate();
 
   useEffect(() => {
-     if (!token) {
-          Swal.fire({
-            title: "Login Required",
-            text: "You need to log in first to place an order.",
-            icon: "warning",
-            confirmButtonText: "Go to Login",
-          }).then(() => {
-            navigate("/login");
-          });
-          return;
-        }
+    if (!token) {
+      Swal.fire({
+        title: "Login Required",
+        text: "You need to log in first to place an order.",
+        icon: "warning",
+        confirmButtonText: "Go to Login",
+      }).then(() => {
+        navigate("/login");
+      });
+      return;
+    }
 
     try {
       const decoded = jwtDecode(token); // Decode the JWT
@@ -46,13 +48,11 @@ function OrderDetails() {
           icon: "warning",
           confirmButtonText: "Go to Login",
         }).then(() => {
-          // Redirect to login if the token is expired
           navigate("/login");
         });
         return;
       }
     } catch (error) {
-      // If decoding the token fails, handle the error (e.g., invalid token)
       Swal.fire({
         title: "Invalid Token",
         text: "The token is invalid. Please log in again.",
@@ -63,7 +63,6 @@ function OrderDetails() {
       });
       return;
     }
-
 
     if (userRole !== "admin") {
       setError("You do not have admin access");
@@ -82,6 +81,7 @@ function OrderDetails() {
         }
       )
       .then((response) => {
+        console.log(response.data.order);
         setOrder(response.data.order);
         setLoading(false);
       })
@@ -92,10 +92,6 @@ function OrderDetails() {
       });
   }, [orderId, token, navigate, userRole]);
 
-
-
-
-  // This is column wise
   const exportToExcel = async () => {
     try {
       if (!order) {
@@ -106,17 +102,13 @@ function OrderDetails() {
       const workbook = new ExcelJS.Workbook();
       const sheet = workbook.addWorksheet("Order Details");
 
-      // ======================
-      // COLUMN CONFIGURATION
-      // ======================
+      // Column Configuration
       sheet.columns = [
         { header: "Field", key: "field", width: 25 },
         { header: "Values", key: "values", width: 50 },
       ];
 
-      // ======================
-      // STYLING
-      // ======================
+      // Styling
       const blackBorder = { argb: "FF000000" };
       const borderStyle = {
         top: { style: "medium", color: blackBorder },
@@ -133,54 +125,30 @@ function OrderDetails() {
           fgColor: { argb: "FF00B4D8" },
         };
         cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
-        cell.border = {
-          top: { style: "medium", color: blackBorder },
-          bottom: { style: "medium", color: blackBorder },
-          left: { style: "medium", color: blackBorder },
-          right: { style: "medium", color: blackBorder },
-        };
+        cell.border = borderStyle;
         cell.alignment = { vertical: "middle", horizontal: "center" };
       });
 
-      // ======================
-      // DATA POPULATION - FILLING COLUMNS INSTEAD OF ROWS
-      // ======================
+      // Data Population
       const data = [
-        { field: "Customer Name", values: order.name || "N/A" },
-        { field: "Email", values: order.email || "N/A" },
-        { field: "Phone Number", values: order.phonenumber || "N/A" },
-        { field: "Agent Code", values: order.agentCode || "N/A" },
-        { field: "Dealer Code", values: order.dealerCode || "N/A" },
-        { field: "Existing BAN", values: order.existingBAN || "N/A" },
-        { field: "Existing FAN", values: order.existingFAN || "N/A" },
+        { field: "Customer Name", values: order.customerId?.businesslegalname || "N/A" },
+        { field: "Email", values: order.customerId?.contactemail || "N/A" },
+        { field: "Phone Number", values: order.customerId?.contactphone || "N/A" },
+        { field: "SANS Partner ID", values: order.sansPartnerID || "N/A" },
         { field: "Agreement Type", values: order.agreementtype || "N/A" },
+        { field: "AT&T Account", values: order.atntaccount || "N/A" },
+        { field: "Existing BAN", values: order.existingBAN || "N/A" },
+        // { field: "Existing FAN", values: order.existingFAN || "N/A" },
+        { field: "Company Name", values: order.userId.companyname || "N/A" },
         { field: "EIP", values: order.eip || "N/A" },
-        { field: "Business Legal Name", values: order.customerId?.businesslegalname || "N/A" },
-        { field: "Business Address", values: order.customerId?.businessaddress || "N/A" },
-        { field: "Business City", values: order.customerId?.businesscity || "N/A" },
-        { field: "Business State", values: order.customerId?.businessstate || "N/A" },
-        { field: "Business Zip", values: order.customerId?.businesszip || "N/A" },
-        { field: "Tax ID", values: order.customerId?.taxid || "N/A" },
-        { field: "Contact Name", values: order.customerId?.contactname || "N/A" },
-        { field: "Contact Phone", values: order.customerId?.contactphone || "N/A" },
-        { field: "Contact Email", values: order.customerId?.contactemail || "N/A" },
-        { field: "Location ID", values: order.customerId?.locationid || "N/A" },
+        { field: "Phone Model", values: order.phonemodel || "N/A" },
+        { field: "IMEI Status", values: order.imeistatus || "N/A" },
+        { field: "No Cracks", values: order.noCracks || "N/A" },
+        { field: "Screen Defects", values: order.screenDefects || "N/A" },
+        { field: "Factory Reset", values: order.factoryReset || "N/A" },
         { field: "Paperless", values: order.paperless || "N/A" },
-        { field: "Bill to Mobile", values: order.customerId?.billtomobile || "N/A" },
-        { field: "Credit Card Payment", values: order.customerId?.creditcardpayment || "N/A" },
-        { field: "Card Number", values: order.customerId?.cardNumber || "N/A" },
-        { field: "Card Expiry", values: order.customerId?.cardExpiry || "N/A" },
-        { field: "Card CVC", values: order.customerId?.cardCVC || "N/A" },
-        { field: "Promotion", values: order.promotion || "N/A" },
         { field: "Special Instruction", values: order.specialinstruction || "N/A" },
         { field: "Rate Plan", values: order.ratePlan || "N/A" },
-        { field: "Smart Phone Brand", values: order.smartphoneDetails?.brand || "N/A" },
-        { field: "Smart Phone Model", values: order.smartphoneDetails?.model || "N/A" },
-        { field: "Smart Phone Color", values: order.smartphoneDetails?.color || "N/A" },
-        { field: "Smart Phone Size", values: order.smartphoneDetails?.size || "N/A" },
-        { field: "Trade Smart Phone", values: order.tradeSmartphone || "N/A" },
-        { field: "Buy Phone Number", values: order.buyPhoneNumber || "N/A" },
-        { field: "Phone Unique Code", values: order.phoneUniqueCode || "N/A" },
         { field: "Order Date", values: new Date(order.createdAt).toLocaleDateString("en-US") },
         { field: "Status", values: order.status || "N/A" },
         { field: "IMEI Number", values: order.imeiNumbers.map((imei) => imei.imei).join(", ") || "N/A" },
@@ -201,21 +169,27 @@ function OrderDetails() {
         { field: "Billing Zip", values: order.carrierInfos.map((carrier) => carrier.billingzip).join(", ") || "N/A" },
         { field: "Authorized Name", values: order.carrierInfos.map((carrier) => carrier.authorizedname).join(", ") || "N/A" },
         { field: "Unique Code", values: order.carrierInfos.map((carrier) => carrier.uniqueCode).join(", ") || "N/A" },
+        { field: "Trade Smartphone", values: order.tradeSmartphone ? "Yes" : "No" },
+        { field: "Buy Phone Number", values: order.buyPhoneNumber ? "Yes" : "No" },
+        { field: "Phone Unique Code", values: order.phoneUniqueCode || "N/A" },
+        { field: "Promo Code", values: order.promoCode || "N/A" },
+        { field: "Location ID", values: order.customerId?.locationid || "N/A" },
+        { field: "Card Holder Name", values: order.customerId?.cardHolderName || "N/A" },
+        { field: "Card Number", values: order.customerId?.cardNumber || "N/A" },
+        { field: "Card Expiry", values: order.customerId?.cardExpiry || "N/A" },
+        { field: "Card CVC", values: order.customerId?.cardCVC || "N/A" },
+        { field: "Card Billing Address", values: order.customerId?.cardBillingAddress || "N/A" },
+        { field: "Payment Method", values: order.customerId?.paymentMethod || "N/A" },
       ];
 
-      // Add data to the sheet (each entry is added as a row)
-      data.forEach((item, index) => {
+
+      // Add data to the sheet
+      data.forEach((item) => {
         const row = sheet.addRow([item.field, item.values]);
 
         // Apply Cell Styling
-        row.eachCell((cell, colNumber) => {
-          cell.border = {
-            top: { style: "medium", color: blackBorder },
-            bottom: { style: "medium", color: blackBorder },
-            left: { style: "medium", color: blackBorder },
-            right: { style: "medium", color: blackBorder },
-          };
-
+        row.eachCell((cell) => {
+          cell.border = borderStyle;
           cell.font = {
             name: "Calibri",
             size: 11,
@@ -225,11 +199,7 @@ function OrderDetails() {
         });
       });
 
-
-
-      // ======================
-      // BROWSER-FRIENDLY SAVE
-      // ======================
+      // Save the Excel file
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -241,160 +211,6 @@ function OrderDetails() {
     }
   };
 
-
-
-
-  // This is row wise
-  // const exportToExcel = async () => {
-  //   try {
-  //     if (!order) {
-  //       alert("No order data available");
-  //       return;
-  //     }
-
-  //     const workbook = new ExcelJS.Workbook();
-  //     const sheet = workbook.addWorksheet("Order Details");
-
-  //     // ======================
-  //     // COLUMN CONFIGURATION
-  //     // ======================
-  //     sheet.columns = [
-  //       { header: "Customer Name", key: "customerName", width: 25 },
-  //       { header: "Email", key: "email", width: 30 },
-  //       { header: "Customer Phone", key: "customerPhone", width: 18 },
-  //       { header: "Agent Code", key: "agentCode", width: 15 },
-  //       { header: "Dealer Code", key: "dealerCode", width: 15 },
-  //       { header: "Agreement Type", key: "agreementType", width: 20 },
-  //       { header: "Order Date", key: "orderDate", width: 15 },
-  //       { header: "Status", key: "status", width: 15 },
-  //       { header: "IMEI Number", key: "imei", width: 20 },
-  //       { header: "Port Out PIN", key: "portOutPin", width: 15 },
-  //       { header: "Attention Name", key: "attentionName", width: 20 },
-  //       { header: "Shipping Address", key: "shippingAddress", width: 35 },
-  //       { header: "City", key: "city", width: 15 },
-  //       { header: "State", key: "state", width: 10 },
-  //       { header: "Zip Code", key: "zipCode", width: 10 },
-  //       { header: "Account Number", key: "accountNumber", width: 20 },
-  //       { header: "Carrier Info", key: "carrierInfo", width: 20 },
-  //     ];
-
-  //     // ======================
-  //     // STYLING
-  //     // ======================
-  //     const blackBorder = { argb: "FF000000" };
-  //     const borderStyle = {
-  //       top: { style: "thin", color: blackBorder },
-  //       bottom: { style: "thin", color: blackBorder },
-  //       left: { style: "thin", color: blackBorder },
-  //       right: { style: "thin", color: blackBorder },
-  //     };
-
-  //     // Header Styling
-  //     sheet.getRow(1).eachCell((cell) => {
-  //       cell.fill = {
-  //         type: "pattern",
-  //         pattern: "solid",
-  //         fgColor: { argb: "FF00B4D8" },
-  //       };
-  //       cell.font = { bold: true, color: { argb: "FFFFFFFF" } };
-  //       cell.border = {
-  //         top: { style: "medium", color: blackBorder },
-  //         bottom: { style: "medium", color: blackBorder },
-  //         left: { style: "medium", color: blackBorder },
-  //         right: { style: "medium", color: blackBorder },
-  //       };
-  //       cell.alignment = { vertical: "middle", horizontal: "center" };
-  //     });
-
-  //     // ======================
-  //     // DATA POPULATION USING MAP
-  //     // ======================
-  //     const rows = order.imeiNumbers.map((imeiData, index) => {
-  //       const rowData = {
-  //         customerName: order.name || "N/A",
-  //         email: order.email || "N/A",
-  //         customerPhone: order.phonenumber || "N/A",
-  //         agentCode: order.agentCode || "N/A",
-  //         dealerCode: order.dealerCode || "N/A",
-  //         agreementType: order.agreementtype || "N/A",
-  //         orderDate: new Date(order.createdAt).toLocaleDateString("en-US"),
-  //         status: order.status || "N/A",
-  //         imei: imeiData.imei || "N/A",
-  //         portOutPin: order.accounts[index]?.portOutPin || "N/A",
-  //         attentionName: order.shippingAddresses[index]?.attentionname || "N/A",
-  //         shippingAddress: order.shippingAddresses[index]?.shippingaddress || "N/A",
-  //         city: order.shippingAddresses[index]?.shippingcity || "N/A",
-  //         state: order.shippingAddresses[index]?.shippingstate || "N/A",
-  //         zipCode: order.shippingAddresses[index]?.shippingzip || "N/A",
-  //         accountNumber: order.accounts[index]?.accountNumber || "N/A",
-  //         carrierInfo: order.carrierInfos[index]?.currentwirelesscarrier || "N/A",
-  //       };
-
-  //       const row = sheet.addRow(rowData);
-
-  //       // Apply Cell Styling
-  //       row.eachCell((cell, colNumber) => {
-  //         cell.border = {
-  //           top: { style: "medium", color: blackBorder },
-  //           bottom: { style: "medium", color: blackBorder },
-  //           left: { style: "medium", color: blackBorder },
-  //           right: { style: "medium", color: blackBorder },
-  //         };
-
-  //         cell.font = {
-  //           name: "Calibri",
-  //           size: 11,
-  //           color: { argb: "FF333333" },
-  //         };
-  //         cell.alignment = { vertical: "top", horizontal: "left" };
-
-  //         // Explicitly set left and right borders
-  //         if (colNumber === 1) {
-  //           cell.border = { ...cell.border, left: { style: "medium", color: blackBorder } };
-  //         }
-  //         if (colNumber === sheet.columns.length) {
-  //           cell.border = { ...cell.border, right: { style: "medium", color: blackBorder } };
-  //         }
-  //       });
-
-  //       return rowData; // Return row data after each iteration
-  //     });
-
-  //     // ======================
-  //     // FINAL BORDER TOUCH-UP
-  //     // ======================
-  //     const lastRowNumber = sheet.lastRow.number;
-  //     const lastColNumber = sheet.columns.length;
-
-  //     sheet.eachRow((row, rowNumber) => {
-  //       row.eachCell({ includeEmpty: true }, (cell, colNumber) => {
-  //         if (colNumber === 1) {
-  //           cell.border = { ...cell.border, left: { style: "medium", color: blackBorder } };
-  //         }
-  //         if (colNumber === lastColNumber) {
-  //           cell.border = { ...cell.border, right: { style: "medium", color: blackBorder } };
-  //         }
-  //         if (rowNumber === lastRowNumber) {
-  //           cell.border = { ...cell.border, bottom: { style: "medium", color: blackBorder } };
-  //         }
-  //       });
-  //     });
-
-  //     // ======================
-  //     // BROWSER-FRIENDLY SAVE
-  //     // ======================
-  //     const buffer = await workbook.xlsx.writeBuffer();
-  //     const blob = new Blob([buffer], {
-  //       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-  //     });
-  //     saveAs(blob, `Order_${order._id}_Details.xlsx`);
-
-  //   } catch (error) {
-  //     console.error("Excel export failed:", error);
-  //     alert("Failed to export Excel file. Check console for details.");
-  //   }
-  // };
-
   if (loading) {
     return (
       <div className="flex justify-center items-center h-screen">
@@ -402,8 +218,7 @@ function OrderDetails() {
       </div>
     );
   }
-  if (error)
-    return <div className="text-center mt-20 text-red-500">{error}</div>;
+  if (error) return <div className="text-center mt-20 text-red-500">{error}</div>;
 
   return (
     <>
@@ -413,128 +228,87 @@ function OrderDetails() {
         <div id="layoutSidenav_content" className="flex-1">
           <main className="p-6 bg-gray-100 min-h-screen">
             <div className="container mx-auto">
-              <h1 className="text-2xl font-bold text-gray-700 mb-6">
-                Order Details
-              </h1>
-
-              {/* Add Export Button */}
+              <h1 className="text-2xl font-bold text-gray-700 mb-6">Order Details</h1>
 
               {/* Customer Information */}
-              <h2 className="text-xl font-bold mb-4 text-cyan-blue">
-                Customer Information
-              </h2>
+              <h2 className="text-xl font-bold mb-4 text-cyan-blue">Customer Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div>
-                  <strong>Name:</strong> {order.name || "N/A"}
-                </div>
-                <div>
-                  <strong>Email:</strong> {order.email || "N/A"}
-                </div>
-                <div>
-                  <strong>Phone Number:</strong> {order.phonenumber || "N/A"}
-                </div>
-                <div>
-                  <strong>Agent Code:</strong> {order.agentCode || "N/A"}
-                </div>
-                <div>
-                  <strong>Dealer Code:</strong> {order.dealerCode || "N/A"}
-                </div>
-                <div>
-                  <strong>Existing BAN:</strong> {order.existingBAN || "N/A"}
-                </div>
-                <div>
-                  <strong>Existing FAN:</strong> {order.existingFAN || "N/A"}
-                </div>
+                <div><strong>Name:</strong> {order.customerId?.businesslegalname || "N/A"}</div>
+                <div><strong>Email:</strong> {order.customerId?.contactemail || "N/A"}</div>
+                <div><strong>Phone Number:</strong> {order.customerId?.contactphone || "N/A"}</div>
+                <div><strong>Existing BAN:</strong> {order.existingBAN || "N/A"}</div>
+                <div><strong>Company Name:</strong> {order.userId.companyname || "N/A"}</div>
+                <div><strong>AT&T Account:</strong> {order.atntaccount || "N/A"}</div>
+                <div><strong>Phone Model:</strong> {order.phonemodel || "N/A"}</div>
+                <div><strong>IMEI Status:</strong> {order.imeistatus || "N/A"}</div>
+                <div><strong>No Cracks:</strong> {order.noCracks || "N/A"}</div>
+                <div><strong>Screen Defects:</strong> {order.screenDefects || "N/A"}</div>
+                <div><strong>Factory Reset:</strong> {order.factoryReset || "N/A"}</div>
               </div>
 
               {/* Order Information */}
-              <h2 className="text-xl font-bold my-6 text-cyan-blue">
-                Order Information
-              </h2>
+              <h2 className="text-xl font-bold my-6 text-cyan-blue">Order Information</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div><strong>Agreement Type:</strong> {order.agreementtype || "N/A"}</div>
+                <div><strong>EIP:</strong> {order.eip || "N/A"}</div>
+                {/* <div><strong>Promotion:</strong> {order.promotion || "N/A"}</div> */}
+                <div><strong>Paperless:</strong> {order.paperless || "N/A"}</div>
+                <div><strong>Special Instruction:</strong> {order.specialinstruction || "N/A"}</div>
+                <div><strong>Rate Plan:</strong> {order.ratePlan || "N/A"}</div>
+                <div><strong>Order Date:</strong> {new Date(order.createdAt).toLocaleDateString()}</div>
                 <div>
-                  <strong>Agreement Type:</strong>{" "}
-                  {order.agreementtype || "N/A"}
-                </div>
-                <div>
-                  <strong>EIP:</strong> {order.eip || "N/A"}
-                </div>
-                <div>
-                  <strong>Promotion:</strong> {order.promotion || "N/A"}
-                </div>
-                <div>
-                  <strong>Paperless:</strong> {order.paperless || "N/A"}
-                </div>
-                <div>
-                  <strong>Special Instruction:</strong>{" "}
-                  {order.specialinstruction || "N/A"}
-                </div>
-                <div>
-                  <strong>Rate Plan:</strong> {order.ratePlan || "N/A"}
-                </div>
-                <div>
-                  <strong>Order Date:</strong>{" "}
-                  {new Date(order.createdAt).toLocaleDateString()}
-                </div>
-                <div>
-                  <strong>Status:</strong>
-                  <span
-                    className={`px-3 py-1 rounded-lg text-sm font-bold ${order.status === "Pending"
-                        ? "bg-yellow-200 text-yellow-800"
-                        : order.status === "Completed"
-                          ? "bg-green-200 text-green-800"
-                          : "bg-gray-200 text-gray-800"
-                      }`}
-                  >
+                  <strong>Status: </strong>
+                  <span className={`px-3 py-1 rounded-lg text-sm font-bold ${order.status === "Pending"
+                    ? "bg-yellow-200 text-yellow-800"
+                    : order.status === "Completed"
+                      ? "bg-green-200 text-green-800"
+                      : "bg-gray-200 text-gray-800"
+                    }`}>
                     {order.status}
                   </span>
                 </div>
               </div>
 
               {/* IMEI Numbers and Related Information */}
-              <h2 className="text-xl font-bold my-6 text-cyan-blue">
-                IMEI Numbers and Related Information
-              </h2>
-              {order.imeiNumbers && order.imeiNumbers.length > 0 ? (
-                order.imeiNumbers.map((imei, index) => (
+              <h2 className="text-xl font-bold my-6 text-cyan-blue">Line Configuration, IMEI Numbers and Related Information</h2>
+              {order.accounts && order.accounts.length > 0 ? (
+                order.accounts.map((account, index) => (
                   <div key={index} className="mb-4 p-4 border rounded-lg">
-                    <h3 className="font-bold">IMEI Number: {imei.imei}</h3>
+                    <h6 className="font-bold">
+                      IMEI Number: {account.imei ? account.imei : "NO IMEI NUMBER HERE"}
+                    </h6>
                     <div>
-                      <strong>Port Out PIN:</strong>{" "}
-                      {order.accounts[index]?.portOutPin || "N/A"} <br />
+                      <strong>Port Out PIN:</strong> {account.portOutPin || "N/A"} <br />
                       <strong>Shipping Address Details:</strong>
                       <div>
-                        <strong>Attention Name:</strong>{" "}
-                        {order.shippingAddresses[index]?.attentionname || "N/A"}{" "}
-                        <br />
-                        <strong>Address:</strong>{" "}
-                        {order.shippingAddresses[index]?.shippingaddress ||
-                          "N/A"}{" "}
-                        <br />
-                        <strong>City:</strong>{" "}
-                        {order.shippingAddresses[index]?.shippingcity || "N/A"}{" "}
-                        <br />
-                        <strong>State:</strong>{" "}
-                        {order.shippingAddresses[index]?.shippingstate || "N/A"}{" "}
-                        <br />
-                        <strong>Zip:</strong>{" "}
-                        {order.shippingAddresses[index]?.shippingzip || "N/A"}{" "}
-                        <br />
+                        <strong>Attention Name:</strong> {order.shippingAddresses[index]?.attentionname || "N/A"} <br />
+                        <strong>Address:</strong> {order.shippingAddresses[index]?.shippingaddress || "N/A"} <br />
+                        <strong>City:</strong> {order.shippingAddresses[index]?.shippingcity || "N/A"} <br />
+                        <strong>State:</strong> {order.shippingAddresses[index]?.shippingstate || "N/A"} <br />
+                        <strong>Zip:</strong> {order.shippingAddresses[index]?.shippingzip || "N/A"} <br />
                       </div>
-                      <strong>Account Number:</strong>{" "}
-                      {order.accounts[index]?.accountNumber || "N/A"} <br />
-                      <strong>Phone Number:</strong>{" "}
-                      {order.phoneNumbers[index]?.phoneNumber || "N/A"} <br />
-                      <strong>Carrier Info:</strong>{" "}
-                      {order.carrierInfos[index]?.currentwirelesscarrier ||
-                        "N/A"}{" "}
-                      <br />
+                      <strong>Account Number:</strong> {account.accountNumber || "N/A"} <br />
+                      <strong>Phone Number:</strong> {order.phoneNumbers[index]?.phoneNumber || "N/A"} <br />
+                      <strong>Carrier Info:</strong> {order.carrierInfos[index]?.currentwirelesscarrier || "N/A"} <br />
                     </div>
                   </div>
                 ))
               ) : (
-                <p>No IMEI numbers available.</p>
+                <p>No IMEI numbers available. This may be due to the following reasons:</p>
               )}
+              {order.tradeSmartphone ? (
+                <p>This order includes a trade-in smartphone, which may not have an associated IMEI number.</p>
+              ) : (
+                <p>This order does not include a trade-in smartphone.</p>
+              )}
+
+              {/* Additional Order Information */}
+              <h2 className="text-xl font-bold my-6 text-cyan-blue">Additional Order Information</h2>
+              <div className="mb-4 p-4 border rounded-lg">
+                <strong>Buy Phone Number:</strong> {order.buyPhoneNumber ? "Yes" : "No"} <br />
+                <strong>Phone Unique Code:</strong> {order.phoneUniqueCode || "N/A"} <br />
+                <strong>Promo Code:</strong> {order.promoCode || "N/A"} <br />
+              </div>
             </div>
             <button
               onClick={exportToExcel}
