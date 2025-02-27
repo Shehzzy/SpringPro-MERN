@@ -174,7 +174,7 @@ function IMEIForm({
                       onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
                     >
                       <option value="trade">I Want to Trade Smartphone</option>
-                      <option value="notrade">Not Yet</option>
+                      <option value="notrade">Bring Your Own Phone</option>
                     </select>
                   </div>
 
@@ -187,7 +187,7 @@ function IMEIForm({
                       disabled={account.tradeSmartphone} // Disable if tradeSmartphone is true
                     >
                       <option value="purchase">I Want to Purchase Smartphone</option>
-                      <option value="nopurchase">Not Yet</option>
+                      <option value="nopurchase">Bring Your Own Phone</option>
                     </select>
                   </div>
 
