@@ -33,7 +33,7 @@ const Signup: React.FC = () => {
     dob: "",
   });
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setErrors] = useState<any>({});
   const [successMessage, setSuccessMessage] = useState("");
   const [state, handleSubmit] = useForm("xanykyav");
 
@@ -47,32 +47,31 @@ const Signup: React.FC = () => {
     setErrors([]); // Clear errors on change
   };
 
+  const newErrors: any = {};
   const validateForm = (): boolean => {
     const missingFields: string[] = [];
-    if (!formData.fname) missingFields.push("First Name");
-    if (!formData.lname) missingFields.push("Last Name");
-    if (!formData.phone) missingFields.push("Phone Number");
-    if (!formData.companyname) missingFields.push("Company Name");
+    if (!formData.fname) newErrors.fname = "First Name is required";
+    if (!formData.lname) newErrors.lname = "Last Name is required";
+    if (!formData.phone) newErrors.phone = "Phone Number is required";
+    if (!formData.companyname)
+      newErrors.companyname = "Company Name is required";
     if (!formData.government_identification)
-      missingFields.push("Government Identification");
-    if (!formData.dob) missingFields.push("Date Of Birth");
-    if (!formData.ssn) missingFields.push("Social Security Number");
-    if (!formData.tax_id) missingFields.push("EIN/TAX ID");
-    if (!formData.email) missingFields.push("Email");
-    if (!formData.password) missingFields.push("Password");
-    if (!formData.confirmPassword) missingFields.push("Confirm Password");
+      newErrors.government_identification =
+        "Government Identification is required";
+    if (!formData.dob) newErrors.dob = "Date of Birth is required";
+    if (!formData.ssn) newErrors.ssn = "SSN is required";
+    if (!formData.tax_id) newErrors.tax_id = "EIN/TAX ID is required";
+    if (!formData.email) newErrors.email = "Email is required";
+    if (!formData.password) newErrors.password = "Password is required";
+    if (!formData.confirmPassword)
+      newErrors.confirmPassword = "Confirm Password is required";
 
     if (formData.password !== formData.confirmPassword) {
       setErrors(["Passwords do not match"]);
       return false;
     }
-
-    if (missingFields.length > 0) {
-      setErrors([`Missing the following fields: ${missingFields.join(", ")}`]);
-      return false;
-    }
-
-    return true;
+    setErrors((prev) => ({ ...prev, ...newErrors }));
+    return Object.keys(newErrors).length === 0; // Return true if no errors
   };
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
@@ -104,10 +103,17 @@ const Signup: React.FC = () => {
           }
           setSuccessMessage("User has been registered successfully!");
           setFormData({
-            name: "",
             email: "",
             password: "",
             confirmPassword: "",
+            fname:"",
+            lname:"",
+            phone:"",
+            companyname:"",
+            government_identification:"",
+            tax_id:"",
+            ssn:"",
+            dob:"",
           });
 
           // Delay redirection to show success message
@@ -135,7 +141,7 @@ const Signup: React.FC = () => {
         <form onSubmit={onSubmit} className="max-w-4xl mx-auto space-y-6">
           <div>
             <div className="grid grid-cols-1 gap-4 my-16">
-            <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
                   <h6 className="text-black text-start">First Name</h6>
                   <input
@@ -146,6 +152,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.fname && (
+                    <p className="text-start text-danger text-sm">{errors.fname}</p>
+                 )}
                 </div>
 
                 <div className="w-full">
@@ -158,6 +167,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.lname && (
+                    <p className="text-start text-danger text-sm">{errors.fname}</p>
+                 )}
                 </div>
 
                 <div className="w-full">
@@ -170,6 +182,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.companyname && (
+                    <p className="text-start text-danger text-sm">{errors.companyname}</p>
+                 )}
                 </div>
               </div>
               <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
@@ -183,6 +198,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                   {errors.phone && (
+                    <p className="text-start text-danger text-sm">{errors.phone}</p>
+                 )}
                 </div>
                 <div>
                   <h6 className="text-black text-start">Email</h6>
@@ -194,6 +212,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                   {errors.email && (
+                    <p className="text-start text-danger text-sm">{errors.email}</p>
+                 )}
                 </div>
                 <div className="w-full">
                   <h6 className="text-black text-start">Date Of Birth</h6>
@@ -205,9 +226,12 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                   {errors.dob && (
+                    <p className="text-start text-danger text-sm">{errors.dob}</p>
+                 )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">                
+              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
                   <h6 className="text-black text-start">
                     Government Identification
@@ -220,6 +244,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.government_identification && (
+                    <p className="text-start text-danger text-sm">{errors.government_identification}</p>
+                  )}
                 </div>
                 <div className="w-full">
                   <h6 className="text-black text-start">EIN/TAX ID</h6>
@@ -231,6 +258,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.tax_id && (
+                    <p className="text-start text-danger text-sm">{errors.tax_id}</p>
+                  )}
                 </div>
 
                 <div className="w-full">
@@ -243,6 +273,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.ssn && (
+                    <p className="text-start text-danger text-sm">{errors.ssn}</p>
+                  )}
                 </div>
               </div>
 
@@ -257,6 +290,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.password && (
+                    <p className="text-start text-danger text-sm">{errors.password}</p>
+                  )}
                 </div>
 
                 <div>
@@ -269,6 +305,9 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
+                  {errors.confirmPassword && (
+                    <p className="text-danger text-start text-sm">{errors.confirmPassword}</p>
+                  )}
                 </div>
               </div>
             </div>
@@ -282,9 +321,6 @@ const Signup: React.FC = () => {
 
           <div className="flex flex-col my-8">
             {/* Show errors or successMessage */}
-            {errors.length > 0 && (
-              <p className="text-red-500 text-sm mb-4">{errors.join(", ")}</p>
-            )}
             {successMessage && (
               <p className="text-green-500 text-sm mb-4">{successMessage}</p>
             )}

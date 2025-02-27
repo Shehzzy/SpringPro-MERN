@@ -1337,6 +1337,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b h-10 border-gray-300 w-full"
                   >
+                    <option value="">Select An Option</option>
                     <option value="accepted">Yes</option>
                     <option value="declined">No</option>
                   </select>
