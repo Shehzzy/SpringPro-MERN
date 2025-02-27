@@ -26,7 +26,7 @@ function LineConfiguration({ carrierInfos, shippingInfos, onLinesChange }) {
         }
         setShowModal(true);
     };
-    
+
 
     // Handle field updates
     const handleFieldChange = (index, field, value) => {

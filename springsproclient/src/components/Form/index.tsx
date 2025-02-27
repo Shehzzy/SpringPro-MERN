@@ -31,14 +31,12 @@ const Form: React.FC = () => {
   const [cardType, setCardType] = useState("");
 
   const [linesData, setLinesData] = useState([]);
-  // console.log("Lines data", linesData);
-  // // Receive data from child component
   const handleLinesChange = (updatedData) => {
     setLinesData(updatedData);
   };
 
   const handleTradeSmartphoneChange = (value) => {
-    // console.log("Updating tradeSmartphone:", value);
+
     setTradeSmartphone(value); // This updates the parent state
   };
 
@@ -48,17 +46,14 @@ const Form: React.FC = () => {
   };
 
   const handlePhoneUniqueCodeChange = (value) => {
-    // console.log("Updating phone unique code:", value);
     setPhoneUniqueCode(value); // This updates the parent state
   };
 
   const handleBuyPhoneNumberChange = (value) => {
-    // console.log("Updating phone number change:", value);
     setBuyPhoneNumber(value); // This updates the parent state
   };
 
   const handlePromoCodeChange = (value) => {
-    // console.log("Updating promo code change:", value);
     setPromoCode(value); // This updates the parent state
   };
 
@@ -376,11 +371,11 @@ const Form: React.FC = () => {
 
     name: "",
     email: "",
-    // phonenumber: "",
     agreementtype: "",
     eip: "",
     promotion: "",
     atntaccount: "",
+    sansPartnerID: "",
     phonemodel: "",
     imeistatus: "",
     noCracks: "",
@@ -407,7 +402,6 @@ const Form: React.FC = () => {
     cardCVC: "",
     cardBillingAddress: "",
     cardType,
-    // sameAsCardAddress: false,
     accountHolderName: "",
     sameAddress: "",
     routingNumber: "",
@@ -418,21 +412,10 @@ const Form: React.FC = () => {
     shippingcity: "",
     shippingstate: "",
     shippingzip: "",
-    // currentwirelesscarrier: "",
     accountnumber: "",
-    // pinorpassword: "",
-    // ssnortaxid: "",
-    // billingname: "",
-    // billingaddress: "",
-    // billingcity: "",
-    // billingstate: "",
-    // billingzip: "",
-    // authorizedname: "",
-    // companyname: "",
     imeiNumbers: imeiNumbers,
     carrierInfos: [],
-    dealerCode: "",
-    agentCode: "",
+    // dealerCode: "",
     existingFAN: "",
     existingBAN: "",
     tradeSmartphone: tradeSmartphone,
@@ -458,7 +441,6 @@ const Form: React.FC = () => {
     cardHolderName: formData.cardHolderName,
     cardBillingAddress: formData.cardBillingAddress,
     cardType: formData.cardType,
-    // sameAsCardAddress: formData.sameAsCardAddress,
     accountHolderName: formData.accountHolderName,
     routingNumber: formData.routingNumber,
     checkingAccountNumber: formData.checkingAccountNumber,
@@ -491,35 +473,6 @@ const Form: React.FC = () => {
       clearTimeout(handler);
     };
   }, [formData.cardNumber]);
-
-  // useEffect(() => {
-  //   // Detect card type only when the input is long enough (e.g., more than 4 digits)
-  //   if (debouncedCardNumber.length >= 4) {
-  //     const types = creditCardType(debouncedCardNumber);
-  //     if (types.length > 0) {
-  //       const type = types[0].type;
-  //       setCardType(types[0].niceType); // Set the nice name for display
-  //       setFormData((prev) => ({
-  //         ...prev,
-  //         cardType: type, // Store the type for form submission
-  //       }));
-  //     } else {
-  //       setCardType("");
-  //       setFormData((prev) => ({ ...prev, cardType: "" }));
-  //     }
-  //   }
-  // }, [debouncedCardNumber]);
-  // const handleCheckboxChange = (e) => {
-  //   const { checked } = e.target;
-  //   if (checked) {
-  //     setFormData({
-  //       ...formData,
-  //       cardBillingAddress: formData.sameAddress ? formData.cardBillingAddress : "",
-  //     });
-  //   } else {
-  //     setFormData({ ...formData, sameAsCardAddress: checked });
-  //   }
-  // };
 
   const [errors, setErrors] = useState<any>({});
   const [state, handleSubmit] = useForm("xanykyav");
@@ -613,7 +566,6 @@ const Form: React.FC = () => {
             const {
               name,
               email,
-              // phonenumber,
               agreementtype,
               eip,
               promotion,
@@ -623,8 +575,7 @@ const Form: React.FC = () => {
               cardNumber, // Add this
               cardExpiry, // Add this
               cardCVC, // Add this
-              dealerCode, // Add this
-              agentCode, // Add this
+              sansPartnerID
             } = userData[0];
 
             // Update only the specified fields
@@ -632,7 +583,6 @@ const Form: React.FC = () => {
               ...prev,
               name: name || "",
               email: email || "",
-              // phonenumber: phonenumber || "",
               agreementtype: agreementtype || "",
               eip: eip || "",
               promotion: promotion || "",
@@ -642,8 +592,7 @@ const Form: React.FC = () => {
               cardNumber: cardNumber || "", // Add this
               cardExpiry: cardExpiry || "", // Add this
               cardCVC: cardCVC || "", // Add this
-              dealerCode: dealerCode || "", // Add this
-              agentCode: agentCode || "", // Add this
+              sansPartnerID: sansPartnerID || "", // Add this
             }));
           }
 
@@ -708,19 +657,12 @@ const Form: React.FC = () => {
 
   const newErrors: any = {};  
   const validateForm = (): boolean => {
-    if (!formData.name) newErrors.name = "Name is required.";
-    if (!formData.email) newErrors.email = "Email is required.";
-    // if (!formData.phonenumber)
-    //   newErrors.phonenumber = "Phone Number is required.";
     if (!formData.agreementtype)
       newErrors.agreementtype = "Agreement Type is required.";
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
-    if (!formData.promotion) newErrors.promotion = "Promotion is required.";
-    // if (!formData.atntaccount)
-    //   newErrors.atntaccount = "Select from add AT&T Account.";
-    // if (!formData.atntaccount)
-    //   newErrors.atntaccount = "Select from add AT&T Account.";
+    if (!formData.atntaccount)
+      newErrors.atntaccount = "Select from add AT&T Account.";
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
     if (!formData.businesslegalname)
@@ -734,15 +676,12 @@ const Form: React.FC = () => {
     if (!formData.businesszip)
       newErrors.businesszip = "Business Zip is required.";
     if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-    // if (!formData.locationid) newErrors.locationid = "Location ID is required.";
     if (!formData.contactname)
       newErrors.contactname = "Contact Name is required.";
     if (!formData.contactphone)
       newErrors.contactphone = "Contact Phone is required.";
     if (!formData.contactemail)
       newErrors.contactemail = "Contact Email is required.";
-    if (!formData.billtomobile)
-      newErrors.billtomobile = "Bill to Mobile is required.";
     if (!formData.creditcardpayment)
       newErrors.creditcardpayment = "Please select an autopay option";
 
@@ -773,48 +712,7 @@ const Form: React.FC = () => {
           newErrors.cardBillingAddress = "Billing Address is required.";
       }
     }
-
-    // if (!formData.singleormultiaddresshipment)
-    //   newErrors.singleormultiaddresshipment =
-    //     "Single or Multi Address Shipment is required.";
-    // if (!formData.attentionname)
-    //   newErrors.attentionname = "Attention Name is required.";
-    // if (!formData.shippingaddress)
-    //   newErrors.shippingaddress = "Shipping Address is required.";
-    // if (!formData.shippingcity)
-    //   newErrors.shippingcity = "Shipping City is required.";
-    // if (!formData.shippingstate)
-    //   newErrors.shippingstate = "Shipping State is required.";
-    // if (!formData.shippingzip)
-    //   newErrors.shippingzip = "Shipping Zip is required.";
-    // if (!formData.currentwirelesscarrier)
-    //   newErrors.currentwirelesscarrier =
-    //     "Current Wireless Carrier is required.";
-    // if (!formData.accountnumber)
-    //   newErrors.accountnumber = "Account Number is required.";
-    // if (!formData.pinorpassword)
-    //   newErrors.pinorpassword = "Pin or Password is required.";
-    // if (!formData.ssnortaxid)
-    //   newErrors.ssnortaxid = "SSN or Tax ID is required.";
-    // if (!formData.billingname)
-    //   newErrors.billingname = "Billing Name is required.";
-    // if (!formData.billingaddress)
-    //   newErrors.billingaddress = "Billing Address is required.";
-    // if (!formData.billingcity)
-    //   newErrors.billingcity = "Billing City is required.";
-    // if (!formData.billingstate)
-    //   newErrors.billingstate = "Billing State is required.";
-    // if (!formData.billingzip) newErrors.billingzip = "Billing Zip is required.";
-    // if (!formData.authorizedname)
-    //   newErrors.authorizedname = "Authorized Name is required.";
-    // if (!formData.companyname)
-    //   newErrors.companyname = "Company Name is required.";
-    if (!formData.dealerCode) newErrors.dealerCode = "Dealer Code is required.";
-    if (!formData.agentCode) newErrors.agentCode = "Agent Code is required.";
-    // if (!formData.existingBAN)
-    //   newErrors.existingBAN = "Existing BAN is required.";
-    // if (!formData.existingFAN)
-    //   newErrors.existingFAN = "Existing FAN is required.";
+    if (!formData.sansPartnerID) newErrors.agentCode = "Agent Code is required.";
     carrierInfos.forEach((info, index) => {
       if (!info.currentwirelesscarrier) {
         newErrors[`currentwirelesscarrier_${index}`] =
@@ -916,6 +814,15 @@ const Form: React.FC = () => {
     }
   };
 
+  // console.log("IMEI Data to be sent:", {
+  //   imeiNumbers,
+  //   accountFields,
+  //   phoneNumbers,
+  //   shippingInfos,
+  // });
+
+  
+
   // console.log(formData);
 
   const validateTab = (tab: string): boolean => {
@@ -998,10 +905,8 @@ const Form: React.FC = () => {
           newErrors.shippingzip = "Shipping Zip is required.";
         // if (!formData.companyname)
         //   newErrors.companyname = "Company Name is required.";
-        if (!formData.dealerCode)
-          newErrors.dealerCode = "Dealer Code is required.";
-        if (!formData.agentCode)
-          newErrors.agentCode = "Agent Code is required.";
+        if (!formData.sansPartnerID)
+          newErrors.sansPartnerID = "SANS Partner ID is required.";
         if (!formData.existingBAN)
           newErrors.existingBAN = "Existing BAN is required.";
         if (!formData.existingFAN)
@@ -1065,10 +970,8 @@ const Form: React.FC = () => {
       case "lineConfig":
         // if (!formData.companyname)
         //   newErrors.companyname = "Company Name is required.";
-        if (!formData.dealerCode)
-          newErrors.dealerCode = "Dealer Code is required.";
-        if (!formData.agentCode)
-          newErrors.agentCode = "Agent Code is required.";
+        if (!formData.sansPartnerID)
+          newErrors.sansPartnerID = "SANS Partner ID is required.";
         break;
 
       default:
@@ -1096,102 +999,6 @@ const Form: React.FC = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      // case "sellerInfo":
-      //   return (
-      //     <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border">
-      //       {/* Heading */}
-      //       <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-      //         SANS Agent Information
-      //       </h2>
-
-      //       {/* Form */}
-      //       <form onSubmit={onSubmit} className="space-y-6">
-      //         {/* Row 1 */}
-      //         <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
-      //           <div className="w-full">
-      //             <h6 className="text-[#3C3C3C] text-start">Name</h6>
-      //             <input
-      //               type="text"
-      //               name="name"
-      //               placeholder="Enter Name"
-      //               value={formData.name}
-      //               onChange={handleChange}
-      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
-      //             />
-      //             {errors.name && (
-      //               <p className="text-red-500 text-sm">{errors.name}</p>
-      //             )}
-      //           </div>
-
-      //           <div>
-      //             <h6 className="text-[#3C3C3C] text-start">Email</h6>
-      //             <input
-      //               type="text"
-      //               name="email"
-      //               placeholder="Enter Email"
-      //               value={formData.email}
-      //               onChange={handleChange}
-      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
-      //             />
-      //             {errors.email && (
-      //               <p className="text-red-500 text-sm">{errors.email}</p>
-      //             )}
-      //           </div>
-
-      //           <div>
-      //             <h6 className="text-[#3C3C3C] text-start">Phone</h6>
-      //             <input
-      //               name="phonenumber"
-      //               placeholder="Enter Phone"
-      //               value={formData.phonenumber}
-      //               onChange={handleChange}
-      //               className="w-full border-b border-gray-300 py-2"
-      //             />
-      //             {errors.phonenumber && (
-      //               <p className="text-red-500 text-sm">{errors.phonenumber}</p>
-      //             )}
-      //           </div>
-      //         </div>
-
-      //         {/* Row 2 */}
-      //         <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
-      //           <div className="w-full">
-      //             <h6 className="text-[#3C3C3C] text-start">Dealer Code</h6>
-      //             <input
-      //               type="text"
-      //               name="dealerCode"
-      //               placeholder="Enter Dealer Code"
-      //               value={formData.dealerCode}
-      //               onChange={handleChange}
-      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
-      //             />
-      //             {errors.dealerCode && (
-      //               <p className="text-red-500 text-sm">{errors.dealerCode}</p>
-      //             )}
-      //           </div>
-
-      //           <div>
-      //             {/* <h6 className="text-[#3C3C3C] text-start">Agent Code</h6> */}
-      //             <h6 className="text-[#3C3C3C] text-start">
-      //               SANS Partner ID:
-      //             </h6>
-      //             <input
-      //               type="text"
-      //               name="agentCode"
-      //               placeholder="Enter Agent Code"
-      //               value={formData.agentCode}
-      //               onChange={handleChange}
-      //               className="border-b focus:outline-none border-gray-300 py-2 w-full"
-      //             />
-      //             {errors.agentCode && (
-      //               <p className="text-red-500 text-sm">{errors.agentCode}</p>
-      //             )}
-      //           </div>
-      //         </div>
-      //       </form>
-      //     </div>
-      //   );
-
       case "accountInfo":
         return (
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
@@ -1202,57 +1009,6 @@ const Form: React.FC = () => {
 
             {/* Form Section */}
             <form onSubmit={onSubmit} className="space-y-6">
-              {/* Row 1 */}
-              {/*
-              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
-                <div className="w-full">
-                  <h6 className="text-sm font-medium text-gray-700">Name</h6>
-                  <input
-                    type="text"
-                    name="name"
-                    placeholder="Enter Name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm">{errors.name}</p>
-                  )}
-                </div>
-
-                <div>
-                  <h6 className="text-sm font-medium text-gray-700">Email</h6>
-                  <input
-                    type="text"
-                    name="email"
-                    placeholder="Enter Email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )}
-                </div>
-
-                <div className="">
-                  <h6 className="text-sm font-medium text-gray-700">Company Name</h6>
-                  <input
-                    type="text"
-                    name="companyname"
-                    placeholder="Enter Company Name"
-                    value={formData.companyname}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                    {errors.companyname && (
-                      <p className="text-danger text-sm">{errors.companyname}</p>
-                    )}
-                </div>
-              </div>
-              </div>*/}
-
-              {/* Row 2 */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
                 <input
                   type="hidden"
@@ -1279,22 +1035,6 @@ const Form: React.FC = () => {
               
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
 
-              {/* <div className="w-full">
-                  <h6 className="text-sm font-medium text-gray-700">
-                    Dealer Code
-                  </h6>
-                  <input
-                    type="text"
-                    name="dealerCode"
-                    placeholder="Enter Dealer Code"
-                    value={formData.dealerCode}
-                    onChange={handleChange}
-                    className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                  />
-                  {errors.dealerCode && (
-                    <p className="text-red-500 text-sm">{errors.dealerCode}</p>
-                  )}
-                </div> */}
 
                 <div>
                   <h6 className="text-sm font-medium text-gray-700">
@@ -1302,14 +1042,14 @@ const Form: React.FC = () => {
                   </h6>
                   <input
                     type="text"
-                    name="agentCode"
-                    placeholder="Enter Agent Code"
-                    value={formData.agentCode}
+                    name="sansPartnerID"
+                    placeholder="Enter SANS Partner ID"
+                    value={formData.sansPartnerID}
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
-                  {errors.agentCode && (
-                    <p className="text-red-500 text-sm">{errors.agentCode}</p>
+                  {errors.sansPartnerID && (
+                    <p className="text-red-500 text-sm">{errors.sansPartnerID}</p>
                   )}
                 </div>
 
@@ -1324,6 +1064,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b h-10 border-gray-300 w-full"
                   >
+                  <option value="">Select An Option</option>
                     <option value="amb">AMB</option>
                     <option value="acda">ACDA Attainment/MAC</option>
                   </select>
@@ -1482,16 +1223,7 @@ const Form: React.FC = () => {
                       label: "Contact Email",
                       placeholder: "Enter Contact Email",
                     },
-                    // {
-                    //   name: "existingBAN",
-                    //   label: "Existing BAN",
-                    //   placeholder: "Enter Existing BAN",
-                    // },
-                    // {
-                    //   name: "existingFAN",
-                    //   label: "Existing FAN",
-                    //   placeholder: "Enter Existing FAN",
-                    // },
+                   
                   ].map((field, index) => (
                     <div key={index} className="mb-4">
                       <h6 className="text-sm font-medium text-gray-700">
@@ -1511,59 +1243,8 @@ const Form: React.FC = () => {
                           />
                         )}
 
-                      {/* Dropdown for Existing BAN */}
-                      {/* {field.name === "existingBAN" && (
-                        <select
-                          name={field.name}
-                          value={formData[field.name]}
-                          onChange={(e) =>
-                            handleBanFanDropdownChange(e, "existingBAN")
-                          }
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        >
-                          <option value="">Select</option>
-                          <option value="yes">Yes</option>
-                          <option value="no">No</option>
-                        </select>
-                      )} */}
-
-                      {/* Dropdown for Existing FAN */}
-                      {/* {field.name === "existingFAN" && (
-                        <select
-                          name={field.name}
-                          value={formData[field.name]}
-                          onChange={(e) =>
-                            handleBanFanDropdownChange(e, "existingFAN")
-                          }
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        >
-                          <option value="">Select</option>
-                          <option value="yes">Yes</option>
-                          <option value="no">No</option>
-                        </select>
-                      )} */}
-
-                      {/* Input fields for Existing BAN and FAN */}
-                      {/* {showExistingBAN && field.name === "existingBAN" && (
-                        <input
-                          type="text"
-                          name={field.name}
-                          placeholder={field.placeholder}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
-                        />
-                      )} */}
-                      {/* {showExistingFAN && field.name === "existingFAN" && (
-                        <input
-                          type="text"
-                          name={field.name}
-                          placeholder={field.placeholder}
-                          value={formData[field.name]}
-                          onChange={handleChange}
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full mt-2"
-                        />
-                      )} */}
+                      
+                      
 
                       {errors[field.name] && (
                         <p className="text-red-500 text-sm">
@@ -1597,6 +1278,8 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
+                  <option value="">Select An Option</option>
+
                   <option value="accepted">Yes</option>
                   <option value="declined">No</option>
                 </select>
@@ -1616,6 +1299,7 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
+                  <option value="">Select An Option</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
