@@ -32,7 +32,6 @@ function IMEIForm({
 
     // Create an array of objects for the number of rows specified
     const newFields = Array.from({ length: value }, () => ({
-      accountNumber: "",
       portOutPin: "",
       phoneNumber: "",
       carrier: "",
@@ -50,7 +49,7 @@ function IMEIForm({
     updatedAccounts[index][field] = value;
     setAccountFields(updatedAccounts);
 
-    if (field === "accountNumber" || field === "portOutPin") {
+    if (field === "portOutPin") {
       onAccountFieldsChange(updatedAccounts);
     } else if (field === "phoneNumber" || field === "carrier") {
       onPhoneNumbersChange(updatedAccounts);
@@ -83,7 +82,6 @@ function IMEIForm({
   const handleModalOpen = () => {
     if (accountFields.length === 0) {
       const initialFields = Array.from({ length: numRows }, () => ({
-        accountNumber: "",
         portOutPin: "",
         phoneNumber: "",
         carrier: "",
@@ -102,7 +100,6 @@ function IMEIForm({
     setAccountFields([
       ...accountFields,
       {
-        accountNumber: "",
         portOutPin: "",
         phoneNumber: "",
         carrier: "",
@@ -123,7 +120,7 @@ function IMEIForm({
           min="0"
           value={numRows}
           onChange={handleNumRowsChange}
-          className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 w-20 sm:w-40"
+          className="border inter border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 w-20 sm:w-40"
           placeholder="Enter number of rows"
         />
         <button
@@ -133,7 +130,7 @@ function IMEIForm({
             background:
               "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
           }}
-          className="text-white px-6 py-2 rounded font-bold"
+          className="text-white px-6 py-2 rounded font-bold inter"
         >
           Generate
         </button>
@@ -156,125 +153,112 @@ function IMEIForm({
             {/* Account, Phone, IMEI & Shipping Fields */}
             <div className="mt-6">
               {accountFields.map((account, index) => (
-                <div key={index} className="space-y-4">
+                <div key={index} className="space-y-4 mb-8 p-6 bg-gray-50 rounded-lg shadow-sm">
                   <div className="flex justify-between mt-4">
                     <h3 className="text-2xl font-bold text-center inter">
                       {index === 0 ? "Add Details" : `Add Details ${index + 1}`}
                     </h3>
                   </div>
-                  <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6 px-6 py-3 rounded" style={{
+
+                  {/* Trade, Purchase, and Buy Phone Number */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 px-3 py-3 rounded" style={{
                   background:
                     "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
                 }}>
-                  <div>
-                    <h6 className="text-sm font-medium text-white inter mb-2">Trade Smart Phone?</h6>
-                    <select
-                      className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
-                      value={account.tradeSmartphone ? "trade" : "notrade"}
-                      onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
-                    >
-                      <option value="trade">I Want to Trade Smartphone</option>
-                      <option value="notrade">Bring Your Own Phone</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <h6 className="text-sm font-medium text-white inter mb-2">Purchase Smart Phone?</h6>
-                    <select
-                      className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
-                      value={account.purchaseSmartphone ? "purchase" : "nopurchase"}
-                      onChange={(e) => handlePurchaseSmartphoneChange(index, e.target.value)}
-                      disabled={account.tradeSmartphone} // Disable if tradeSmartphone is true
-                    >
-                      <option value="purchase">I Want to Purchase Smartphone</option>
-                      <option value="nopurchase">Bring Your Own Phone</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <h6 className="text-sm font-medium text-white mb-2 inter">Want to Buy New Phone Number?</h6>                  
-                    <select
-                      className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
-                      value={buyPhoneNumber ? "true" : "false"}
-                      onChange={(e) => handleBuyPhoneNumberChange(e.target.value === "true")}
-                    >
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
-                    </select>
-                  </div>
-                  </div>
-                  {/* Account Number and Port Out PIN */}
-                  <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
-                    <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
-                      <div>
-                        <h6 className="text-sm font-medium text-gray-700 mb-2 inter">Account Number</h6>
-                        <input
-                          type="text"
-                          placeholder="Enter Account Number"
-                          value={account.accountNumber}
-                          onChange={(e) =>
-                            handleFieldChange(index, "accountNumber", e.target.value)
-                          }
-                          className="border-b focus:outline-none border-gray-300 p-2 w-full inter text-sm"
-                        />
-                      </div>
-                      <div>
-                        <h6 className="text-sm font-medium text-gray-700 mb-2 inter">Port Out PIN</h6>
-                        <input
-                          type="text"
-                          placeholder="Enter Port Out PIN"
-                          value={account.portOutPin}
-                          onChange={(e) =>
-                            handleFieldChange(index, "portOutPin", e.target.value)
-                          }
-                          className="border-b focus:outline-none border-gray-300 p-2 w-full inter text-sm"
-                        />
-                      </div>
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
+                      <select
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        value={account.tradeSmartphone ? "trade" : "notrade"}
+                        onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
+                      >
+                        <option value="trade">I Want to Trade Smartphone</option>
+                        <option value="notrade">Bring Your Own Phone</option>
+                      </select>
                     </div>
-                    {/* Phone Number and Carrier */}
+
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Purchase Smart Phone?</label>
+                      <select
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        value={account.purchaseSmartphone ? "purchase" : "nopurchase"}
+                        onChange={(e) => handlePurchaseSmartphoneChange(index, e.target.value)}
+                        disabled={account.tradeSmartphone} // Disable if tradeSmartphone is true
+                      >
+                        <option value="purchase">I Want to Purchase Smartphone</option>
+                        <option value="nopurchase">Bring Your Own Phone</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Want to Buy New Phone Number?</label>
+                      <select
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        value={buyPhoneNumber ? "true" : "false"}
+                        onChange={(e) => handleBuyPhoneNumberChange(e.target.value === "true")}
+                      >
+                        <option value="true">Yes</option>
+                        <option value="false">No</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Port Out PIN, Phone Number, and IMEI Number */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Port Out PIN</label>
+                      <input
+                        type="text"
+                        placeholder="Enter Port Out PIN"
+                        value={account.portOutPin}
+                        onChange={(e) =>
+                          handleFieldChange(index, "portOutPin", e.target.value)
+                        }
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      />
+                    </div>
                     {!buyPhoneNumber && (
-                    <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                      <input
+                        type="text"
+                        placeholder="Enter Phone Number"
+                        value={account.phoneNumber}
+                        onChange={(e) =>
+                          handleFieldChange(index, "phoneNumber", e.target.value)
+                        }
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      />
+                    </div>
+                    )}
+                    
+                    {/* Show IMEI only if both tradeSmartphone and purchaseSmartphone are false */}
+                    {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
                       <div>
-                        <h6 className="text-sm font-medium text-gray-700 mb-2 inter">Phone Number</h6>
+                        <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
                         <input
                           type="text"
-                          placeholder="Enter Phone Number"
-                          value={account.phoneNumber}
+                          placeholder="Enter IMEI Number"
+                          value={account.imei}
                           onChange={(e) =>
-                            handleFieldChange(index, "phoneNumber", e.target.value)
+                            handleFieldChange(index, "imei", e.target.value)
                           }
-                          className="border-b focus:outline-none border-gray-300 p-2 w-full inter text-sm"
+                          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         />
                       </div>
-                      {/* Show IMEI only if both tradeSmartphone and purchaseSmartphone are false */}
-                      {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
-                        <div>
-                          <h6 className="text-sm font-medium text-gray-700 mb-2 inter">IMEI Number</h6>
-                          <input
-                            type="text"
-                            placeholder="Enter IMEI Number"
-                            value={account.imei}
-                            onChange={(e) =>
-                              handleFieldChange(index, "imei", e.target.value)
-                            }
-                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          />
-                        </div>
-                      )}
-                    </div>
-                  )}
+                    )}
                   </div>
 
                   {/* Carrier and Shipping Address */}
-                  <div className="grid grid-cols-1 md:mt-10 md:grid-cols-2 gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                    <h6 className="text-sm font-medium text-gray-700 mb-2 inter">Carrier</h6>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Carrier</label>
                       <select
                         value={account.carrier}
                         onChange={(e) =>
                           handleFieldChange(index, "carrier", e.target.value)
                         }
-                        className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
                         <option value="">Select Carrier</option>
                         {carrierInfos.map((carrier, idx) => (
@@ -285,13 +269,13 @@ function IMEIForm({
                       </select>
                     </div>
                     <div>
-                      <h6 className="text-sm font-medium text-gray-700 mb-2 inter pl-2">Shipping Address</h6>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
                       <select
                         value={account.shippingAddress}
                         onChange={(e) =>
                           handleFieldChange(index, "shippingAddress", e.target.value)
                         }
-                        className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
                         <option value="">Select Shipping Address</option>
                         {shippingInfos.map((info, idx) => (
@@ -315,7 +299,7 @@ function IMEIForm({
                   background:
                     "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
                 }}
-                className="text-white px-6 py-2 rounded font-bold"
+                className="text-white px-6 py-2 rounded inter font-bold"
               >
                 Add New
               </button>
