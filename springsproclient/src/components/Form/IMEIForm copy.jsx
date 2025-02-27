@@ -9,11 +9,17 @@ function IMEIForm({
   onShippingAddressesChange,
   shippingInfos,
   carrierInfos,
+  tradeSmartphone,
+  purchaseSmartphone,
+  setTradeSmartphone,
+  setPurchaseSmartphone,
   buyPhoneNumber,
   setBuyPhoneNumber,
   phoneUniqueCode,
   setPhoneUniqueCode,
   handleBuyPhoneNumberChange,
+  handleTradeSmartphoneChange,
+  handlePurchaseSmartphoneChange,
   handlePhoneUniqueCodeChange,
   handlePromoCodeChange,
   promoCode,
@@ -38,8 +44,6 @@ function IMEIForm({
       carrier: "",
       imei: "",
       shippingAddress: "",
-      tradeSmartphone: false, // Add tradeSmartphone state for each row
-      purchaseSmartphone: false, // Add purchaseSmartphone state for each row
     }));
     setAccountFields(newFields); // Update accountFields with new rows
   };
@@ -59,26 +63,6 @@ function IMEIForm({
     }
   };
 
-  // Handle trade smartphone change
-  const handleTradeSmartphoneChange = (index, value) => {
-    const updatedAccounts = [...accountFields];
-    updatedAccounts[index].tradeSmartphone = value === "trade";
-
-    // Auto-select "I Want to Purchase Smartphone" if "I Want to Trade Smartphone" is selected
-    if (value === "trade") {
-      updatedAccounts[index].purchaseSmartphone = true;
-    }
-
-    setAccountFields(updatedAccounts);
-  };
-
-  // Handle purchase smartphone change
-  const handlePurchaseSmartphoneChange = (index, value) => {
-    const updatedAccounts = [...accountFields];
-    updatedAccounts[index].purchaseSmartphone = value === "purchase";
-    setAccountFields(updatedAccounts);
-  };
-
   // Open Modal logic
   const handleModalOpen = () => {
     if (accountFields.length === 0) {
@@ -89,8 +73,6 @@ function IMEIForm({
         carrier: "",
         imei: "",
         shippingAddress: "",
-        tradeSmartphone: false,
-        purchaseSmartphone: false,
       }));
       setAccountFields(initialFields);
     }
@@ -108,8 +90,6 @@ function IMEIForm({
         carrier: "",
         imei: "",
         shippingAddress: "",
-        tradeSmartphone: false,
-        purchaseSmartphone: false,
       },
     ]);
   };
@@ -166,12 +146,45 @@ function IMEIForm({
                   background:
                     "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
                 }}>
+                  {/* Trade Smartphone or Purchase New Smartphone */}
+                  {/* <div className="flex gap-4 mb-6">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="smartphoneOption"
+                        value="true"
+                        checked={tradeSmartphone}
+                        onChange={() => handleTradeSmartphoneChange(true)}
+                      />
+                      <span className="ml-2">Trade Smartphone</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="smartphoneOption"
+                        value="false"
+                        checked={!tradeSmartphone}
+                        onChange={() => handleTradeSmartphoneChange(false)}
+                      />
+                      <span className="ml-2">Purchase New Smartphone</span>
+                    </label>
+                  </div> */}
+                  
                   <div>
                     <h6 className="text-sm font-medium text-white inter mb-2">Trade Smart Phone?</h6>
+                    {/* <select
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      value={tradeSmartphone === null ? "no" : tradeSmartphone ? "trade" : "purchase"}
+                      onChange={(e) => handleTradeSmartphoneChange(e.target.value === "purchase" ? false : e.target.value === "trade" ? true : null)}
+                    >
+                      <option value="trade">I Want to Trade Smartphone</option>
+                      <option value="purchase">I Want to Purchase New Smartphone</option>
+                      <option value="no">Not Yet</option>
+                    </select> */}
                     <select
                       className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
-                      value={account.tradeSmartphone ? "trade" : "notrade"}
-                      onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
+                      value={tradeSmartphone ? "trade" : "notrade"}
+                      onChange={(e) => handleTradeSmartphoneChange(e.target.value === "trade" ? true : e.target.value === "notrade" ? false : null)}
                     >
                       <option value="trade">I Want to Trade Smartphone</option>
                       <option value="notrade">Not Yet</option>
@@ -179,12 +192,11 @@ function IMEIForm({
                   </div>
 
                   <div>
-                    <h6 className="text-sm font-medium text-white inter mb-2">Purchase Smart Phone?</h6>
+                    <h6 className="text-sm font-medium text-white inter mb-2">Puchase Smart Phone?</h6>
                     <select
                       className="border-b focus:outline-none rounded-lg border-gray-300 inter p-2 w-full text-sm"
-                      value={account.purchaseSmartphone ? "purchase" : "nopurchase"}
-                      onChange={(e) => handlePurchaseSmartphoneChange(index, e.target.value)}
-                      disabled={account.tradeSmartphone} // Disable if tradeSmartphone is true
+                      value={purchaseSmartphone ? "purchase" : "nopurchase"}
+                      onChange={(e) => handlePurchaseSmartphoneChange(e.target.value === "purchase" ? true : e.target.value === "nopurchase" ? false : null )}
                     >
                       <option value="purchase">I Want to Purchase Smartphone</option>
                       <option value="nopurchase">Not Yet</option>
@@ -202,6 +214,30 @@ function IMEIForm({
                       <option value="false">No</option>
                     </select>
                   </div>
+
+                  {/* Buy Phone Number */}
+                  {/* <div className="flex gap-4 mb-6">
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="buyPhoneNumber"
+                        value="true"
+                        checked={buyPhoneNumber}
+                        onChange={() => handleBuyPhoneNumberChange(true)}
+                      />
+                      <span className="ml-2">Buy Phone Number (Yes)</span>
+                    </label>
+                    <label className="flex items-center">
+                      <input
+                        type="radio"
+                        name="buyPhoneNumber"
+                        value="false"
+                        checked={!buyPhoneNumber}
+                        onChange={() => handleBuyPhoneNumberChange(false)}
+                      />
+                      <span className="ml-2">Buy Phone Number (No)</span>
+                    </label>
+                  </div> */}
                   </div>
                   {/* Account Number and Port Out PIN */}
                   <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
@@ -246,8 +282,7 @@ function IMEIForm({
                           className="border-b focus:outline-none border-gray-300 p-2 w-full inter text-sm"
                         />
                       </div>
-                      {/* Show IMEI only if both tradeSmartphone and purchaseSmartphone are false */}
-                      {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
+                      {tradeSmartphone && purchaseSmartphone && (
                         <div>
                           <h6 className="text-sm font-medium text-gray-700 mb-2 inter">IMEI Number</h6>
                           <input

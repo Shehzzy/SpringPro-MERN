@@ -25,7 +25,8 @@ const Form: React.FC = () => {
 
   const [phoneUniqueCode, setPhoneUniqueCode] = useState("");
   const [promoCode, setPromoCode] = useState("");
-  const [tradeSmartphone, setTradeSmartphone] = useState(false); // State for trade smartphone
+  const [tradeSmartphone, setTradeSmartphone] = useState(false);
+  const [purchaseSmartphone, setPurchaseSmartphone] = useState(false);
   const [buyPhoneNumber, setBuyPhoneNumber] = useState(false); // State for buy phone number
   const [cardType, setCardType] = useState("");
 
@@ -39,6 +40,11 @@ const Form: React.FC = () => {
   const handleTradeSmartphoneChange = (value) => {
     // console.log("Updating tradeSmartphone:", value);
     setTradeSmartphone(value); // This updates the parent state
+  };
+
+  const handlePurchaseSmartphoneChange = (value) => {
+    // console.log("Updating tradeSmartphone:", value);
+    setPurchaseSmartphone(value); // This updates the parent state
   };
 
   const handlePhoneUniqueCodeChange = (value) => {
@@ -430,6 +436,7 @@ const Form: React.FC = () => {
     existingFAN: "",
     existingBAN: "",
     tradeSmartphone: tradeSmartphone,
+    purchaseSmartphone: purchaseSmartphone,
     buyPhoneNumber: buyPhoneNumber,
     phoneUniqueCode: phoneUniqueCode || "",
     promoCode: promoCode,
@@ -2255,14 +2262,17 @@ const Form: React.FC = () => {
                   shippingInfos={shippingInfos}
                   carrierInfos={carrierInfos}
                   tradeSmartphone={tradeSmartphone}
+                  purchaseSmartphone={purchaseSmartphone}
                   setTradeSmartphone={setTradeSmartphone}
+                  setPurchaseSmartphone={setPurchaseSmartphone}
                   buyPhoneNumber={buyPhoneNumber}
                   setBuyPhoneNumber={setBuyPhoneNumber}
                   phoneUniqueCode={phoneUniqueCode}
                   setPhoneUniqueCode={setPhoneUniqueCode}
                   promoCode={promoCode}
                   setPromoCode={setPromoCode}
-                  handleTradeSmartphoneChange={handleTradeSmartphoneChange}
+                  handleTradeSmartphoneChange={handleTradeSmartphoneChange}                  
+                  handlePurchaseSmartphoneChange={handlePurchaseSmartphoneChange}
                   handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange}
                   handleBuyPhoneNumberChange={handleBuyPhoneNumberChange}
                   handlePromoCodeChange={handlePromoCodeChange}
