@@ -27,8 +27,12 @@ function IMEIForm({
 
   // Handle input change for number of rows
   const handleNumRowsChange = (e) => {
-    const value = parseInt(e.target.value, 10) || 0;
-    setNumRows(value);
+    const value = e.target.value;
+
+    // Ensure the input is numeric or empty (so backspace can work)
+    const parsedValue = /^\d*$/.test(value) ? value : "1"; // Only allow numeric characters, default to "1" if invalid
+
+    setNumRows(parsedValue);
 
     // Create an array of objects for the number of rows specified
     const newFields = Array.from({ length: value }, () => ({
@@ -39,6 +43,7 @@ function IMEIForm({
       shippingAddress: "",
       tradeSmartphone: false, // Add tradeSmartphone state for each row
       purchaseSmartphone: false, // Add purchaseSmartphone state for each row
+      buyPhoneNumber: false, // <-- Added here
     }));
     setAccountFields(newFields); // Update accountFields with new rows
   };
@@ -46,14 +51,26 @@ function IMEIForm({
   // Handle field changes (to update the parent component if necessary)
   const handleFieldChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
-    updatedAccounts[index][field] = value;
+    // If the field is shippingAddress, we need to handle it differently
+    if (field.startsWith("shippingAddress.")) {
+      const shippingField = field.split(".")[1]; // Get the specific field (e.g., "attentionName")
+      updatedAccounts[index].shippingAddress = {
+        ...updatedAccounts[index].shippingAddress,
+        [shippingField]: value,
+      };
+    } else {
+      updatedAccounts[index][field] = value;
+    }
     setAccountFields(updatedAccounts);
+    console.log(updatedAccounts, "This is imei form data");
 
-    if (field === "portOutPin") {
+
+    // Call the appropriate change handlers
+    if (field === "accountNumber" || field === "portOutPin") {
       onAccountFieldsChange(updatedAccounts);
     } else if (field === "phoneNumber" || field === "carrier") {
       onPhoneNumbersChange(updatedAccounts);
-    } else if (field === "shippingAddress") {
+    } else if (field.startsWith("shippingAddress.")) {
       onShippingAddressesChange(updatedAccounts);
     }
   };
@@ -89,6 +106,7 @@ function IMEIForm({
         shippingAddress: "",
         tradeSmartphone: false,
         purchaseSmartphone: false,
+        buyPhoneNumber: false, // <-- Added here
       }));
       setAccountFields(initialFields);
     }
@@ -107,6 +125,7 @@ function IMEIForm({
         shippingAddress: "",
         tradeSmartphone: false,
         purchaseSmartphone: false,
+        buyPhoneNumber: false, // <-- Added here
       },
     ]);
   };
@@ -116,12 +135,11 @@ function IMEIForm({
       <div className="flex items-center justify-center gap-4 mb-4">
         {/* Input for number of rows */}
         <input
-          type="number"
-          min="0"
+          type="text"
           value={numRows}
           onChange={handleNumRowsChange}
           className="border inter border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 w-20 sm:w-40"
-          placeholder="Enter number of rows"
+
         />
         <button
           onClick={handleModalOpen}
@@ -162,9 +180,9 @@ function IMEIForm({
 
                   {/* Trade, Purchase, and Buy Phone Number */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 px-3 py-3 rounded" style={{
-                  background:
-                    "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
-                }}>
+                    background:
+                      "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+                  }}>
                     <div>
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
                       <select
@@ -194,8 +212,10 @@ function IMEIForm({
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Want to Buy New Phone Number?</label>
                       <select
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                        value={buyPhoneNumber ? "true" : "false"}
-                        onChange={(e) => handleBuyPhoneNumberChange(e.target.value === "true")}
+                        value={account.buyPhoneNumber ? "true" : "false"}
+                        onChange={(e) =>
+                          handleFieldChange(index, "buyPhoneNumber", e.target.value === "true")
+                        }
                       >
                         <option value="true">Yes</option>
                         <option value="false">No</option>
@@ -217,21 +237,20 @@ function IMEIForm({
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       />
                     </div>
-                    {!buyPhoneNumber && (
-                    <div>
-                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                      <input
-                        type="text"
-                        placeholder="Enter Phone Number"
-                        value={account.phoneNumber}
-                        onChange={(e) =>
-                          handleFieldChange(index, "phoneNumber", e.target.value)
-                        }
-                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                      />
-                    </div>
+                    {!account.buyPhoneNumber && (
+                      <div>
+                        <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                        <input
+                          type="text"
+                          placeholder="Enter Phone Number"
+                          value={account.phoneNumber}
+                          onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+                          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        />
+                      </div>
                     )}
-                    
+
+
                     {/* Show IMEI only if both tradeSmartphone and purchaseSmartphone are false */}
                     {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
                       <div>

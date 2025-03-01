@@ -43,34 +43,34 @@ function AllOrders() {
         return;
       }
 
-     try {
-              const decoded = jwtDecode(token); // Decode the JWT
-              const currentTime = Date.now() / 1000; // Current time in seconds
-              // Check if the token has expired
-              if (decoded.exp && decoded.exp < currentTime) {
-                Swal.fire({
-                  title: "Session Expired",
-                  text: "Your session has expired. Please log in again.",
-                  icon: "warning",
-                  confirmButtonText: "Go to Login",
-                }).then(() => {
-                  // Redirect to login if the token is expired
-                  navigate("/login");
-                });
-                return;
-              }
-            } catch (error) {
-              // If decoding the token fails, handle the error (e.g., invalid token)
-              Swal.fire({
-                title: "Invalid Token",
-                text: "The token is invalid. Please log in again.",
-                icon: "error",
-                confirmButtonText: "Go to Login",
-              }).then(() => {
-                navigate("/login");
-              });
-              return;
-            }
+    //  try {
+    //           const decoded = jwtDecode(token); // Decode the JWT
+    //           const currentTime = Date.now() / 1000; // Current time in seconds
+    //           // Check if the token has expired
+    //           if (decoded.exp && decoded.exp < currentTime) {
+    //             Swal.fire({
+    //               title: "Session Expired",
+    //               text: "Your session has expired. Please log in again.",
+    //               icon: "warning",
+    //               confirmButtonText: "Go to Login",
+    //             }).then(() => {
+    //               // Redirect to login if the token is expired
+    //               navigate("/login");
+    //             });
+    //             return;
+    //           }
+    //         } catch (error) {
+    //           // If decoding the token fails, handle the error (e.g., invalid token)
+    //           Swal.fire({
+    //             title: "Invalid Token",
+    //             text: "The token is invalid. Please log in again.",
+    //             icon: "error",
+    //             confirmButtonText: "Go to Login",
+    //           }).then(() => {
+    //             navigate("/login");
+    //           });
+    //           return;
+    //         }
     
 
     if (userRole !== "admin") {
