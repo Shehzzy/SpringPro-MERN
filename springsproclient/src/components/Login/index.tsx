@@ -2,7 +2,7 @@ import React, { useState, FormEvent, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import {jwtDecode} from "jwt-decode"; // Import jwt-decode
-
+import Swal from "sweetalert2"; // Import SweetAlert2
 const Login: React.FC = () => {
   const navigate = useNavigate();
 
@@ -83,9 +83,22 @@ const Login: React.FC = () => {
         } else {
           setErrors([response.data.message || "Login failed"]);
         }
+
+        
       } catch (error) {
         console.error("Login error:", error);
         setErrors(["An error occurred. Please try again later."]);
+        console.log("Full Response:", error.response);
+
+        if (!error.response.data?.userStatus) {
+          Swal.fire({
+            icon: "warning",
+            title: "Account Not Activated",
+            text: "Your account is not yet approved by the admin. Please contact support.",
+            confirmButtonColor: "#41FDFE",
+          });
+          return; // Stop further execution
+        }
       }
     }
   };

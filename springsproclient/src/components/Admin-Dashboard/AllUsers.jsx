@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // Correct import
+import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
-import "bootstrap/dist/css/bootstrap.min.css"; // Ensure Bootstrap CSS is included
-import "./styles.css"; // Include your custom styles
+import "bootstrap/dist/css/bootstrap.min.css";
+import "./styles.css";
 import HashLoader from "react-spinners/HashLoader";
 import Swal from "sweetalert2";
-import DataTable from "react-data-table-component"; // Import DataTable
+import DataTable from "react-data-table-component";
 
 function AllUsers() {
   const [users, setUsers] = useState([]);
@@ -23,7 +23,7 @@ function AllUsers() {
     if (!token) {
       Swal.fire({
         title: "Login Required",
-        text: "You need to log in first to place an order.",
+        text: "You need to log in first to access this page.",
         icon: "warning",
         confirmButtonText: "Go to Login",
       }).then(() => {
@@ -32,67 +32,77 @@ function AllUsers() {
       return;
     }
 
-    // try {
-    //   const decoded = jwtDecode(token); // Decode the JWT
-    //   const currentTime = Date.now() / 1000; // Current time in seconds
-    //   // Check if the token has expired
-    //   if (decoded.exp && decoded.exp < currentTime) {
-    //     Swal.fire({
-    //       title: "Session Expired",
-    //       text: "Your session has expired. Please log in again.",
-    //       icon: "warning",
-    //       confirmButtonText: "Go to Login",
-    //     }).then(() => {
-    //       // Redirect to login if the token is expired
-    //       navigate("/login");
-    //     });
-    //     return;
-    //   }
-    // } catch (error) {
-    //   // If decoding the token fails, handle the error (e.g., invalid token)
-    //   Swal.fire({
-    //     title: "Invalid Token",
-    //     text: "The token is invalid. Please log in again.",
-    //     icon: "error",
-    //     confirmButtonText: "Go to Login",
-    //   }).then(() => {
-    //     navigate("/login");
-    //   });
-    //   return;
-    // }
-
     const decodedToken = jwtDecode(token);
     const userRole = decodedToken.role;
 
-    // Check if user has admin role
     if (userRole !== "admin") {
       setError("You do not have admin access");
       navigate("/");
       return;
     }
 
-    // Fetching the users data if the user is an admin
-    axios
-      .get("https://springprobackend-production.up.railway.app/api/auth/get-users", {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      })
-      .then((response) => {
-        setUsers(response.data.userData);
-        setLoading(false);
-      })
-      .catch((error) => {
-        console.error("Error fetching users:", error);
-        setError("Error fetching users");
-        setLoading(false);
-      });
+    fetchUsers();
   }, [navigate]);
+
+  const fetchUsers = async () => {
+    try {
+      const token = localStorage.getItem("jwt_token");
+      const response = await axios.get(
+        "https://springprobackend-production.up.railway.app/api/auth/get-users",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setUsers(response.data.userData);
+      setLoading(false);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      setError("Error fetching users");
+      setLoading(false);
+    }
+  };
+
+  // Function to enable/disable user
+  const toggleUserStatus = async (userId, currentStatus) => {
+    const token = localStorage.getItem("jwt_token");
+
+    Swal.fire({
+      title: `Are you sure?`,
+      text: `Do you want to ${currentStatus ? "disable" : "enable"} this user?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#41FDFE",
+      cancelButtonColor: "#d33",
+      confirmButtonText: `Yes, ${currentStatus ? "disable" : "enable"}!`,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await axios.put(
+            "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+            { userId, isEnabled: !currentStatus },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+
+          Swal.fire("Success", response.data.message, "success");
+          fetchUsers(); // Refresh user list
+        } catch (error) {
+          Swal.fire("Error", "Failed to update user status", "error");
+          console.error("Error updating user status:", error);
+        }
+      }
+    });
+  };
 
   const columns = [
     {
       name: "Name",
-      selector: (row) => row.fullname !== undefined ? row.fullname : `${row.fname || 'User'} ${row.lname || ''}`,
+      selector: (row) => row.fullname || `${row.fname || "User"} ${row.lname || ""}`,
       sortable: true,
     },
     {
@@ -102,31 +112,39 @@ function AllUsers() {
     },
     {
       name: "Company Name",
-      selector: (row) => row.companyname != null ? row.companyname : "N/A",
-    },
-    {
-      name: "Phone Number",
-      selector: (row) => row.phone != null ? row.phone : "N/A",
-    },
-    {
-      name: "Date of Birth",
-      selector: (row) => row.dob != null ? row.dob : "N/A",
-    },
-    {
-      name: "SSN",
-      selector: (row) => row.ssn != null ? row.ssn : "N/A",
-    },
-    {
-      name: "TAX ID",
-      selector: (row) => row.tax_id != null ? row.tax_id : "N/A",
-    },
-    {
-      name: "Gov ID",
-      selector: (row) => row.government_identification != null ? row.government_identification : "N/A",
+      selector: (row) => row.companyname || "N/A",
     },
     {
       name: "Role",
       selector: (row) => row.role,
+    },
+    {
+      name: "Status",
+      cell: (row) => (
+        <span
+          className={`px-3 py-1 rounded-lg text-sm font-bold ${
+            row.isEnabled
+              ? "bg-green-200 text-green-800"  // Light green for enabled
+              : "bg-zinc-600 text-white"      // Light red for disabled
+          }`}
+        >
+          {row.isEnabled ? "Active" : "In-Active"}
+        </span>
+      ),
+      sortable: true,
+    }
+,    
+    
+    {
+      name: "Actions",
+      cell: (row) => (
+        <button
+          className={`btn ${row.isEnabled ? "btn-danger" : "btn-success"} btn-sm`}
+          onClick={() => toggleUserStatus(row._id, row.isEnabled)}
+        >
+          {row.isEnabled ? "Disable" : "Enable"}
+        </button>
+      ),
     },
   ];
 

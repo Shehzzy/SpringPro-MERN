@@ -9,6 +9,7 @@ import IMEIForm from "./IMEIForm";
 import creditCardType from "credit-card-type";
 import LineConfiguration from "./LineConfiguration";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { CheckAccountStatus } from "../../assets/CheckAccountStatus";
 import {
   faCcVisa,
   faCcMastercard,
@@ -20,6 +21,7 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 const Form: React.FC = () => {
+
   const [showExistingBAN, setShowExistingBAN] = useState(false);
   const [showExistingFAN, setShowExistingFAN] = useState(false);
 

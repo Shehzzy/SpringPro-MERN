@@ -33,13 +33,17 @@ import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
 import Orders from "./components/Orders/Orders.jsx";
 import MainContent from "./components/Admin-Dashboard/MainContent.jsx";
 import OrderDetails from "./components/Admin-Dashboard/OrderDetails.jsx";
+import  CheckAccountStatus  from "./assets/CheckAccountStatus.js";
 
 function App() {
+
+
   return (
     <Router>
       {/* Manually adding Header and Footer only for specific routes */}
 
       {/* Routes that require Header and Footer */}
+      <CheckAccountStatus />
       <Routes>
         <Route
           path="/"
