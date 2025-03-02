@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import luhn from 'luhn-generator'
 
 function IMEIForm({
   imeiNumbers,
@@ -20,10 +21,92 @@ function IMEIForm({
   setPromoCode,
 }) {
   const token = localStorage.getItem("jwt_token");
+  const [error, setError] = useState("")
   const [errorphoneUniqueCode, setErrorphoneUniqueCode] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [numRows, setNumRows] = useState(0); // For tracking the number of rows
   const [accountFields, setAccountFields] = useState([]); // To store dynamic rows
+  const [phoneDetails, setPhoneDetails] = useState(null);
+
+
+
+  const fetchPhoneDetails = async (tac) => {
+    console.log("Fetching phone details for TAC:", tac); // Debugging log
+
+    try {
+      const response = await axios.get(
+        `https://springprobackend-production.up.railway.app/api/order/tac-lookup/${tac}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("API response received:", response); // Debugging log
+
+      if (response.status !== 200)  setError("Invalid IMEI number");
+
+      const data = await response.data;
+      console.log("Fetched phone details:", data); // Debugging log
+
+      setPhoneDetails({
+        model: data.device.model || "Unknown Model",
+        name: data.device.name || "Unknown Name",
+        brand: data.device.brand || "Unknown Brand"
+      });
+    } catch (error) {
+      setError("Invalid IMEI number");
+      console.error("Error fetching TAC details:", error);
+    }
+  };
+
+
+
+  const validateIMEI = (imei) => {
+    console.log(luhn.validate(imei), imei);
+    return luhn.validate(imei);
+  };
+
+
+  // THIS FUNCTION USES IMEI LUHN 15 DIGITS
+  //   const handleIMEIChange = (e) => {
+  //     const imei = e.target.value.trim();  // Trim whitespace
+  //     console.log("IMEI entered:", imei); // Log the IMEI input
+
+  //     if (!validateIMEI(imei)) {
+  //         setErrorphoneUniqueCode("Invalid IMEI number");
+  //         console.log("Invalid IMEI, skipping API call."); // Debugging log
+  //     } else {
+  //         setErrorphoneUniqueCode("");
+  //         const tac = imei.substring(0, 8);
+  //         console.log("Valid IMEI, TAC extracted:", tac); // Debugging log
+  //         fetchPhoneDetails(tac);
+  //     }
+  // };
+
+
+  // THIS IS CUSTOM WHICH CHECKS 8 DIGITS
+  const handleIMEIChange = (e) => {
+    const imei = e.target.value;
+    console.log("IMEI entered:", imei);
+
+    if (imei.length === 0) {
+      setPhoneDetails(null);
+      return;
+    }
+
+    if (imei.length < 8) {
+      console.log("IMEI too short, skipping API call.");
+      return;
+    }
+    setError(""); 
+    const tac = imei.substring(0, 8); // Extract first 8 digits (TAC)
+    console.log("Extracted TAC:", tac);
+
+    fetchPhoneDetails(tac); // Call API with TAC
+  };
+
 
   // Handle input change for number of rows
   const handleNumRowsChange = (e) => {
@@ -256,17 +339,41 @@ function IMEIForm({
                       <div>
                         <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
                         <input
-                          type="text"
+                          type="number"
                           placeholder="Enter IMEI Number"
                           value={account.imei}
                           onChange={(e) =>
                             handleFieldChange(index, "imei", e.target.value)
                           }
+                          onBlur={(e) => handleIMEIChange(e)}
                           className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         />
+                        <p className="text-danger">{error && error}</p>
+
+
                       </div>
                     )}
                   </div>
+
+                  {phoneDetails && error === "" && (
+                    <div className="bg-white shadow-md rounded-lg p-4 mt-4 border border-gray-200">
+                      <h3 className="text-lg font-semibold text-gray-700 mb-2">Phone Details</h3>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div className="flex flex-col items-center p-3 bg-gray-100 rounded-lg">
+                          <span className="text-gray-500 text-sm">Brand</span>
+                          <span className="text-lg font-semibold text-gray-700">{phoneDetails.brand || "Unknown"}</span>
+                        </div>
+                        <div className="flex flex-col items-center p-3 bg-gray-100 rounded-lg">
+                          <span className="text-gray-500 text-sm">Model</span>
+                          <span className="text-lg font-semibold text-gray-700">{phoneDetails.model || "Unknown"}</span>
+                        </div>
+                        <div className="flex flex-col items-center p-3 bg-gray-100 rounded-lg">
+                          <span className="text-gray-500 text-sm">Name</span>
+                          <span className="text-lg font-semibold text-gray-700">{phoneDetails.name || "Unknown"}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Carrier and Shipping Address */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
