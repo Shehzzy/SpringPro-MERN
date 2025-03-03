@@ -28,9 +28,9 @@ function IMEIForm({
   const [accountFields, setAccountFields] = useState([]); // To store dynamic rows
   const [phoneDetails, setPhoneDetails] = useState(null);
 
-
-
   const fetchPhoneDetails = async (tac) => {
+     
+    setError("");
     console.log("Fetching phone details for TAC:", tac); // Debugging log
 
     try {
@@ -62,51 +62,39 @@ function IMEIForm({
   };
 
 
-
   const validateIMEI = (imei) => {
-    console.log(luhn.validate(imei), imei);
-    return luhn.validate(imei);
+     
+    imei = imei.replace(/\D/g, ''); // Remove any non-numeric characters
+    if (imei.length !== 15) {
+      setError("IMEI must be 15 digits");
+      return false;
+    }
+    const isValid = luhn.validate(imei);
+    if (!isValid) {
+      setError("Invalid IMEI");
+    }
+    return isValid;
   };
 
 
-  // THIS FUNCTION USES IMEI LUHN 15 DIGITS
-  //   const handleIMEIChange = (e) => {
-  //     const imei = e.target.value.trim();  // Trim whitespace
-  //     console.log("IMEI entered:", imei); // Log the IMEI input
-
-  //     if (!validateIMEI(imei)) {
-  //         setErrorphoneUniqueCode("Invalid IMEI number");
-  //         console.log("Invalid IMEI, skipping API call."); // Debugging log
-  //     } else {
-  //         setErrorphoneUniqueCode("");
-  //         const tac = imei.substring(0, 8);
-  //         console.log("Valid IMEI, TAC extracted:", tac); // Debugging log
-  //         fetchPhoneDetails(tac);
-  //     }
-  // };
-
-
-  // THIS IS CUSTOM WHICH CHECKS 8 DIGITS
   const handleIMEIChange = (e) => {
-    const imei = e.target.value;
+    const imei = e.target.value.trim();
     console.log("IMEI entered:", imei);
-
-    if (imei.length === 0) {
+  
+    // First validate the IMEI
+    if (!validateIMEI(imei)) {
       setPhoneDetails(null);
       return;
     }
-
-    if (imei.length < 8) {
-      console.log("IMEI too short, skipping API call.");
-      return;
-    }
-    setError(""); 
-    const tac = imei.substring(0, 8); // Extract first 8 digits (TAC)
-    console.log("Extracted TAC:", tac);
-
-    fetchPhoneDetails(tac); // Call API with TAC
+  
+    const tac = imei.substring(0, 8); // Extract TAC (first 8 digits)
+    console.log("Valid IMEI, TAC extracted:", tac);
+  
+    // Fetch details using TAC
+    fetchPhoneDetails(tac);
   };
 
+  
 
   // Handle input change for number of rows
   const handleNumRowsChange = (e) => {

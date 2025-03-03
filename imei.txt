@@ -1,0 +1,156 @@
+2. IMEI Validation & LUHN Algorithm
+LUHN Algorithm will be used to check if an entered IMEI is valid.
+Instead of writing custom logic, an existing npm package (luhn-generator) will be used. (A few
+sample IMEIs were provided to verify the LUHN validation)  
+
+
+8 digit just shows the model name manufacturer etc, Which is fine.
+But when the agent completes 15 digits
+It does one final check in accordance to LUHN
+Just to help mitigate fake imei
+
+The last number of the IMEI is a check digit. The Check Digit is calculated according to Luhn formula.
+
+Breaking down the IMEI number 
+The IMEI number consists of 15 digits. The number is typically arranged in a sequence of WW-XXXXXX-YYYYYY-Z, where:
+
+WW: describes the reporting body identifier showing Type Allocation Code (TAC) by GSMA approval group
+XXXXXX: represents the actual TAC digits 
+YYYYYY: acts as an identifier for the particular device 
+Z: is the check digit. In GSM devices, this is 0
+
+
+Here’s a step-by-step summary of how the IMEI check digit (Luhn Algorithm) works:
+
+Step 1: Extract the First 14 Digits
+
+Remove the last digit (check digit) from the 15-digit IMEI.
+
+Example: 356154281602859
+
+First 14 digits: 35615428160285
+
+Check digit: 9
+
+
+
+
+---
+
+Step 2: Double Every Second Digit from the Right
+
+Start from the rightmost digit (excluding the check digit).
+
+Double every second digit:
+
+
+
+---
+
+Step 3: Replace the Original Digits with Adjusted Values
+
+The transformed sequence becomes:
+3, 1, 6, 2, 5, 8, 2, 7, 1, 3, 0, 4, 8, 1
+
+
+
+---
+
+Step 4: Sum All the Digits
+
+3 + 1 + 6 + 2 + 5 + 8 + 2 + 7 + 1 + 3 + 0 + 4 + 8 + 1 = 51
+
+
+---
+
+Step 5: Find the Check Digit
+
+Find the next multiple of 10 after 51 → 60.
+
+Subtract the sum from the next multiple of 10:
+
+
+60 - 51 = 9
+
+
+---
+
+Final Check
+
+Total sum including the check digit (51 + 9) = 60, which is a multiple of 10. ✅
+
+The IMEI 356154281602859 is valid.
+
+
+First 8 is only TAC pull
+But when you use LUHN for all 14 digits + 1 digit as check digit, that's when you can say Valid IMEI or Invalid IMEI
+
+
+Step 1: IMEI Validation
+Luhn Algorithm Check
+Implement the Luhn Algorithm to validate the IMEI (15-digit) number.
+If the IMEI fails the Luhn check, immediately prompt the agent with the message:
+"Invalid IMEI" and terminate the process.
+If the IMEI passes, proceed to the next step.
+Extract TAC (Type Allocation Code)
+Extract the first 8 digits from the IMEI number (this is the TAC number).
+Use this TAC number to check for device details.
+Lookup Device Details in JSON Storage
+Check if the JSON file contains an entry for the given TAC number.
+If an entry exists, retrieve the stored device details in the format:
+{
+  "model": "<model>",
+  "name": "<name>",
+  "brand": "<brand>"
+}
+Run the Luhn Algorithm again using the full 15-digit IMEI.
+If this check fails, halt further processing.
+If it passes, proceed to the next step.
+API Call to Fetch Device Details (If TAC Not Found in JSON)
+If the TAC is not found in the JSON file, call the API to fetch device details.
+
+Use the following API request format:
+
+curl --location 'https://alpha.imeicheck.com/api/php-api/create?key=<apiKey>&service=11&imei=<IMEI>'
+Sample Response:
+
+{
+  "orderId": 65696809,
+  "status": "success",
+  "imei": "359407601602851",
+  "price": "0.01",
+  "result": "IMEI: 359407601602851<br>Brand: Samsung<br>Model: SM-G736U<br>Model Name: Galaxy XCover6 Pro<br>",
+  "object": {
+    "brand": "Samsung",
+    "name": "Galaxy XCover6 Pro",
+    "model": "SM-G736U"
+  }
+}
+Store Response Object
+Store this response object in the JSON file for future lookups.
+Proceed to Step 2 after storing the data.
+
+Step 2: Blacklist Check
+Once the IMEI validation is complete, call the Blacklist API to check if the IMEI is reported as stolen or lost.
+
+API details and endpoint should be provided (assumed to be a simple request to an external service).
+If the device is blacklisted, stop further processing and alert the agent.
+If the device is not blacklisted, proceed to Step 3.
+Step 3: Trade-in & Apple Devices (Only if applicable)
+3.1 Find My iPhone API
+If the device being processed is an Apple device, check Find My iPhone (FMI) status.
+
+Call the appropriate Find My iPhone API (endpoint details required).
+If FMI is enabled, inform the agent and do not proceed with trade-in.
+If FMI is disabled, proceed to the next step.
+3.2 iCloud Lock Status API
+Call the iCloud API to check for iCloud lock status.
+If the device is iCloud-locked, inform the agent and halt further processing.
+If unlocked, proceed with trade-in processing.
+Error Handling & Edge Cases
+IMEI Validation Failure → Show error message: "Invalid IMEI".
+API Failure → If the API fails to respond, retry up to 3 times with exponential backoff.
+If still unsuccessful, alert the agent.
+Blacklist Check Failure → If API is unreachable, proceed cautiously but inform the agent to manually verify blacklist status.
+Apple-Specific Checks → If FMI or iCloud checks fail, alert the agent before proceeding with trade-in.
+Invalid JSON Data → If TAC exists in JSON but the object is malformed, re-fetch data from the API.
