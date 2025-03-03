@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
 import Swal from "sweetalert2";
 import { jwtDecode } from "jwt-decode";
-import { CheckAccountStatus } from "../../assets/CheckAccountStatus";
 function Orders() {
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt_token");

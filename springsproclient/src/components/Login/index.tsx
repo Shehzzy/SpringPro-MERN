@@ -91,7 +91,7 @@ const Login: React.FC = () => {
         console.log("Full Response:", error.response);
 
         if (!error.response.data?.userStatus) {
-          Swal.fire({
+          Swal.fire({ 
             icon: "warning",
             title: "Account Not Activated",
             text: "Your account is not yet approved by the admin. Please contact support.",

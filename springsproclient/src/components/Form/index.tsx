@@ -9,7 +9,6 @@ import IMEIForm from "./IMEIForm";
 import creditCardType from "credit-card-type";
 import LineConfiguration from "./LineConfiguration";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { CheckAccountStatus } from "../../assets/CheckAccountStatus";
 import {
   faCcVisa,
   faCcMastercard,
