@@ -25,7 +25,8 @@ function AllUsers() {
         title: "Login Required",
         text: "You need to log in first to access this page.",
         icon: "warning",
-        confirmButtonText: "Go to Login",
+        // confirmButtonText: "Go to Login",
+        confirmButtonColor: "#41FDFE",
       }).then(() => {
         navigate("/login");
       });
