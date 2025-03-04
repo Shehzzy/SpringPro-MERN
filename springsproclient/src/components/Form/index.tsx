@@ -493,7 +493,8 @@ const Form: React.FC = () => {
         title: "Login Required",
         text: "You need to log in first to place an order.",
         icon: "warning",
-        confirmButtonText: "Go to Login",
+        // confirmButtonText: "Go to Login",
+        confirmButtonColor: "#41FDFE",
       }).then(() => {
         navigate("/login");
       });
