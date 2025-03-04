@@ -28,9 +28,10 @@ function OrderDetails() {
     if (!token) {
       Swal.fire({
         title: "Login Required",
-        text: "You need to log in first to place an order.",
+        text: "You need to log in first to access this page.",
         icon: "warning",
-        confirmButtonText: "Go to Login",
+        // confirmButtonText: "Go to Login",
+        confirmButtonColor: "#41FDFE",
       }).then(() => {
         navigate("/login");
       });
