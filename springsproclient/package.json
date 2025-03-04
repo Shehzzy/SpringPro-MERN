@@ -12,6 +12,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.9",
+    "axios-mock-adapter": "^2.1.0",
     "bootstrap": "^5.3.3",
     "credit-card-type": "^10.0.2",
     "exceljs": "^4.4.0",

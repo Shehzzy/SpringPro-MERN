@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import axios from "axios";
-import luhn from 'luhn-generator'
+import luhn from 'luhn-generator';
 
 function IMEIForm({
+  onSecurityCheck,
   imeiNumbers,
   onImeiNumbersChange,
   onAccountFieldsChange,
@@ -21,17 +22,22 @@ function IMEIForm({
   setPromoCode,
 }) {
   const token = localStorage.getItem("jwt_token");
-  const [error, setError] = useState("")
-  const [errorphoneUniqueCode, setErrorphoneUniqueCode] = useState("");
+  const [error, setError] = useState({
+    isValidError: "",
+    isInvalidError: "",
+  });
   const [showModal, setShowModal] = useState(false);
-  const [numRows, setNumRows] = useState(0); // For tracking the number of rows
-  const [accountFields, setAccountFields] = useState([]); // To store dynamic rows
+  const [numRows, setNumRows] = useState(0);
+  const [accountFields, setAccountFields] = useState([]);
   const [phoneDetails, setPhoneDetails] = useState(null);
 
+
   const fetchPhoneDetails = async (tac) => {
-     
-    setError("");
-    console.log("Fetching phone details for TAC:", tac); // Debugging log
+    setError({
+      isValidError: "",
+      isInvalidError: "",
+    });
+    console.log("Fetching phone details for TAC:", tac);
 
     try {
       const response = await axios.get(
@@ -43,130 +49,366 @@ function IMEIForm({
           },
         }
       );
-      console.log("API response received:", response); // Debugging log
 
-      if (response.status !== 200)  setError("Invalid IMEI number");
+      if (response.status !== 200) {
+        // setError("Invalid IMEI number");
+        setError({
+          isValidError: "",
+          isInvalidError: "Invalid IMEI number",
+        });
+        onSecurityCheck(false);
+        return;
+      }
 
-      const data = await response.data;
-      console.log("Fetched phone details:", data); // Debugging log
-
+      const data = response.data;
       setPhoneDetails({
         model: data.device.model || "Unknown Model",
         name: data.device.name || "Unknown Name",
         brand: data.device.brand || "Unknown Brand"
       });
     } catch (error) {
-      setError("Invalid IMEI number");
+      // setError("Invalid IMEI number");
+      setError({
+        isValidError: "",
+        isInvalidError: "Invalid IMEI number",
+      });
       console.error("Error fetching TAC details:", error);
     }
   };
 
-
   const validateIMEI = (imei) => {
-     
-    imei = imei.replace(/\D/g, ''); // Remove any non-numeric characters
+    imei = imei.replace(/\D/g, '');
     if (imei.length !== 15) {
-      setError("IMEI must be 15 digits");
+      // setError("IMEI must be 15 digits");
+      setError({
+        isValidError: "",
+        isInvalidError: "IMEI must be 15 digits",
+      });
+
+      onSecurityCheck(false);
       return false;
     }
     const isValid = luhn.validate(imei);
     if (!isValid) {
-      setError("Invalid IMEI");
+      // setError("Invalid IMEI");
+      setError({
+        isValidError: "",
+        isInvalidError: "Invalid IMEI",
+      });
     }
+    setError({
+      isValidError: "IMEI is Valid!",
+      isInvalidError: "",
+    });
     return isValid;
   };
 
-
-  const handleIMEIChange = (e) => {
+  const handleIMEIChange = async (e) => {
     const imei = e.target.value.trim();
     console.log("IMEI entered:", imei);
-  
-    // First validate the IMEI
+
     if (!validateIMEI(imei)) {
       setPhoneDetails(null);
       return;
     }
-  
-    const tac = imei.substring(0, 8); // Extract TAC (first 8 digits)
+
+    const tac = imei.substring(0, 8);
     console.log("Valid IMEI, TAC extracted:", tac);
-  
-    // Fetch details using TAC
-    fetchPhoneDetails(tac);
+    await fetchPhoneDetails(tac);
+
+    // Run Luhn check again on full IMEI
+    if (!validateIMEI(imei)) {
+      setPhoneDetails(null);
+      return;
+    }
+
+    // Check blacklist status
+    await checkBlacklist(imei, onSecurityCheck);
   };
 
-  
+  const [securityCheckStatus, setSecurityCheckStatus] = useState({
+    blacklist: null,
+    findMyiPhone: null,
+    iCloudLock: null
+  });
 
-  // Handle input change for number of rows
+
+  //  This is 3 retries code 
+  // const fetchWithRetries = async (url, retries = 3, delay = 1000) => {
+  //   for (let attempt = 1; attempt <= retries; attempt++) {
+  //     try {
+  //       const response = await axios.get(url);
+
+  //       // Check if response contains valid JSON structure
+  //       if (!response.data || typeof response.data !== "object") {
+  //         throw new Error("Malformed JSON response");
+  //       }
+
+  //       return response.data;
+  //     } catch (error) {
+  //       console.error(`API request failed (Attempt ${attempt}):`, error.message);
+
+  //       if (attempt === retries) {
+  //         throw new Error("Max retries reached. API request failed.");
+  //       }
+
+  //       await new Promise((resolve) => setTimeout(resolve, delay * attempt)); // Exponential backoff
+  //     }
+  //   }
+  // };
+
+
+  // const checkBlacklist = async (imei, onSecurityCheck) => {
+  //   try {
+  //     console.log("Checking blacklist for IMEI:", imei);
+
+  //     const url = `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=5&imei=${imei}`;
+  //     const data = await fetchWithRetries(url); // ✅ Use retry function
+
+  //     const blacklistStatus = data?.object?.blacklistStatus;
+  //     const brand = data?.object?.brand;
+
+  //     if (!data || !data.object) {
+  //       throw new Error("Invalid JSON response. Re-fetching data...");
+  //     }
+
+  //     if (blacklistStatus) {
+  //       setError("Device is blacklisted.");
+  //       setSecurityCheckStatus((prev) => ({ ...prev, blacklist: "Failed" }));
+  //       onSecurityCheck(false); // ✅ Block form submission
+  //       return;
+  //     }
+
+  //     setSecurityCheckStatus((prev) => ({ ...prev, blacklist: "Passed" }));
+
+  //     if (brand === "Apple") {
+  //       await checkFindMyiPhone(imei, onSecurityCheck);
+  //     } else {
+  //       onSecurityCheck(true); // ✅ Allow form submission if no further checks
+  //     }
+  //   } catch (error) {
+  //     console.error("Blacklist API error:", error);
+  //     setError("Blacklist check failed. Please verify manually.");
+  //     onSecurityCheck(true); // ✅ Allow cautious processing
+  //   }
+  // };
+
+
+  // const checkFindMyiPhone = async (imei, onSecurityCheck) => {
+  //   try {
+  //     console.log("Checking Find My iPhone for IMEI:", imei);
+
+  //     const url = `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=1&imei=${imei}`;
+  //     const data = await fetchWithRetries(url); // ✅ Use retry function
+
+  //     const fmiEnabled = data?.object?.fmiOn || data?.object?.fmiON;
+
+  //     if (!data || !data.object) {
+  //       throw new Error("Invalid JSON response. Re-fetching data...");
+  //     }
+
+  //     if (fmiEnabled) {
+  //       setError("Find My iPhone is enabled. Cannot proceed.");
+  //       setSecurityCheckStatus((prev) => ({ ...prev, findMyiPhone: "Failed" }));
+  //       onSecurityCheck(false); // ✅ Block form submission
+  //       return;
+  //     }
+
+  //     setSecurityCheckStatus((prev) => ({ ...prev, findMyiPhone: "Passed" }));
+
+  //     await checkiCloudLock(imei, onSecurityCheck);
+  //   } catch (error) {
+  //     console.error("Error checking Find My iPhone status:", error);
+  //     setError("Could not verify Find My iPhone status.");
+  //     onSecurityCheck(false); // Block form submission
+  //   }
+  // };
+
+
+  // const checkiCloudLock = async (imei, onSecurityCheck) => {
+  //   try {
+  //     console.log("Checking iCloud Lock for IMEI:", imei);
+
+  //     const url = `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=4&imei=${imei}`;
+  //     const data = await fetchWithRetries(url); // Use retry function
+
+  //     const iCloudLocked = data?.object?.lostMode;
+
+  //     if (!data || !data.object) {
+  //       throw new Error("Invalid JSON response. Re-fetching data...");
+  //     }
+
+  //     if (iCloudLocked) {
+  //       setError("Device is iCloud locked. Cannot proceed.");
+  //       setSecurityCheckStatus((prev) => ({ ...prev, iCloudLock: "Failed" }));
+  //       onSecurityCheck(false); //Block form submission
+  //       return;
+  //     }
+
+  //     setSecurityCheckStatus((prev) => ({ ...prev, iCloudLock: "Passed" }));
+
+  //     console.log("Device passed all security checks.");
+  //     onSecurityCheck(true); // Allow form submission
+  //   } catch (error) {
+  //     console.error("Error checking iCloud lock status:", error);
+  //     setError("Could not verify iCloud lock status.");
+  //     onSecurityCheck(false); // Block form submission
+  //   }
+  // };
+
+
+  // Current APIS = work perfectly
+  const checkBlacklist = async (imei, onSecurityCheck) => {
+    try {
+      console.log("Checking blacklist for IMEI:", imei);
+
+      const response = await axios.get(
+        `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=5&imei=${imei}`
+      );
+      console.log("Blacklist API Response:", response.data);
+
+      const blacklistStatus = response.data?.object?.blacklistStatus;
+      const brand = response.data?.object?.brand;
+
+      if (blacklistStatus) {
+        // setError("Device is blacklisted.");
+        setError({
+          isInvalidError: "Device is blacklisted",
+          isValidError: "",
+        })
+        setSecurityCheckStatus((prev) => ({ ...prev, blacklist: "Failed" }));
+        onSecurityCheck(false); // Block form submission
+        return;
+      }
+      setSecurityCheckStatus((prev) => ({ ...prev, blacklist: "Passed" }));
+
+      if (brand === "Apple") {
+        await checkFindMyiPhone(imei, onSecurityCheck);
+      } else {
+        onSecurityCheck(true); // Allow form submission if no further checks
+      }
+    } catch (error) {
+      console.error("Error checking blacklist:", error);
+      // setError("Could not verify blacklist status.");
+      setError({
+        isValidError: "",
+        isInValidError: "Could not verify blacklist status",
+      })
+      onSecurityCheck(false); // Block form submission
+    }
+  };
+
+  const checkFindMyiPhone = async (imei, onSecurityCheck) => {
+    try {
+      console.log("Checking Find My iPhone for IMEI:", imei);
+
+      const response = await axios.get(
+        `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=1&imei=${imei}`
+      );
+      console.log("Find My iPhone API Response:", response.data);
+
+      const fmiEnabled = response.data?.object?.fmiOn || response.data?.object?.fmiON;
+
+      if (fmiEnabled) {
+        // setError("Find My iPhone is enabled. Cannot proceed.");
+        setError({
+          isValidError: "",
+          isInvalidError: "Find My iPhone is enabled. Cannot proceed",
+        })
+        setSecurityCheckStatus((prev) => ({ ...prev, findMyiPhone: "Failed" }));
+        onSecurityCheck(false); // Block form submission
+        return;
+      }
+      setSecurityCheckStatus((prev) => ({ ...prev, findMyiPhone: "Passed" }));
+
+      await checkiCloudLock(imei, onSecurityCheck);
+    } catch (error) {
+      console.error("Error checking Find My iPhone status:", error);
+      // setError("Could not verify Find My iPhone status.");
+      setError({
+        isValidError: "",
+        isInvalidError: "Could not verify Find My iPhone status",
+      });
+      onSecurityCheck(false); // Block form submission
+    }
+  };
+
+  const checkiCloudLock = async (imei, onSecurityCheck) => {
+    try {
+      console.log("Checking iCloud Lock for IMEI:", imei);
+
+      const response = await axios.get(
+        `https://alpha.imeicheck.com/api/php-api/create?key=${process.env.REACT_APP_API_KEY}&service=4&imei=${imei}`
+      );
+      console.log("iCloud Lock API Response:", response.data);
+
+      const iCloudLocked = response.data?.object?.lostMode;
+
+      if (iCloudLocked) {
+        // setError("Device is iCloud locked. Cannot proceed.");
+        setError({
+          isValidError: "",
+          isInvalidError: "Device is iCloud locked. Cannot proceed",
+        });
+        setSecurityCheckStatus((prev) => ({ ...prev, iCloudLock: "Failed" }));
+        onSecurityCheck(false); // Block form submission
+        return;
+      }
+      setSecurityCheckStatus((prev) => ({ ...prev, iCloudLock: "Passed" }));
+
+      console.log("Device passed all security checks.");
+      onSecurityCheck(true); // Allow form submission
+    } catch (error) {
+      console.error("Error checking iCloud lock status:", error);
+      // setError("Could not verify iCloud lock status.");
+      setError({
+        isValidError: "",
+        isInvalidError: "Could not verify iCloud lock status",
+      });
+      onSecurityCheck(false); // Block form submission
+    }
+  };
+
+
   const handleNumRowsChange = (e) => {
     const value = e.target.value;
-
-    // Ensure the input is numeric or empty (so backspace can work)
-    const parsedValue = /^\d*$/.test(value) ? value : "1"; // Only allow numeric characters, default to "1" if invalid
-
+    const parsedValue = /^\d*$/.test(value) ? value : "1";
     setNumRows(parsedValue);
 
-    // Create an array of objects for the number of rows specified
     const newFields = Array.from({ length: value }, () => ({
       portOutPin: "",
       phoneNumber: "",
       carrier: "",
       imei: "",
       shippingAddress: "",
-      tradeSmartphone: false, // Add tradeSmartphone state for each row
-      purchaseSmartphone: false, // Add purchaseSmartphone state for each row
-      buyPhoneNumber: false, // <-- Added here
+      tradeSmartphone: false,
+      purchaseSmartphone: false,
+      buyPhoneNumber: false,
     }));
-    setAccountFields(newFields); // Update accountFields with new rows
+    setAccountFields(newFields);
   };
 
-  // Handle field changes (to update the parent component if necessary)
   const handleFieldChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
-    // If the field is shippingAddress, we need to handle it differently
-    if (field.startsWith("shippingAddress.")) {
-      const shippingField = field.split(".")[1]; // Get the specific field (e.g., "attentionName")
-      updatedAccounts[index].shippingAddress = {
-        ...updatedAccounts[index].shippingAddress,
-        [shippingField]: value,
-      };
-    } else {
-      updatedAccounts[index][field] = value;
-    }
+    updatedAccounts[index][field] = value;
     setAccountFields(updatedAccounts);
-    console.log(updatedAccounts, "This is imei form data");
-
-
-    // Call the appropriate change handlers
-    if (field === "accountNumber" || field === "portOutPin") {
-      onAccountFieldsChange(updatedAccounts);
-    } else if (field === "phoneNumber" || field === "carrier") {
-      onPhoneNumbersChange(updatedAccounts);
-    } else if (field.startsWith("shippingAddress.")) {
-      onShippingAddressesChange(updatedAccounts);
-    }
   };
 
-  // Handle trade smartphone change
   const handleTradeSmartphoneChange = (index, value) => {
     const updatedAccounts = [...accountFields];
     updatedAccounts[index].tradeSmartphone = value === "trade";
-
-    // Auto-select "I Want to Purchase Smartphone" if "I Want to Trade Smartphone" is selected
     if (value === "trade") {
       updatedAccounts[index].purchaseSmartphone = true;
     }
-
     setAccountFields(updatedAccounts);
   };
 
-  // Handle purchase smartphone change
   const handlePurchaseSmartphoneChange = (index, value) => {
     const updatedAccounts = [...accountFields];
     updatedAccounts[index].purchaseSmartphone = value === "purchase";
     setAccountFields(updatedAccounts);
   };
 
-  // Open Modal logic
   const handleModalOpen = () => {
     if (accountFields.length === 0) {
       const initialFields = Array.from({ length: numRows }, () => ({
@@ -177,14 +419,13 @@ function IMEIForm({
         shippingAddress: "",
         tradeSmartphone: false,
         purchaseSmartphone: false,
-        buyPhoneNumber: false, // <-- Added here
+        buyPhoneNumber: false,
       }));
       setAccountFields(initialFields);
     }
     setShowModal(true);
   };
 
-  // Add a new row dynamically
   const handleAddNewRow = () => {
     setAccountFields([
       ...accountFields,
@@ -196,7 +437,7 @@ function IMEIForm({
         shippingAddress: "",
         tradeSmartphone: false,
         purchaseSmartphone: false,
-        buyPhoneNumber: false, // <-- Added here
+        buyPhoneNumber: false,
       },
     ]);
   };
@@ -204,13 +445,11 @@ function IMEIForm({
   return (
     <div>
       <div className="flex items-center justify-center gap-4 mb-4">
-        {/* Input for number of rows */}
         <input
           type="text"
           value={numRows}
           onChange={handleNumRowsChange}
           className="border inter border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-teal-400 w-20 sm:w-40"
-
         />
         <button
           onClick={handleModalOpen}
@@ -239,7 +478,6 @@ function IMEIForm({
               Add IMEI and Account Information
             </h2>
 
-            {/* Account, Phone, IMEI & Shipping Fields */}
             <div className="mt-6">
               {accountFields.map((account, index) => (
                 <div key={index} className="space-y-4 mb-8 p-6 bg-gray-50 rounded-lg shadow-sm">
@@ -249,7 +487,6 @@ function IMEIForm({
                     </h3>
                   </div>
 
-                  {/* Trade, Purchase, and Buy Phone Number */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 px-3 py-3 rounded" style={{
                     background:
                       "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
@@ -272,7 +509,7 @@ function IMEIForm({
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         value={account.purchaseSmartphone ? "purchase" : "nopurchase"}
                         onChange={(e) => handlePurchaseSmartphoneChange(index, e.target.value)}
-                        disabled={account.tradeSmartphone} // Disable if tradeSmartphone is true
+                        disabled={account.tradeSmartphone}
                       >
                         <option value="purchase">I Want to Purchase Smartphone</option>
                         <option value="nopurchase">Bring Your Own Phone</option>
@@ -294,7 +531,6 @@ function IMEIForm({
                     </div>
                   </div>
 
-                  {/* Port Out PIN, Phone Number, and IMEI Number */}
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div>
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Port Out PIN</label>
@@ -321,29 +557,30 @@ function IMEIForm({
                       </div>
                     )}
 
-
-                    {/* Show IMEI only if both tradeSmartphone and purchaseSmartphone are false */}
                     {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
                       <div>
                         <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
                         <input
-                          type="number"
+                          type="text"
                           placeholder="Enter IMEI Number"
                           value={account.imei}
-                          onChange={(e) =>
-                            handleFieldChange(index, "imei", e.target.value)
-                          }
+                          maxLength={15} // Restricts input length
+                          onChange={(e) => {
+                            const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                            handleFieldChange(index, "imei", value);
+                          }}
                           onBlur={(e) => handleIMEIChange(e)}
                           className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         />
-                        <p className="text-danger">{error && error}</p>
 
-
+                        <p className={error.isValidError ? "text-green-500" : "text-danger"}>
+                          {error.isValidError || error.isInvalidError}
+                        </p>
                       </div>
                     )}
                   </div>
 
-                  {phoneDetails && error === "" && (
+                  {error.isValidError !== "" && error.isInvalidError === "" && (
                     <div className="bg-white shadow-md rounded-lg p-4 mt-4 border border-gray-200">
                       <h3 className="text-lg font-semibold text-gray-700 mb-2">Phone Details</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -363,7 +600,6 @@ function IMEIForm({
                     </div>
                   )}
 
-                  {/* Carrier and Shipping Address */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Carrier</label>
@@ -404,7 +640,6 @@ function IMEIForm({
               ))}
             </div>
 
-            {/* Add New Row Button */}
             <div className="flex justify-center mt-10">
               <button
                 type="button"
@@ -418,6 +653,24 @@ function IMEIForm({
                 Add New
               </button>
             </div>
+            {securityCheckStatus.blacklist && (
+              <div className={`p-2 mt-2 text-sm font-bold rounded ${securityCheckStatus.blacklist === "Passed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                Blacklist Check: {securityCheckStatus.blacklist}
+              </div>
+            )}
+
+            {securityCheckStatus.findMyiPhone && (
+              <div className={`p-2 mt-2 text-sm font-bold rounded ${securityCheckStatus.findMyiPhone === "Passed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                Find My iPhone: {securityCheckStatus.findMyiPhone}
+              </div>
+            )}
+
+            {securityCheckStatus.iCloudLock && (
+              <div className={`p-2 mt-2 text-sm font-bold rounded ${securityCheckStatus.iCloudLock === "Passed" ? "bg-green-100 text-green-700" : "bg-red-100 text-red-700"}`}>
+                iCloud Lock: {securityCheckStatus.iCloudLock}
+              </div>
+            )}
+
           </div>
         </div>
       )}

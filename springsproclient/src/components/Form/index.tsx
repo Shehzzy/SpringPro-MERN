@@ -20,6 +20,12 @@ import {
 } from "@fortawesome/free-brands-svg-icons";
 
 const Form: React.FC = () => {
+  const [isFormBlocked, setIsFormBlocked] = useState(false);
+
+  const handleSecurityCheck = (status) => {
+    setIsFormBlocked(!status); // If status is false, block the form
+  };
+
 
   const [showExistingBAN, setShowExistingBAN] = useState(false);
   const [showExistingFAN, setShowExistingFAN] = useState(false);
@@ -755,6 +761,17 @@ const Form: React.FC = () => {
     e.preventDefault();
     console.log("Form Data before submission:", formData);
     console.log(newErrors);
+
+    if (isFormBlocked) {
+      Swal.fire({
+        icon: "error",
+        title: "Security Check Failed",
+        text: "Form submission is blocked due to security check failure.",
+        confirmButtonColor: "#d33"
+      });
+      return;
+    }
+
     if (validateForm()) {
       try {
         const token = localStorage.getItem("jwt_token");
@@ -1939,6 +1956,7 @@ const Form: React.FC = () => {
               </h3>
               <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
                 <IMEIForm
+                onSecurityCheck={handleSecurityCheck}
                   imeiNumbers={imeiNumbers}
                   onImeiNumbersChange={handleImeiNumbersChange}
                   onAccountFieldsChange={handleAccountFieldsChange}
@@ -2522,11 +2540,12 @@ const Form: React.FC = () => {
           <div className="flex justify-center mt-6">
             {activeTab === "paymentInfo" ? (
               <button
-                type="submit" // Submit button triggers the form's onSubmit handler
+                type="submit" disabled={isFormBlocked} // Submit button triggers the form's onSubmit handler
                 className="bg-green-500 text-white px-6 py-2 rounded"
               >
                 Submit
               </button>
+              
             ) : (
               <button
                 type="button"
@@ -2547,6 +2566,12 @@ const Form: React.FC = () => {
             <p className="text-center text-green-500 mt-4">
               Form Submitted Successfully!
             </p>
+          )}
+
+          {isFormBlocked && (
+             <p className="text-center text-red mt-4">
+             Form cannot be submitted. Please check if the IMEI you've input is correct.
+           </p>
           )}
         </div>
       </section>
