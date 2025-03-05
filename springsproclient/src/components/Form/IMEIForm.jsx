@@ -395,15 +395,15 @@ function IMEIForm({
   const handleTradeSmartphoneChange = (index, value) => {
     debugger;
     const updatedAccounts = [...accountFields];
-    updatedAccounts[index].tradeSmartphone = value; // value is now a boolean
-    if (value) { // If value is true
-      updatedAccounts[index].purchaseSmartphone = false; // Set purchaseSmartphone to false
-    } else {
-      updatedAccounts[index].purchaseSmartphone = true; // Optionally reset if not trading
+    updatedAccounts[index].tradeSmartphone = value === "trade";
+    if (value === "trade") {
+      updatedAccounts[index].purchaseSmartphone = true;
     }
     setAccountFields(updatedAccounts);
   };
+
   const handlePurchaseSmartphoneChange = (index, value) => {
+    debugger;
     const updatedAccounts = [...accountFields];
     updatedAccounts[index].purchaseSmartphone = value === "purchase";
     setAccountFields(updatedAccounts);
@@ -495,11 +495,11 @@ function IMEIForm({
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
                       <select
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                        value={account.tradeSmartphone ? "true" : "false"} // Use string representation
-                        onChange={(e) => handleTradeSmartphoneChange(index, e.target.value === "true")} // Convert to boolean
+                        value={account.tradeSmartphone ? "trade" : "notrade"}
+                        onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
                       >
-                        <option value="true">I Want to Trade Smartphone</option>
-                        <option value="false">Bring Your Own Phone</option>
+                        <option value="trade">I Want to Trade Smartphone</option>
+                        <option value="notrade">Bring Your Own Phone</option>
                       </select>
                     </div>
 
@@ -557,8 +557,8 @@ function IMEIForm({
                       </div>
                     )}
 
-                    {/* {(!account.tradeSmartphone && !account.purchaseSmartphone) && ( */}
-                    {(!account.purchaseSmartphone) && (
+                    {(account.tradeSmartphone && account.purchaseSmartphone) ||
+                      (!account.tradeSmartphone && !account.purchaseSmartphone) ? (
                       <div>
                         <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
                         <input
@@ -578,7 +578,7 @@ function IMEIForm({
                           {error.isValidError || error.isInvalidError}
                         </p>
                       </div>
-                    )}
+                    ) : null}
                   </div>
 
                   {error.isValidError !== "" && error.isInvalidError === "" && (
