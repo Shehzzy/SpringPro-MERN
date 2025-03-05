@@ -30,8 +30,6 @@ function IMEIForm({
   const [numRows, setNumRows] = useState(0);
   const [accountFields, setAccountFields] = useState([]);
   const [phoneDetails, setPhoneDetails] = useState(null);
-
-
   const fetchPhoneDetails = async (tac) => {
     setError({
       isValidError: "",
@@ -557,27 +555,27 @@ function IMEIForm({
                       </div>
                     )}
 
-                    {(!account.tradeSmartphone && !account.purchaseSmartphone) && (
-                      <div>
-                        <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
-                        <input
-                          type="text"
-                          placeholder="Enter IMEI Number"
-                          value={account.imei}
-                          maxLength={15} // Restricts input length
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                            handleFieldChange(index, "imei", value);
-                          }}
-                          onBlur={(e) => handleIMEIChange(e)}
-                          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                        />
+                    {/* {(!account.tradeSmartphone && !account.purchaseSmartphone) && ( */}
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
+                      <input
+                        type="text"
+                        placeholder="Enter IMEI Number"
+                        value={account.imei}
+                        maxLength={15} // Restricts input length
+                        onChange={(e) => {
+                          const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+                          handleFieldChange(index, "imei", value);
+                        }}
+                        onBlur={(e) => handleIMEIChange(e)}
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                      />
 
-                        <p className={error.isValidError ? "text-green-500" : "text-danger"}>
-                          {error.isValidError || error.isInvalidError}
-                        </p>
-                      </div>
-                    )}
+                      <p className={error.isValidError ? "text-green-500" : "text-danger"}>
+                        {error.isValidError || error.isInvalidError}
+                      </p>
+                    </div>
+                    {/* )} */}
                   </div>
 
                   {error.isValidError !== "" && error.isInvalidError === "" && (
@@ -611,11 +609,21 @@ function IMEIForm({
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
                         <option value="">Select Carrier</option>
-                        {carrierInfos.map((carrier, idx) => (
-                          <option key={idx} value={carrier.currentwirelesscarrier}>
-                            {carrier.currentwirelesscarrier}
-                          </option>
-                        ))}
+
+                        {carrierInfos.length > 0 && carrierInfos.some(carrier => carrier.currentwirelesscarrier) ? (
+                          carrierInfos.map((carrier, idx) =>
+                            carrier.currentwirelesscarrier && (
+                              <option key={idx} value={carrier.currentwirelesscarrier}>
+                                {carrier.currentwirelesscarrier}
+                              </option>
+                            )
+                          )
+                        ) : (
+                          <option disabled>No options available</option>
+                        )}
+
+
+
                       </select>
                     </div>
                     <div>
@@ -628,11 +636,19 @@ function IMEIForm({
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
                         <option value="">Select Shipping Address</option>
-                        {shippingInfos.map((info, idx) => (
-                          <option key={idx} value={info.shippingaddress}>
-                            {info.shippingaddress}
-                          </option>
-                        ))}
+                        {shippingInfos.length > 0 && shippingInfos.some(info => info.shippingaddress) ? (
+                          shippingInfos.map((info, idx) =>
+                            info.shippingaddress && (
+                              <option key={idx} value={info.shippingaddress}>
+                                {info.shippingaddress}
+                              </option>
+                            )
+                          )
+                        ) : (
+                          <option disabled>No shipping addresses available</option>
+                        )}
+
+                        {/* ))} */}
                       </select>
                     </div>
                   </div>
