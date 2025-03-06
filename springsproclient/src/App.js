@@ -33,7 +33,8 @@ import AllOrders from "./components/Admin-Dashboard/AllOrders.jsx";
 import Orders from "./components/Orders/Orders.jsx";
 import MainContent from "./components/Admin-Dashboard/MainContent.jsx";
 import OrderDetails from "./components/Admin-Dashboard/OrderDetails.jsx";
-import  CheckAccountStatus  from "./assets/CheckAccountStatus.js";
+import CheckAccountStatus from "./assets/CheckAccountStatus.js";
+import UpdateOrder from "./components/Admin-Dashboard/UpdateOrder.tsx";
 
 function App() {
 
@@ -252,6 +253,15 @@ function App() {
           element={
             <div className="overflow-x-hidden ">
               <OrderDetails />
+            </div>
+          }
+        />
+
+        <Route
+          path="/update-order/:id"
+          element={
+            <div className="overflow-x-hidden ">
+              <UpdateOrder />
             </div>
           }
         />

@@ -317,6 +317,9 @@ function OrderDetails() {
             >
               Export to Excel
             </button>
+
+
+            <button className="ml-3 mb-4 px-3 py-2 bg-slate-800 text-white rounded" onClick={() => { navigate(`/update-order/${order._id}`) }}>Update Order</button>
           </main>
           <Footer />
         </div>
