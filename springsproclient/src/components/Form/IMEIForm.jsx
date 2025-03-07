@@ -4,22 +4,8 @@ import luhn from 'luhn-generator';
 
 function IMEIForm({
   onSecurityCheck,
-  imeiNumbers,
-  onImeiNumbersChange,
-  onAccountFieldsChange,
-  onPhoneNumbersChange,
-  onShippingAddressesChange,
   shippingInfos,
   carrierInfos,
-  buyPhoneNumber,
-  setBuyPhoneNumber,
-  phoneUniqueCode,
-  setPhoneUniqueCode,
-  handleBuyPhoneNumberChange,
-  handlePhoneUniqueCodeChange,
-  handlePromoCodeChange,
-  promoCode,
-  setPromoCode,
 }) {
   const token = localStorage.getItem("jwt_token");
   const [error, setError] = useState({
