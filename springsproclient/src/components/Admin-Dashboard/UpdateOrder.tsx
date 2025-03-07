@@ -6,12 +6,45 @@ import Sidebar from "./Sidebar";
 import Footer from "./Footer";
 import Swal from "sweetalert2";
 import IMEIForm from "./IMEIForm";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faCcVisa,
+  faCcMastercard,
+  faCcAmex,
+  faCcDiscover,
+  faCcJcb,
+  faCcDinersClub,
+  faCcStripe,
+} from "@fortawesome/free-brands-svg-icons";
 
 const UpdateOrder: React.FC = () => {
+  // Function to map card type to FontAwesome icons
+  const getCardIcon = (cardType: string) => {
+    switch (cardType.toLowerCase()) {
+      case "visa":
+        return faCcVisa;
+      case "mastercard":
+        return faCcMastercard;
+      case "amex":
+      case "american express":
+        return faCcAmex;
+      case "discover":
+        return faCcDiscover;
+      case "jcb":
+        return faCcJcb;
+      case "dinersclub":
+        return faCcDinersClub;
+      case "unionpay":
+        return faCcStripe; // UnionPay doesn't have a specific FontAwesome icon, so we'll use the Stripe icon as a placeholder
+      case "maestro":
+        return faCcMastercard; // Maestro can be closely represented by MasterCard's icon
+      default:
+        return null; // Return null for invalid or unrecognized card types
+    }
+  };
 
   const [accountFields, setAccountFields] = useState([]);
-
-
+  const [cardType, setCardType] = useState("");
   const [ratePlan, setRatePlan] = useState("");
   const [isFormBlocked, setIsFormBlocked] = useState(false);
   const [buyNewPhone, setBuyNewPhone] = useState("");
@@ -89,38 +122,24 @@ const UpdateOrder: React.FC = () => {
     promoCode: "",
   });
 
-  const handleRatePlanChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    setRatePlan(value);
-    setFormData((prev) => ({
-      ...prev,
-      ratePlan: value,
-    }));
+  const handleRatePlanChange = (e) => {
+    setFormData({ ...formData, ratePlan: e.target.value });
   };
 
-  
-    const handleBuyNewPhoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-      const value = e.target.value;
-      setBuyNewPhone(value);
-      setFormData((prev) => ({
-        ...prev,
-        buyNewPhone: value,
-      }));
-    };
-  
-    const handleSmartphoneDetailsChange = (
-      e: React.ChangeEvent<HTMLSelectElement>
-    ) => {
-      const { name, value } = e.target;
-      setSmartphoneDetails((prev) => {
-        const updatedDetails = { ...prev, [name]: value };
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          smartphoneDetails: updatedDetails,
-        }));
-        return updatedDetails;
-      });
-    };
+  const handleBuyNewPhoneChange = (e) => {
+    setFormData({ ...formData, buyNewPhone: e.target.value });
+  };
+
+  const handleSmartphoneDetailsChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      smartphoneDetails: {
+        ...prevData.smartphoneDetails,
+        [name]: value,
+      },
+    }));
+  };
 
   const customerData = {
     businesslegalname: formData.businesslegalname,
@@ -424,9 +443,38 @@ const UpdateOrder: React.FC = () => {
             promotion: orderData.promotion || "",
             atntaccount: orderData.atntaccount || "",
             sansPartnerID: orderData.sansPartnerID || "",
-            // Populate other fields as necessary
+            ratePlan: orderData.ratePlan || "",
+            buyNewPhone: orderData.buyNewPhone || "",
+            phonemodel: orderData.phonemodel || "",
+            imeistatus: orderData.imeistatus || "",
+            noCracks: orderData.noCracks || "",
+            screenDefects: orderData.screenDefects || "",
+            factoryReset: orderData.factoryReset || "",
+            smartphoneDetails: {
+              brand: orderData.smartphoneDetails.brand || "",
+              model: orderData.smartphoneDetails.model || "",
+              color: orderData.smartphoneDetails.color || "",
+              size: orderData.smartphoneDetails.size || "",
+            },
+
+            billtomobile: orderData.billtomobile || "",
+            paymentMethod: orderData.paymentMethod || "",
+            creditcardpayment: orderData.creditcardpayment || "",
+            cardHolderName: orderData.cardHolderName || "",
+            cardNumber: orderData.cardNumber || "",
+            cardExpiry: orderData.cardExpiry || "",
+            cardCVC: orderData.cardCVC || "",
+            cardBillingAddress: orderData.cardBillingAddress || "",
+            cardType: orderData.cardType || "",
+            accountHolderName: orderData.accountHolderName || "",
+            sameAddress: orderData.sameAddress || "",
+            routingNumber: orderData.routingNumber || "",
+            checkingAccountNumber: orderData.checkingAccountNumber || "",
+            singleormultiaddresshipment: orderData.singleormultiaddresshipment || "",
+            businesslegalname : orderData.customerId.businesslegalname
           }));
 
+          console.log(orderData)
           // Set existing shipping information
           if (orderData.shippingAddresses) {
             setShippingInfos(orderData.shippingAddresses);
@@ -437,9 +485,8 @@ const UpdateOrder: React.FC = () => {
             setCarrierInfos(orderData.carrierInfos);
           }
 
-
           if (orderData.accounts) {
-            const formattedAccounts = orderData.accounts.map(account => ({
+            const formattedAccounts = orderData.accounts.map((account) => ({
               portOutPin: account.portOutPin || "",
               phoneNumber: account.phoneNumber || "",
               carrier: account.carrier || "",
@@ -447,24 +494,24 @@ const UpdateOrder: React.FC = () => {
               buyPhoneNumber: account.buyPhoneNumber || false,
               tradeSmartphone: account.tradeSmartphone || false,
               purchaseSmartphone: account.purchaseSmartphone || false,
-              shippingAddress: account.shippingAddress ? {
-                attentionName: account.shippingAddress.attentionName || "",
-                address: account.shippingAddress.address || "",
-                city: account.shippingAddress.city || "",
-                state: account.shippingAddress.state || "",
-                zip: account.shippingAddress.zip || "",
-              } : {
-                attentionName: "",
-                address: "",
-                city: "",
-                state: "",
-                zip: "",
-              },
+              shippingAddress: account.shippingAddress
+                ? {
+                    attentionName: account.shippingAddress.attentionName || "",
+                    address: account.shippingAddress.address || "",
+                    city: account.shippingAddress.city || "",
+                    state: account.shippingAddress.state || "",
+                    zip: account.shippingAddress.zip || "",
+                  }
+                : {
+                    attentionName: "",
+                    address: "",
+                    city: "",
+                    state: "",
+                    zip: "",
+                  },
             }));
             setAccountFields(formattedAccounts); // Set formatted accounts
           }
-
-
         }
       } catch (error) {
         console.error("Error fetching order details:", error);
@@ -497,21 +544,39 @@ const UpdateOrder: React.FC = () => {
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (validateForm()) {
+    if (validateForm()) { // Ensure you have a validateForm function to validate inputs
       try {
         const response = await axios.put(
           `https://springprobackend-production.up.railway.app/api/order/update-order/${id}`,
-          formData,
+          {
+            ...formData, // Include the form data
+            customerData: { // Include customer data if needed
+              businesslegalname: formData.businesslegalname,
+              businessaddress: formData.businessaddress,
+              businesscity: formData.businesscity,
+              businessstate: formData.businessstate,
+              businesszip: formData.businesszip,
+              taxid: formData.taxid,
+              contactname: formData.contactname,
+              contactphone: formData.contactphone,
+              contactemail: formData.contactemail,
+              // Add other customer fields as necessary
+            },
+            carrierInfos: carrierInfos, // Include carrier information
+            accountFields: accountFields, // Include account fields from the IMEI form
+            shippingAddresses: shippingInfos, // Include shipping addresses
+          },
           {
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: `Bearer ${token}`, // Include the token for authorization
             },
           }
         );
-
+  
         if (response.status === 200) {
           console.log("Order updated successfully!");
-          setIsSubmitted(true);
+          setIsSubmitted(true); // Set submitted state to true
+          // Optionally, redirect or show a success message
         }
       } catch (error) {
         console.error("There was an error updating the order:", error.message);
@@ -522,6 +587,7 @@ const UpdateOrder: React.FC = () => {
       }
     }
   };
+  
 
   return (
     <>
@@ -861,387 +927,600 @@ const UpdateOrder: React.FC = () => {
                 {/* Fifth Row */}
 
                 <div>
-                     {/* Additional Information */}
-                      <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mb-4 mt-5">
-                        Line Configuration
+                  {/* Additional Information */}
+                  <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mb-4 mt-5">
+                    Line Configuration
+                  </h3>
+                  <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
+                    <IMEIForm
+                      onSecurityCheck={handleSecurityCheck}
+                      shippingInfos={shippingInfos}
+                      carrierInfos={carrierInfos}
+                      accountFields={accountFields} // Pass account fields
+                      setAccountFields={setAccountFields} // Pass setter function
+                    />
+                  </div>
+
+                  {/* Sixth row */}
+
+                  <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
+                    {/* Rate Plan Selection */}
+                    <div>
+                      <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                        Rate Plan Selection
                       </h3>
-                      <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
-                        <IMEIForm
-                          onSecurityCheck={handleSecurityCheck}
-                          shippingInfos={shippingInfos}
-                          carrierInfos={carrierInfos}
-                          accountFields={accountFields} // Pass account fields
-                          setAccountFields={setAccountFields} // Pass setter function
-                        />
+                      <div className="mb-4">
+                        <select
+                          name="ratePlan"
+                          value={formData.ratePlan}
+                          onChange={handleRatePlanChange}
+                          className="border-b h-10 border-gray-300 w-full"
+                        >
+                          <option value="UYW 2.0 Advanced">
+                            UYW 2.0 Advanced
+                          </option>
+                          <option value="UYW 2.0 Premium">
+                            UYW 2.0 Premium
+                          </option>
+                          <option value="Turnkey BYOD">Turnkey BYOD</option>
+                          <option value="Turnkey Standard">
+                            Turnkey Standard
+                          </option>
+                          <option value="Turnkey Premium">
+                            Turnkey Premium
+                          </option>
+                          <option value="Unlimited Tablet">
+                            Unlimited Tablet
+                          </option>
+                          <option value="Unlimited Watch">
+                            Unlimited Watch
+                          </option>
+                          <option value="AWB / Hotspot Core">
+                            AWB / Hotspot Core
+                          </option>
+                          <option value="AWB / Hotspot Pro">
+                            AWB / Hotspot Pro
+                          </option>
+                          <option value="AWB / Hotspot Ultra">
+                            AWB / Hotspot Ultra
+                          </option>
+                          <option value="AT&T Internet Air">
+                            AT&T Internet Air
+                          </option>
+                        </select>
                       </div>
+                    </div>
 
-                      <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
-                        {/* Rate Plan Selection */}
-                        <div>
-                          <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                            Rate Plan Selection
-                          </h3>
-                          <div className="mb-4">
-                            <select
-                              name="ratePlan"
-                              value={formData.ratePlan}
-                              onChange={handleRatePlanChange}
-                              className="border-b h-10 border-gray-300 w-full"
-                            >
-                              <option value="UYW 2.0 Advanced">
-                                UYW 2.0 Advanced
-                              </option>
-                              <option value="UYW 2.0 Premium">
-                                UYW 2.0 Premium
-                              </option>
-                              <option value="Turnkey BYOD">Turnkey BYOD</option>
-                              <option value="Turnkey Standard">
-                                Turnkey Standard
-                              </option>
-                              <option value="Turnkey Premium">
-                                Turnkey Premium
-                              </option>
-                              <option value="Unlimited Tablet">
-                                Unlimited Tablet
-                              </option>
-                              <option value="Unlimited Watch">
-                                Unlimited Watch
-                              </option>
-                              <option value="AWB / Hotspot Core">
-                                AWB / Hotspot Core
-                              </option>
-                              <option value="AWB / Hotspot Pro">
-                                AWB / Hotspot Pro
-                              </option>
-                              <option value="AWB / Hotspot Ultra">
-                                AWB / Hotspot Ultra
-                              </option>
-                              <option value="AT&T Internet Air">
-                                AT&T Internet Air
-                              </option>
-                            </select>
-                          </div>
+                    {/* Smartphone Purchase Options */}
+
+                    <div>
+                      <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
+                        Smartphone Purchase/Trade Options
+                      </h3>
+
+                      {/* Promotions */}
+                      <div className="w-full">
+                        <select
+                          name="buyNewPhone"
+                          value={formData.buyNewPhone}
+                          onChange={handleBuyNewPhoneChange}
+                          className="border-b h-10 border-gray-300 w-full"
+                        >
+                          <option value="">Select</option>
+                          <option value="yes">
+                            I want to buy new smartphone
+                          </option>
+                          <option value="accepted">Trade in promotion</option>
+                          <option value="no">
+                            No, I don't want a new phone or promotion
+                          </option>
+                        </select>
+                        {errors.buyNewPhone && (
+                          <p className="text-red-500 text-sm">
+                            {errors.buyNewPhone}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Phone Model Section */}
+                    {formData.buyNewPhone === "accepted" && (
+                      <div className="col-span-full">
+                        {/* Phone Model Dropdown */}
+                        <div className="mt-6">
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Model
+                          </label>
+                          <select
+                            name="phonemodel"
+                            value={formData.phonemodel}
+                            onChange={handleSmartphoneDetailsChange}
+                            className="border-b h-12 border-gray-300 w-full rounded-md"
+                          >
+                            <option value="">Select Phone Model</option>
+                            <option value="iphone">iPhone</option>
+                            <option value="samsung">Samsung</option>
+                            <option value="google">Google</option>
+                          </select>
+                          {errors.phonemodel && (
+                            <p className="text-red-500 text-sm">
+                              {errors.phonemodel}
+                            </p>
+                          )}
                         </div>
 
-                        {/* Smartphone Purchase Options */}
-                        <div>
-                          <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
-                            Smartphone Purchase/Trade Options
-                          </h3>
+                        {/* Device Status (Phone Turned On or Off) */}
+                        <div className="mt-4">
+                          <h6 className="text-sm font-medium text-gray-700 mb-2">
+                            Device Status (Phone Turned On or Off)
+                          </h6>
+                          <div className="grid grid-cols-2 gap-4">
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="imeistatus"
+                                value="on"
+                                checked={formData.imeistatus === "on"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              Yes
+                            </label>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="imeistatus"
+                                value="off"
+                                checked={formData.imeistatus === "off"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              No
+                            </label>
+                          </div>
+                          {errors.imeistatus && (
+                            <p className="text-red-500 text-sm">
+                              {errors.imeistatus}
+                            </p>
+                          )}
+                        </div>
 
-                          {/* Promotions */}
+                        {/* Phone Has No Cracks */}
+                        <div className="mt-4">
+                          <h6 className="text-sm font-medium text-gray-700 mb-2">
+                            Phone Has No Cracks?
+                          </h6>
+                          <div className="grid grid-cols-2 gap-4">
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="noCracks"
+                                value="yes"
+                                checked={formData.noCracks === "yes"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              Yes
+                            </label>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="noCracks"
+                                value="no"
+                                checked={formData.noCracks === "no"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              No
+                            </label>
+                          </div>
+                          {errors.noCracks && (
+                            <p className="text-red-500 text-sm">
+                              {errors.noCracks}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Screen Blur or Display Defects */}
+                        <div className="mt-4">
+                          <h6 className="text-sm font-medium text-gray-700 mb-2">
+                            Screen Blur or Display Defects?
+                          </h6>
+                          <div className="grid grid-cols-2 gap-4">
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="screenDefects"
+                                value="yes"
+                                checked={formData.screenDefects === "yes"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              Yes
+                            </label>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="screenDefects"
+                                value="no"
+                                checked={formData.screenDefects === "no"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              No
+                            </label>
+                          </div>
+                          {errors.screenDefects && (
+                            <p className="text-red-500 text-sm">
+                              {errors.screenDefects}
+                            </p>
+                          )}
+                        </div>
+
+                        {/* Factory Reset & Log out of All Accounts */}
+                        <div className="mt-4">
+                          <h6 className="text-sm font-medium text-gray-700 mb-2">
+                            Factory Reset & Log out of all Accounts?
+                          </h6>
+                          <div className="grid grid-cols-2 gap-4">
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="factoryReset"
+                                value="yes"
+                                checked={formData.factoryReset === "yes"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              Yes
+                            </label>
+                            <label className="flex items-center space-x-2">
+                              <input
+                                type="radio"
+                                name="factoryReset"
+                                value="no"
+                                checked={formData.factoryReset === "no"}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="mr-2"
+                              />
+                              No
+                            </label>
+                          </div>
+                          {errors.factoryReset && (
+                            <p className="text-red-500 text-sm">
+                              {errors.factoryReset}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
+                  {/*  Seventh row */}
+
+                  <div className="mt-2 mb-5">
+                    {/* Order Payment Options */}
+                    <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+                      Order Payment Options
+                    </h2>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-10">
+                      {/* Paperless Billing */}
+                      <div className="w-full">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          Paperless Billing?
+                        </h6>
+                        <select
+                          name="paperless"
+                          value={formData.paperless}
+                          onChange={handleChange}
+                          className="border-b h-10 border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select An Option</option>
+
+                          <option value="accepted">Yes</option>
+                          <option value="declined">No</option>
+                        </select>
+                        {errors.paperless && (
+                          <p className="text-danger text-sm">
+                            {errors.paperless}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Bill to Mobile */}
+                      <div className="w-full">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          Bill to Mobile?
+                        </h6>
+                        <select
+                          name="billtomobile"
+                          value={formData.billtomobile}
+                          onChange={handleChange}
+                          className="border-b h-10 border-gray-300 py-2 w-full"
+                        >
+                          <option value="">Select An Option</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                        {errors.billtomobile && (
+                          <p className="text-danger text-sm">
+                            {errors.billtomobile}
+                          </p>
+                        )}
+                      </div>
+
+                      {/* Credit Card Payment */}
+                      <div className="w-full">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          Autopay?
+                        </h6>
+                        <select
+                          name="creditcardpayment"
+                          value={formData.creditcardpayment}
+                          onChange={handleChange}
+                          className="border-b h-10 border-gray-300 py-2 w-full"
+                        >
+                          <option value="select">Select An Option</option>
+                          <option value="yes">Yes</option>
+                          <option value="no">No</option>
+                        </select>
+                        {errors.creditcardpayment && (
+                          <p className="text-danger text-sm">
+                            {errors.creditcardpayment}
+                          </p>
+                        )}
+                      </div>
+
+                      {formData.creditcardpayment === "yes" && (
+                        <div className="w-full md:col-span-3 mt-4">
                           <div className="w-full">
-                            <select
-                              name="buyNewPhone"
-                              value={buyNewPhone}
-                              onChange={handleBuyNewPhoneChange}
-                              className="border-b h-10 border-gray-300 w-full"
+                            <label
+                              className="block text-sm font-medium mb-2"
+                              htmlFor="paymentMethod"
                             >
-                              <option value="">Select</option>
-                              <option value="yes">
-                                I want to buy new smartphone
-                              </option>
-                              <option value="accepted">
-                                Trade in promotion
-                              </option>
-                              <option value="no">
-                                No, I don't want a new phone or promotion
-                              </option>
-                            </select>
-                            {errors.buyNewPhone && (
-                              <p className="text-red-500 text-sm">
-                                {errors.buyNewPhone}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Phone Model Section */}
-                      {buyNewPhone === "accepted" && (
-                        <div className="col-span-full">
-                          {/* Phone Model Dropdown */}
-                          <div className="mt-6">
-                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Phone Model
+                              Payment Method
                             </label>
                             <select
-                              name="phonemodel"
-                              value={formData.phonemodel}
+                              name="paymentMethod"
+                              value={formData.paymentMethod}
                               onChange={handleChange}
-                              className="border-b h-12 border-gray-300 w-full rounded-md"
+                              className="border-b focus:outline-none border-gray-300 py-2 w-full"
                             >
-                              <option value="">Select Phone Model</option>
-                              <option value="iphone">iPhone</option>
-                              <option value="samsung">Samsung</option>
-                              <option value="google">Google</option>
+                              <option value="select">Select An Option</option>
+                              <option value="checkingAccount">
+                                Checking Account
+                              </option>
+                              <option value="debitCreditCard">
+                                Debit Card/Credit Card
+                              </option>
                             </select>
-                            {errors.phonemodel && (
-                              <p className="text-red-500 text-sm">
-                                {errors.phonemodel}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Device Status (Phone Turned On or Off) */}
-                          <div className="mt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-2">
-                              Device Status (Phone Turned On or Off)
-                            </h6>
-                            <div className="grid grid-cols-2 gap-4">
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="imeistatus"
-                                  value="on"
-                                  checked={formData.imeistatus === "on"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                Yes
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="imeistatus"
-                                  value="off"
-                                  checked={formData.imeistatus === "off"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                No
-                              </label>
-                            </div>
-                            {errors.imeistatus && (
-                              <p className="text-red-500 text-sm">
-                                {errors.imeistatus}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Phone Has No Cracks */}
-                          <div className="mt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-2">
-                              Phone Has No Cracks?
-                            </h6>
-                            <div className="grid grid-cols-2 gap-4">
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="noCracks"
-                                  value="yes"
-                                  checked={formData.noCracks === "yes"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                Yes
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="noCracks"
-                                  value="no"
-                                  checked={formData.noCracks === "no"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                No
-                              </label>
-                            </div>
-                            {errors.noCracks && (
-                              <p className="text-red-500 text-sm">
-                                {errors.noCracks}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Screen Blur or Display Defects */}
-                          <div className="mt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-2">
-                              Screen Blur or Display Defects?
-                            </h6>
-                            <div className="grid grid-cols-2 gap-4">
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="screenDefects"
-                                  value="yes"
-                                  checked={formData.screenDefects === "yes"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                Yes
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="screenDefects"
-                                  value="no"
-                                  checked={formData.screenDefects === "no"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                No
-                              </label>
-                            </div>
-                            {errors.screenDefects && (
-                              <p className="text-red-500 text-sm">
-                                {errors.screenDefects}
-                              </p>
-                            )}
-                          </div>
-
-                          {/* Factory Reset & Log out of All Accounts */}
-                          <div className="mt-4">
-                            <h6 className="text-sm font-medium text-gray-700 mb-2">
-                              Factory Reset & Log out of all Accounts?
-                            </h6>
-                            <div className="grid grid-cols-2 gap-4">
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="factoryReset"
-                                  value="yes"
-                                  checked={formData.factoryReset === "yes"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                Yes
-                              </label>
-                              <label className="flex items-center space-x-2">
-                                <input
-                                  type="radio"
-                                  name="factoryReset"
-                                  value="no"
-                                  checked={formData.factoryReset === "no"}
-                                  onChange={handleChange}
-                                  className="mr-2"
-                                />
-                                No
-                              </label>
-                            </div>
-                            {errors.factoryReset && (
-                              <p className="text-red-500 text-sm">
-                                {errors.factoryReset}
-                              </p>
-                            )}
                           </div>
                         </div>
                       )}
-
-                      {buyNewPhone === "yes" && (
-                        <div>
-                          <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
-                            <div className="mb-4">
-                              <h6 className="text-sm font-medium text-gray-700">
-                                Select Brand
-                              </h6>
-                              <select
-                                name="brand"
-                                value={smartphoneDetails.brand}
-                                onChange={handleSmartphoneDetailsChange}
-                                className="border-b h-10 border-gray-300 w-full"
+                      {formData.paymentMethod === "checkingAccount" && (
+                        <div className="w-full md:col-span-3 mt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="accountHolderName"
                               >
-                                <option value="">Select Brand</option>
-                                <option value="apple">Apple</option>
-                                <option value="samsung">Samsung</option>
-                                <option value="google">Google</option>
-                                <option value="motorola">Motorola</option>
-                                <option value="sonim">Sonim</option>
-                                <option value="other">Other</option>
-                              </select>
+                                Account Holder Name
+                              </label>
+                              <input
+                                type="text"
+                                name="accountHolderName"
+                                value={formData.accountHolderName}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="Account Holder Name"
+                              />
+                              {errors.accountHolderName && (
+                                <p className="text-danger text-sm">
+                                  {errors.accountHolderName}
+                                </p>
+                              )}
                             </div>
 
-                            {smartphoneDetails.brand === "apple" && (
-                              <div className="mb-4">
-                                <h6 className="text-sm font-medium text-gray-700">
-                                  Select Apple Model
-                                </h6>
-                                <select
-                                  name="model"
-                                  value={smartphoneDetails.model}
-                                  onChange={handleSmartphoneDetailsChange}
-                                  className="border-b h-10 border-gray-300 w-full"
-                                >
-                                  <option value="">Select Model</option>
-                                  <option value="iphone13">iPhone 13</option>
-                                  <option value="iphone14">iPhone 14</option>
-                                  <option value="iphone15">iPhone 15</option>
-                                </select>
-                              </div>
-                            )}
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="routingNumber"
+                              >
+                                Routing Number
+                              </label>
+                              <input
+                                type="text"
+                                name="routingNumber"
+                                value={formData.routingNumber}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="Routing Number"
+                              />
+                              {errors.routingNumber && (
+                                <p className="text-danger text-sm">
+                                  {errors.routingNumber}
+                                </p>
+                              )}
+                            </div>
 
-                            {smartphoneDetails.brand === "samsung" && (
-                              <div className="mb-4">
-                                <h6 className="text-sm font-medium text-gray-700">
-                                  Select Samsung Model
-                                </h6>
-                                <select
-                                  name="model"
-                                  value={smartphoneDetails.model}
-                                  onChange={handleSmartphoneDetailsChange}
-                                  className="border-b h-10 border-gray-300 w-full"
-                                >
-                                  <option value="">Select Model</option>
-                                  <option value="s24">S24</option>
-                                  <option value="s24_fe">S24 FE</option>
-                                  <option value="s24_plus">S24 Plus</option>
-                                  <option value="s24_ultra">S24 Ultra</option>
-                                </select>
-                              </div>
-                            )}
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="checkingAccountNumber"
+                              >
+                                Checking Account Number
+                              </label>
+                              <input
+                                type="text"
+                                name="checkingAccountNumber"
+                                value={formData.checkingAccountNumber}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="Checking Account Number"
+                              />
+                              {errors.checkingAccountNumber && (
+                                <p className="text-danger text-sm">
+                                  {errors.checkingAccountNumber}
+                                </p>
+                              )}
+                            </div>
                           </div>
-                          <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
-                            <div className="mb-4">
-                              <h6 className="text-sm font-medium text-gray-700">
-                                Select Color
-                              </h6>
-                              <select
-                                name="color"
-                                value={smartphoneDetails.color}
-                                onChange={handleSmartphoneDetailsChange}
-                                className="border-b h-10 border-gray-300 w-full"
+                        </div>
+                      )}
+                      {formData.paymentMethod === "debitCreditCard" && (
+                        <div className="w-full md:col-span-3 mt-4">
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="cardHolderName"
                               >
-                                <option value="">Select Color</option>
-                                <option value="black">Black</option>
-                                <option value="white">White</option>
-                                <option value="blue">Blue</option>
-                                <option value="red">Red</option>
-                                <option value="green">Green</option>
-                              </select>
+                                Card Holder Name
+                              </label>
+                              <input
+                                type="text"
+                                name="cardHolderName"
+                                value={formData.cardHolderName}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="Card Holder Name"
+                              />
+                              {errors.cardHolderName && (
+                                <p className="text-danger text-sm">
+                                  {errors.cardHolderName}
+                                </p>
+                              )}
+                            </div>
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="cardNumber"
+                              >
+                                Card Number
+                              </label>
+                              <div className="flex items-center space-x-3">
+                                {" "}
+                                {/* Flex container for input and icon */}
+                                <input
+                                  type="text"
+                                  name="cardNumber"
+                                  value={formData.cardNumber}
+                                  onChange={handleChange}
+                                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                  placeholder="Enter your card number"
+                                />
+                                {/* Display card type icon side by side */}
+                                {cardType && (
+                                  <FontAwesomeIcon
+                                    icon={getCardIcon(cardType)} // Display the correct icon based on card type
+                                    size="2x" // Adjust size as needed
+                                    className={`text-${cardType.toLowerCase()}-500`} // Apply color based on card type
+                                  />
+                                )}
+                              </div>
+
+                              {/* Display card type name */}
+                              {cardType && (
+                                <p className="text-sm mt-2">
+                                  <strong>Card Type:</strong> {cardType}
+                                </p>
+                              )}
+
+                              {/* Display error message */}
+                              {errors.cardNumber && (
+                                <p className="text-danger text-sm">
+                                  {errors.cardNumber}
+                                </p>
+                              )}
+
+                              {/* Hidden input to store card type */}
+                              <input
+                                type="hidden"
+                                name="cardType"
+                                value={formData.cardType}
+                              />
                             </div>
 
-                            <div className="mb-4">
-                              <h6 className="text-sm font-medium text-gray-700">
-                                Select Data Storage Capacity
-                              </h6>
-                              <select
-                                name="size"
-                                value={smartphoneDetails.size}
-                                onChange={handleSmartphoneDetailsChange}
-                                className="border-b h-10 border-gray-300 w-full"
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="cardExpiry"
                               >
-                                <option value="">Select Storage</option>
-                                <option value="64gb">64GB</option>
-                                <option value="128gb">128GB</option>
-                                <option value="256gb">256GB</option>
-                                <option value="512gb">512GB</option>
-                                <option value="1tb">1TB</option>
-                                <option value="2tb">2TB</option>
-                              </select>
+                                Expiry Date (MM/YY)
+                              </label>
+                              <input
+                                type="text"
+                                name="cardExpiry"
+                                value={formData.cardExpiry}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="MM/YY"
+                              />
+                              {errors.cardExpiry && (
+                                <p className="text-danger text-sm">
+                                  {errors.cardExpiry}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="cardCVC"
+                              >
+                                CVC
+                              </label>
+                              <input
+                                type="text"
+                                name="cardCVC"
+                                value={formData.cardCVC}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="CVC"
+                              />
+                              {errors.cardCVC && (
+                                <p className="text-danger text-sm">
+                                  {errors.cardCVC}
+                                </p>
+                              )}
+                            </div>
+
+                            <div className="w-full">
+                              <label
+                                className="block text-sm font-medium mb-2"
+                                htmlFor="cardBillingAddress"
+                              >
+                                Card Billing Address
+                              </label>
+                              <input
+                                type="text"
+                                name="cardBillingAddress"
+                                value={formData.cardBillingAddress}
+                                onChange={handleChange}
+                                className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                placeholder="Billing Address"
+                              />
+                              {errors.cardBillingAddress && (
+                                <p className="text-danger text-sm">
+                                  {errors.cardBillingAddress}
+                                </p>
+                              )}
                             </div>
                           </div>
                         </div>
                       )}
                     </div>
+                  </div>
+                </div>
                 <button
                   type="submit"
-                  className="mt-4 bg-blue-500 text-white p-2 rounded"
+                  className="mt-2 bg-slate-800 text-white px-6 py-2 rounded font-bold"
                 >
                   Update Order
                 </button>
                 {errors.submit && (
-                  <p className="text-red-500">{errors.submit}</p>
+                  <p className="text-red-500 ">{errors.submit}</p>
                 )}
               </form>
             </div>
