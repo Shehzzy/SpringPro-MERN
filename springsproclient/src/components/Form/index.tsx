@@ -23,6 +23,7 @@ const Form: React.FC = () => {
   const [isFormBlocked, setIsFormBlocked] = useState(false);
 
   const handleSecurityCheck = (status) => {
+    console.log("Security Check Status:", status);
     setIsFormBlocked(!status); // If status is false, block the form
   };
 
