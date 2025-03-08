@@ -97,12 +97,12 @@ function AllOrders() {
     //       : "No IMEI numbers",
     // },
     {
-      name: "Order Date",
+      name: "Date",
       selector: (row) => new Date(row.createdAt).toLocaleString(),
       sortable: true,
     },
     {
-      name: "Status",
+      name: "Order Status",
       selector: (row) => row.status,
       cell: (row) => <span style={getStatusStyle(row.status)}>{row.status}</span>,
       sortable: true,
@@ -113,7 +113,7 @@ function AllOrders() {
         <select
           value={row.status}
           onChange={(e) => updateOrderStatus(row._id, e.target.value)}
-          className="form-control select-admin-status"
+          className="form-control select-admin-status inter"
         >
           <option value="Pending">Pending</option>
           <option value="In Progress">In Progress</option>
@@ -124,16 +124,16 @@ function AllOrders() {
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex justify-content-between">
+        <div className="d-flex gap-1 py-1 md:flex-row flex-column justify-content-between">
           <button
             onClick={() => handleAddComment(row._id)}
-            className="btn btn-secondary btn-sm"
+            className=" bg-slate-500 py-2 px-2 rounded text-center no-underline text-white inter"
           >
             Add Comment
           </button>
           <Link
             to={`/single-order-details/${row._id}`}
-            className="btn btn-primary text-white btn-sm"
+            className=" bg-sky-600 py-2 px-2 rounded text-center no-underline text-white inter"
           >
             View Details
           </Link>
@@ -216,11 +216,11 @@ function AllOrders() {
   const getStatusStyle = (status) => {
     switch (status) {
       case "Pending":
-        return { backgroundColor: "#f1c40f", color: "#2d3436", padding: '8px', borderRadius: '6px' };
+        return { backgroundColor: "#f1c40f", color: "white", width: '150px', textAlign: 'center', fontSize: '16px', padding: '9px', borderRadius: '6px'};
       case "In Progress":
-        return { backgroundColor: "#e67e22", color: "white", padding: '8px', borderRadius: '6px' };
+        return { backgroundColor: "#e67e22", color: "white", width: '150px', textAlign: 'center', fontSize: '16px', padding: '9px', borderRadius: '6px'};
       case "Completed":
-        return { backgroundColor: "#2ecc71", color: "white", padding: '8px', borderRadius: '6px' };
+        return { backgroundColor: "#2ecc71", color: "white", width: '150px', textAlign: 'center', fontSize: '16px', padding: '9px', borderRadius: '6px'};
       default:
         return {};
     }
@@ -281,7 +281,7 @@ function AllOrders() {
               </div>
             </div>
           </main>
-          <Footer />
+          {/* <Footer /> */}
         </div>
       </div>
 
