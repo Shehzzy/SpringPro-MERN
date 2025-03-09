@@ -29,7 +29,7 @@ const Footer = () => {
                                 <h4 className="text-gray-600 font-poppins font-[400] tracking-wider">SOLUTIONS</h4>
                                 <div className="mt-1"></div>
                                 <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Cellular Service</a>
-                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Fibre Internet</a>
+                                <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Fiber Internet</a>
                                 <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">Cloud Solutions</a>
                                 <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">CyberSecurity</a>
                                 <a href="" className="text-gray-600 font-poppins font-[350] text-[14px] sm:text-[15px]  inter tracking-wider no-underline">AT&T</a>
@@ -57,7 +57,7 @@ const Footer = () => {
                             <i className="fa-brands text-gray-600 fa-whatsapp"></i>
                         </div>
                         <div className="w-fit">
-                            <h1 className="text-gray-600 inter font-[350] text-sm sm:text-[16px]">© 2024 Spring Air Network Solutions, Inc.</h1>
+                            <h1 className="text-gray-600 inter font-[350] text-sm sm:text-[16px]">© 2025 Spring Air Network Solutions, Inc.</h1>
                         </div>
                     </div>
                 </div>

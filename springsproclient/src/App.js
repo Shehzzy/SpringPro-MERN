@@ -57,10 +57,10 @@ function App() {
                 <Network />
                 <BillService />
                 <FeedBack />
-                <Story />
-                <Guide />
+                {/* <Story /> */}
+                {/* <Guide /> */}
                 <Deploys />
-                <Products />
+                {/* <Products /> */}
                 <Technology />
               </div>
               <Footer />

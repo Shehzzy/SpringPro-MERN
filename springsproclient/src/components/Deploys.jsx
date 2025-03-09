@@ -13,7 +13,7 @@ const Deploys = () => {
                      style={{ lineHeight: "50px" }}
                      className="work-sans font-medium text-[#3C3C3C] leading-tight text-3xl md:text-4xl lg:text-5xl"
                   >
-                     Have Any Questions? Feel Free To Call Us For Enquiries!
+                     Have Any Questions? Feel Free To Call Us!
                   </h1>
                   <p className="text-[#3C3C3C] mt-3 text-sm sm:text-base md:text-lg work-sans">
                      We Offer The Industry-Leading Technology Solutions With our extensive

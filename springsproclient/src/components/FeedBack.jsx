@@ -9,7 +9,7 @@ const FeedBack = () => {
           <div className="flex-col items-center max-w-[670px] w-full flex justify-start">
             <img src={logo} className="w-[200px] pb-5" alt="" />
             <h1 className="text-3xl sm:text-2xl md:text-3xl lg:text-4xl font-medium text-black mt-4 text-center work-sans">
-              Have Any Questions? Feel Free To Call Us For Enquiries!
+              Have Any Questions? Feel Free To Call Us!
             </h1>
             <h4 className="mt-5 text-sm sm:text-base md:text-lg lg:text-xl text-black text-center inter font-medium">
               We Offer The Industry-Leading Technology Solutions With our extensive services, we can guarantee that your business needs will be met. In addition, our engineering team is equipped to assist in every real-world situation you can think of.

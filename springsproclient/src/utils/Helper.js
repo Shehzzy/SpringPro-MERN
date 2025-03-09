@@ -1,4 +1,4 @@
-import { ABOUT, BENEFIT, CHATBOT, EMAIL, HOME, LOCATION, SERVICES } from "./const";
+import { ABOUT, BENEFIT, CHATBOT, WA, EMAIL, HOME, LOCATION, SERVICES } from "./const";
 import clientProfileImg from "../assets/images/webp/client-image.webp";
 import ratingStars from "../assets/images/svg/rating-stars.svg";
 import costManagment from "../assets/images/webp/cost-management.webp";
@@ -9,18 +9,19 @@ export const CONTACT_US_CARD_DATA = [
     icon: "chatBot",
     title: "Chat with Us!",
     description: ["We're just a message away.", "Start chatting now!"],
-    url: CHATBOT,
+    url: WA,
   },
   {
     icon: "phone",
     title: "Phone",
-    description: ["(917) 473-0532", "(684) 555-0102"],
+    // description: ["(917) 473-0532", "(684) 555-0102"],
+    description: ["(999) 999-9999"],
     url: "",
   },
   {
     icon: "email",
     title: "Email",
-    description: ["savings@springairns.com"],
+    description: ["savings@getbetterbills.com"],
     url: EMAIL,
   },
 ];
@@ -98,8 +99,9 @@ export const PLAN_DATA_LIST = [
     price: 10,
     autopayDiscount: 70,
     streaming: true,
-    network5G: false,
+    network5G: true,
     total: 74,
+    months: "For 24 Months*"
   },
   {
     title:" AT&T",
@@ -108,8 +110,9 @@ export const PLAN_DATA_LIST = [
     price: 5,
     autopayDiscount: 70,
     streaming: true,
-    network5G: false,
+    network5G: true,
     total: 74,
+    months: ""
   },
   {
     title:"Verizon",
@@ -117,8 +120,9 @@ export const PLAN_DATA_LIST = [
     price: 10,
     autopayDiscount: 70,
     streaming: true,
-    network5G: false,
+    network5G: true,
     total: 74,
+    months: ""
   },
   {
     title:"T-Mobile",
@@ -126,8 +130,9 @@ export const PLAN_DATA_LIST = [
     price: "5-25",
     autopayDiscount: 70,
     streaming: true,
-    network5G: false,
+    network5G: true,
     total: 74,
+    months: ""
   },
 ];
 

@@ -8,7 +8,7 @@ const Resource = () => {
             id: 1,
             icon: "fa-file",
             type: "REPORTS",
-            title: "2024 Global Networking Trends Report",
+            title: "2025 Global Networking Trends Report",
             description:
                 "Gain insights from over 2,000 global IT leaders on the networking strategies that are advancing digital business.",
             buttonText: "GET REPORT",
@@ -26,7 +26,7 @@ const Resource = () => {
             id: 3,
             icon: "fa-network-wired",
             type: "NETWORKING",
-            title: "Enterprise Networking in 2024",
+            title: "Enterprise Networking in 2025",
             description:
                 "Discover the latest trends in networking technology and how they are transforming businesses worldwide.",
             buttonText: "READ REPORT",

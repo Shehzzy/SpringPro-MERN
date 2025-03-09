@@ -9,12 +9,14 @@ import Structure from "./Structure";
 import Tab from "./Tab";
 import Watch from "./Watch";
 import Trial from "./Trial";
+import SwitchCalculate from "./SwitchCalculate";
 const Cellular = () => {
   
     return (
 <>
 <Hero/>
 <Strip/>
+<SwitchCalculate/>
 <Structure heading={"Easily scale at your own pace."} details={"Deploy one or tens of thousands of networks quickly through automation and configuration that’s a breeze."} point1={"Meet specific needs for each location by creating unique configurations"} point2={"Keep all locations aligned to your corporate standards"} point3={"Gain a seamless experience with cloud/on-premises network configurations"} button={"LEARN HOW WE SCALE"} img={img} classe={"md:flex-row flex-col"} padding={"xl:pr-[120px] lg:pr-8"}/>
 <Info/>
 <Structure heading={"Manage and monitor from anywhere."}  details={"Manage your entire distributed network remotely with a single interface—the SpringAir dashboard."} point1={"Monitor WAN, access, and IoT technologies in one place with end-to-end visibility"} point2={"See the overall health of each network and proactively solve issues before they become critical"} point3={"Leverage our advanced AI to take the guesswork out of optimizing networks."} classe={"md:flex-row flex-col"} padding={"xl:pr-[120px] lg:pr-8"}  button={"EXPLORE THE DASHBOARD"} img={img}/>
