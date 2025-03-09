@@ -26,11 +26,9 @@ const Form: React.FC = () => {
     console.log("Security Check Status:", status);
     setIsFormBlocked(!status); // If status is false, block the form
   };
-
-
   const [showExistingBAN, setShowExistingBAN] = useState(false);
   const [showExistingFAN, setShowExistingFAN] = useState(false);
-
+  const [accountFields, setAccountFields] = useState([]);
   const [phoneUniqueCode, setPhoneUniqueCode] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [tradeSmartphone, setTradeSmartphone] = useState(false);
@@ -39,12 +37,18 @@ const Form: React.FC = () => {
   const [cardType, setCardType] = useState("");
 
   const [linesData, setLinesData] = useState([]);
+
+  // Callback function to receive updated accountFields data
+  const handleAccountFieldsChange = (updatedAccountFields) => {
+    setAccountFields(updatedAccountFields); // Update state in the parent
+    console.log("Updated accountFields:", updatedAccountFields);
+  };
+
   const handleLinesChange = (updatedData) => {
     setLinesData(updatedData);
   };
 
   const handleTradeSmartphoneChange = (value) => {
-
     setTradeSmartphone(value); // This updates the parent state
   };
 
@@ -115,56 +119,56 @@ const Form: React.FC = () => {
     });
   };
   const states = [
-    { code: 'AL', name: 'Alabama' },
-    { code: 'AK', name: 'Alaska' },
-    { code: 'AZ', name: 'Arizona' },
-    { code: 'AR', name: 'Arkansas' },
-    { code: 'CA', name: 'California' },
-    { code: 'CO', name: 'Colorado' },
-    { code: 'CT', name: 'Connecticut' },
-    { code: 'DE', name: 'Delaware' },
-    { code: 'FL', name: 'Florida' },
-    { code: 'GA', name: 'Georgia' },
-    { code: 'HI', name: 'Hawaii' }, // Fixed typo here (was 'nametab')
-    { code: 'ID', name: 'Idaho' },
-    { code: 'IL', name: 'Illinois' },
-    { code: 'IN', name: 'Indiana' },
-    { code: 'IA', name: 'Iowa' },
-    { code: 'KS', name: 'Kansas' },
-    { code: 'KY', name: 'Kentucky' },
-    { code: 'LA', name: 'Louisiana' },
-    { code: 'ME', name: 'Maine' },
-    { code: 'MD', name: 'Maryland' },
-    { code: 'MA', name: 'Massachusetts' },
-    { code: 'MI', name: 'Michigan' },
-    { code: 'MN', name: 'Minnesota' },
-    { code: 'MS', name: 'Mississippi' },
-    { code: 'MO', name: 'Missouri' },
-    { code: 'MT', name: 'Montana' },
-    { code: 'NE', name: 'Nebraska' },
-    { code: 'NV', name: 'Nevada' },
-    { code: 'NH', name: 'New Hampshire' },
-    { code: 'NJ', name: 'New Jersey' },
-    { code: 'NM', name: 'New Mexico' },
-    { code: 'NY', name: 'New York' },
-    { code: 'NC', name: 'North Carolina' },
-    { code: 'ND', name: 'North Dakota' },
-    { code: 'OH', name: 'Ohio' },
-    { code: 'OK', name: 'Oklahoma' },
-    { code: 'OR', name: 'Oregon' },
-    { code: 'PA', name: 'Pennsylvania' },
-    { code: 'RI', name: 'Rhode Island' },
-    { code: 'SC', name: 'South Carolina' },
-    { code: 'SD', name: 'South Dakota' },
-    { code: 'TN', name: 'Tennessee' },
-    { code: 'TX', name: 'Texas' },
-    { code: 'UT', name: 'Utah' },
-    { code: 'VT', name: 'Vermont' },
-    { code: 'VA', name: 'Virginia' },
-    { code: 'WA', name: 'Washington' },
-    { code: 'WV', name: 'West Virginia' },
-    { code: 'WI', name: 'Wisconsin' },
-    { code: 'WY', name: 'Wyoming' }
+    { code: "AL", name: "Alabama" },
+    { code: "AK", name: "Alaska" },
+    { code: "AZ", name: "Arizona" },
+    { code: "AR", name: "Arkansas" },
+    { code: "CA", name: "California" },
+    { code: "CO", name: "Colorado" },
+    { code: "CT", name: "Connecticut" },
+    { code: "DE", name: "Delaware" },
+    { code: "FL", name: "Florida" },
+    { code: "GA", name: "Georgia" },
+    { code: "HI", name: "Hawaii" }, // Fixed typo here (was 'nametab')
+    { code: "ID", name: "Idaho" },
+    { code: "IL", name: "Illinois" },
+    { code: "IN", name: "Indiana" },
+    { code: "IA", name: "Iowa" },
+    { code: "KS", name: "Kansas" },
+    { code: "KY", name: "Kentucky" },
+    { code: "LA", name: "Louisiana" },
+    { code: "ME", name: "Maine" },
+    { code: "MD", name: "Maryland" },
+    { code: "MA", name: "Massachusetts" },
+    { code: "MI", name: "Michigan" },
+    { code: "MN", name: "Minnesota" },
+    { code: "MS", name: "Mississippi" },
+    { code: "MO", name: "Missouri" },
+    { code: "MT", name: "Montana" },
+    { code: "NE", name: "Nebraska" },
+    { code: "NV", name: "Nevada" },
+    { code: "NH", name: "New Hampshire" },
+    { code: "NJ", name: "New Jersey" },
+    { code: "NM", name: "New Mexico" },
+    { code: "NY", name: "New York" },
+    { code: "NC", name: "North Carolina" },
+    { code: "ND", name: "North Dakota" },
+    { code: "OH", name: "Ohio" },
+    { code: "OK", name: "Oklahoma" },
+    { code: "OR", name: "Oregon" },
+    { code: "PA", name: "Pennsylvania" },
+    { code: "RI", name: "Rhode Island" },
+    { code: "SC", name: "South Carolina" },
+    { code: "SD", name: "South Dakota" },
+    { code: "TN", name: "Tennessee" },
+    { code: "TX", name: "Texas" },
+    { code: "UT", name: "Utah" },
+    { code: "VT", name: "Vermont" },
+    { code: "VA", name: "Virginia" },
+    { code: "WA", name: "Washington" },
+    { code: "WV", name: "West Virginia" },
+    { code: "WI", name: "Wisconsin" },
+    { code: "WY", name: "Wyoming" },
   ];
   // State to manage multiple carrier information entries
   const carrierOptions = [
@@ -341,12 +345,6 @@ const Form: React.FC = () => {
 
   const [imeiInput, setImeiInput] = useState("");
   const [imeiNumbers, setImeiNumbers] = useState<string[]>([]);
-  const [accountFields, setAccountFields] = useState([
-    {
-      accountNumber: "", // Correct name
-      portOutPin: "", // Correct name
-    },
-  ]);
   const [shippingAddresses, setShippingAddresses] = useState({}); // State to hold shipping addresses
 
   const [phoneNumbers, setPhoneNumbers] = useState([]);
@@ -357,10 +355,6 @@ const Form: React.FC = () => {
   };
   const handleImeiNumbersChange = (newImeiNumbers) => {
     setImeiNumbers(newImeiNumbers);
-  };
-
-  const handleAccountFieldsChange = (newAccountFields) => {
-    setAccountFields(newAccountFields);
   };
 
   const handlePhoneNumbersChange = (newPhoneNumbers) => {
@@ -584,7 +578,7 @@ const Form: React.FC = () => {
               cardNumber, // Add this
               cardExpiry, // Add this
               cardCVC, // Add this
-              sansPartnerID
+              sansPartnerID,
             } = userData[0];
 
             // Update only the specified fields
@@ -664,7 +658,7 @@ const Form: React.FC = () => {
     }
   };
 
-  const newErrors: any = {};  
+  const newErrors: any = {};
   const validateForm = (): boolean => {
     if (!formData.agreementtype)
       newErrors.agreementtype = "Agreement Type is required.";
@@ -721,7 +715,8 @@ const Form: React.FC = () => {
           newErrors.cardBillingAddress = "Billing Address is required.";
       }
     }
-    if (!formData.sansPartnerID) newErrors.agentCode = "Agent Code is required.";
+    if (!formData.sansPartnerID)
+      newErrors.agentCode = "Agent Code is required.";
     carrierInfos.forEach((info, index) => {
       if (!info.currentwirelesscarrier) {
         newErrors[`currentwirelesscarrier_${index}`] =
@@ -769,7 +764,7 @@ const Form: React.FC = () => {
         icon: "error",
         title: "Security Check Failed",
         text: "Form submission is blocked due to security check failure.",
-        confirmButtonColor: "#d33"
+        confirmButtonColor: "#d33",
       });
       return;
     }
@@ -840,8 +835,6 @@ const Form: React.FC = () => {
   //   phoneNumbers,
   //   shippingInfos,
   // });
-
-  
 
   // console.log(formData);
 
@@ -1047,15 +1040,10 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
-                
-
               </div>
               {/* Row 2 */}
 
-              
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
-
-
                 <div>
                   <h6 className="text-sm font-medium text-gray-700">
                     SANS Partner ID
@@ -1069,7 +1057,9 @@ const Form: React.FC = () => {
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
                   />
                   {errors.sansPartnerID && (
-                    <p className="text-red-500 text-sm">{errors.sansPartnerID}</p>
+                    <p className="text-red-500 text-sm">
+                      {errors.sansPartnerID}
+                    </p>
                   )}
                 </div>
 
@@ -1084,7 +1074,7 @@ const Form: React.FC = () => {
                     onChange={handleChange}
                     className="border-b h-10 border-gray-300 w-full"
                   >
-                  <option value="">Select An Option</option>
+                    <option value="">Select An Option</option>
                     <option value="amb">AMB</option>
                     <option value="acda">ACDA Attainment/MAC</option>
                   </select>
@@ -1095,7 +1085,7 @@ const Form: React.FC = () => {
                   )}
                 </div>
                 {/* Add AT&T Account */}
-                <div className="w-full">                  
+                <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
                     Create AT&T Account?
                   </h6>
@@ -1112,53 +1102,54 @@ const Form: React.FC = () => {
                   {/* {errors.atntaccount && (
                     <p className="text-red-500 text-sm">{errors.atntaccount}</p>
                   )} */}
-                </div>              
+                </div>
               </div>
             </form>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
               {/* EIP Limit (Conditional Field) */}
               {formData.agreementtype === "acda" && (
-                  <div className="w-full">
-                    <h6 className="text-sm font-medium text-gray-700">Please, specify EIP Limit</h6>                    
-                    <input
-                      name="eip"
-                      placeholder="Enter EIP Limit"
-                      value={formData.eip}
-                      onChange={handleChange}
-                      className="w-full border-b border-gray-300 py-2"
-                    />
-                    {errors.eip && (
-                      <p className="text-red-500 text-sm">{errors.eip}</p>
-                    )}
-                  </div>
-                )}
-                {formData.atntaccount === "declined" && (
-                <div>
-                    {[
-                      {
-                        name: "existingBAN",
-                        label: "Existing BAN (AT&T Account)",
-                        placeholder: "Enter Existing BAN",
-                      },
-                    ].map((field, index) => (
-                      <div key={index} className="mb-4">
-                        <h6 className="text-sm font-medium text-gray-700">
-                          {field.label}
-                        </h6>
-                          <input
-                            type="text"
-                            name={field.name}
-                            placeholder={field.placeholder}
-                            value={formData[field.name]}
-                            onChange={handleChange}
-                            className="w-full border-b border-gray-300 py-2"
-                          />
-                      </div>
-                    ))}
-                  
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Please, specify EIP Limit
+                  </h6>
+                  <input
+                    name="eip"
+                    placeholder="Enter EIP Limit"
+                    value={formData.eip}
+                    onChange={handleChange}
+                    className="w-full border-b border-gray-300 py-2"
+                  />
+                  {errors.eip && (
+                    <p className="text-red-500 text-sm">{errors.eip}</p>
+                  )}
                 </div>
-              )}                
+              )}
+              {formData.atntaccount === "declined" && (
+                <div>
+                  {[
+                    {
+                      name: "existingBAN",
+                      label: "Existing BAN (AT&T Account)",
+                      placeholder: "Enter Existing BAN",
+                    },
+                  ].map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        {field.label}
+                      </h6>
+                      <input
+                        type="text"
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className="w-full border-b border-gray-300 py-2"
+                      />
+                    </div>
+                  ))}
+                </div>
+              )}
               {/* Special Instructions */}
               <div className="w-full mb-5">
                 <h6 className="text-sm font-medium text-gray-700">
@@ -1243,7 +1234,6 @@ const Form: React.FC = () => {
                       label: "Contact Email",
                       placeholder: "Enter Contact Email",
                     },
-                   
                   ].map((field, index) => (
                     <div key={index} className="mb-4">
                       <h6 className="text-sm font-medium text-gray-700">
@@ -1263,9 +1253,6 @@ const Form: React.FC = () => {
                           />
                         )}
 
-                      
-                      
-
                       {errors[field.name] && (
                         <p className="text-red-500 text-sm">
                           {errors[field.name]}
@@ -1275,7 +1262,7 @@ const Form: React.FC = () => {
                   ))}
                 </div>
               </div>
-            )}            
+            )}
           </div>
         );
 
@@ -1337,9 +1324,7 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
-                  <option value="select">
-                    Select An Option
-                  </option>
+                  <option value="select">Select An Option</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -1756,7 +1741,11 @@ const Form: React.FC = () => {
                 {[
                   { name: "attentionname", label: "Attention Name" },
                   { name: "shippingaddress", label: "Shipping Address" },
-                  { name: "shippingstate", label: "Shipping State", isDropdown: true },
+                  {
+                    name: "shippingstate",
+                    label: "Shipping State",
+                    isDropdown: true,
+                  },
                   { name: "shippingzip", label: "Shipping Zip" },
                   { name: "shippingcity", label: "Shipping City" },
                 ].map(({ name, label, isDropdown }) => (
@@ -1771,7 +1760,9 @@ const Form: React.FC = () => {
                         onChange={(e) => handleShippingInfoChange(e, index)}
                         className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
                       >
-                        <option value="" className="py-2">Select a state</option>
+                        <option value="" className="py-2">
+                          Select a state
+                        </option>
                         {states.map((state) => (
                           <option key={state.code} value={state.code}>
                             {state.name}
@@ -1888,7 +1879,10 @@ const Form: React.FC = () => {
                 {/* Repeated Fields */}
                 {[
                   { name: "accountnumber", label: "Account Number" },
-                  { name: "pinorpassword", label: "Account Passcode/Port Out Pin/Number Transfer Pin" },
+                  {
+                    name: "pinorpassword",
+                    label: "Account Passcode/Port Out Pin/Number Transfer Pin",
+                  },
                   { name: "ssnortaxid", label: "SSN or TaxID" },
                   { name: "billingname", label: "Billing Name" },
                   { name: "billingaddress", label: "Billing Address" },
@@ -1947,7 +1941,7 @@ const Form: React.FC = () => {
             </button>
           </div>
         );
-      
+
       case "lineConfig":
         return (
           <div className="flex justify-center items-start">
@@ -1958,29 +1952,10 @@ const Form: React.FC = () => {
               </h3>
               <div className="flex flex-col md:flex-row items-start gap-6 mt-4">
                 <IMEIForm
-                onSecurityCheck={handleSecurityCheck}
-                  imeiNumbers={imeiNumbers}
-                  onImeiNumbersChange={handleImeiNumbersChange}
                   onAccountFieldsChange={handleAccountFieldsChange}
-                  onPhoneNumbersChange={handlePhoneNumbersChange}
-                  onShippingAddressesChange={handleShippingAddressesChange}
+                  onSecurityCheck={handleSecurityCheck}
                   shippingInfos={shippingInfos}
                   carrierInfos={carrierInfos}
-                  tradeSmartphone={tradeSmartphone}
-                  purchaseSmartphone={purchaseSmartphone}
-                  setTradeSmartphone={setTradeSmartphone}
-                  setPurchaseSmartphone={setPurchaseSmartphone}
-                  buyPhoneNumber={buyPhoneNumber}
-                  setBuyPhoneNumber={setBuyPhoneNumber}
-                  phoneUniqueCode={phoneUniqueCode}
-                  setPhoneUniqueCode={setPhoneUniqueCode}
-                  promoCode={promoCode}
-                  setPromoCode={setPromoCode}
-                  handleTradeSmartphoneChange={handleTradeSmartphoneChange}                  
-                  handlePurchaseSmartphoneChange={handlePurchaseSmartphoneChange}
-                  handlePhoneUniqueCodeChange={handlePhoneUniqueCodeChange}
-                  handleBuyPhoneNumberChange={handleBuyPhoneNumberChange}
-                  handlePromoCodeChange={handlePromoCodeChange}
                 />
 
                 {/* <LineConfiguration 
@@ -2241,62 +2216,70 @@ const Form: React.FC = () => {
               {buyNewPhone === "yes" && (
                 <div>
                   <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
-                  <div className="mb-4">
-                    <h6 className="text-sm font-medium text-gray-700">Select Brand</h6>
-                    <select
-                      name="brand"
-                      value={smartphoneDetails.brand}
-                      onChange={handleSmartphoneDetailsChange}
-                      className="border-b h-10 border-gray-300 w-full"
-                    >
-                      <option value="">Select Brand</option>
-                      <option value="apple">Apple</option>
-                      <option value="samsung">Samsung</option>
-                      <option value="google">Google</option>
-                      <option value="motorola">Motorola</option>
-                      <option value="sonim">Sonim</option>
-                      <option value="other">Other</option>
-                    </select>
-                  </div>
-
-                  {smartphoneDetails.brand === "apple" && (
                     <div className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">Select Apple Model</h6>
+                      <h6 className="text-sm font-medium text-gray-700">
+                        Select Brand
+                      </h6>
                       <select
-                        name="model"
-                        value={smartphoneDetails.model}
+                        name="brand"
+                        value={smartphoneDetails.brand}
                         onChange={handleSmartphoneDetailsChange}
                         className="border-b h-10 border-gray-300 w-full"
                       >
-                        <option value="">Select Model</option>
-                        <option value="iphone13">iPhone 13</option>
-                        <option value="iphone14">iPhone 14</option>
-                        <option value="iphone15">iPhone 15</option>
+                        <option value="">Select Brand</option>
+                        <option value="apple">Apple</option>
+                        <option value="samsung">Samsung</option>
+                        <option value="google">Google</option>
+                        <option value="motorola">Motorola</option>
+                        <option value="sonim">Sonim</option>
+                        <option value="other">Other</option>
                       </select>
                     </div>
-                  )}
 
-                  {smartphoneDetails.brand === "samsung" && (
-                    <div className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">Select Samsung Model</h6>
-                      <select
-                        name="model"
-                        value={smartphoneDetails.model}
-                        onChange={handleSmartphoneDetailsChange}
-                        className="border-b h-10 border-gray-300 w-full"
-                      >
-                        <option value="">Select Model</option>
-                        <option value="s24">S24</option>
-                        <option value="s24_fe">S24 FE</option>
-                        <option value="s24_plus">S24 Plus</option>
-                        <option value="s24_ultra">S24 Ultra</option>
-                      </select>
-                    </div>
-                  )}
+                    {smartphoneDetails.brand === "apple" && (
+                      <div className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          Select Apple Model
+                        </h6>
+                        <select
+                          name="model"
+                          value={smartphoneDetails.model}
+                          onChange={handleSmartphoneDetailsChange}
+                          className="border-b h-10 border-gray-300 w-full"
+                        >
+                          <option value="">Select Model</option>
+                          <option value="iphone13">iPhone 13</option>
+                          <option value="iphone14">iPhone 14</option>
+                          <option value="iphone15">iPhone 15</option>
+                        </select>
+                      </div>
+                    )}
+
+                    {smartphoneDetails.brand === "samsung" && (
+                      <div className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700">
+                          Select Samsung Model
+                        </h6>
+                        <select
+                          name="model"
+                          value={smartphoneDetails.model}
+                          onChange={handleSmartphoneDetailsChange}
+                          className="border-b h-10 border-gray-300 w-full"
+                        >
+                          <option value="">Select Model</option>
+                          <option value="s24">S24</option>
+                          <option value="s24_fe">S24 FE</option>
+                          <option value="s24_plus">S24 Plus</option>
+                          <option value="s24_ultra">S24 Ultra</option>
+                        </select>
+                      </div>
+                    )}
                   </div>
                   <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
                     <div className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">Select Color</h6>
+                      <h6 className="text-sm font-medium text-gray-700">
+                        Select Color
+                      </h6>
                       <select
                         name="color"
                         value={smartphoneDetails.color}
@@ -2313,7 +2296,9 @@ const Form: React.FC = () => {
                     </div>
 
                     <div className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">Select Data Storage Capacity</h6>
+                      <h6 className="text-sm font-medium text-gray-700">
+                        Select Data Storage Capacity
+                      </h6>
                       <select
                         name="size"
                         value={smartphoneDetails.size}
@@ -2542,12 +2527,12 @@ const Form: React.FC = () => {
           <div className="flex justify-center mt-6">
             {activeTab === "paymentInfo" ? (
               <button
-                type="submit" disabled={isFormBlocked} // Submit button triggers the form's onSubmit handler
+                type="submit"
+                disabled={isFormBlocked} // Submit button triggers the form's onSubmit handler
                 className="bg-green-500 text-white px-6 py-2 rounded"
               >
                 Submit
               </button>
-              
             ) : (
               <button
                 type="button"
@@ -2570,10 +2555,13 @@ const Form: React.FC = () => {
             </p>
           )}
 
+
+
           {isFormBlocked && (
-             <p className="text-center text-red mt-4">
-             Form cannot be submitted. Please check if the IMEI you've input is correct.
-           </p>
+            <p className="text-center text-red mt-4">
+              Form cannot be submitted. Please check if the IMEI you've input is
+              correct.
+            </p>
           )}
         </div>
       </section>

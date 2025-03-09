@@ -47,13 +47,17 @@ const UpdateOrder: React.FC = () => {
   const [cardType, setCardType] = useState("");
   const [ratePlan, setRatePlan] = useState("");
   const [isFormBlocked, setIsFormBlocked] = useState(false);
-  const [buyNewPhone, setBuyNewPhone] = useState("");
-  const [smartphoneDetails, setSmartphoneDetails] = useState({
-    brand: "",
-    model: "",
-    color: "",
-    size: "",
-  });
+    const [smartphoneDetails, setSmartphoneDetails] = useState({
+      brand: "",
+      model: "",
+      color: "",
+      size: "",
+    });
+
+  // Callback function to receive updated accountFields data
+  const handleAccountFieldsChange = (updatedAccountFields) => {
+    setAccountFields(updatedAccountFields); // Update state in the parent
+  };
 
   const { id } = useParams(); // Get the order ID from the URL
   const [formData, setFormData] = useState({
@@ -127,19 +131,68 @@ const UpdateOrder: React.FC = () => {
   };
 
   const handleBuyNewPhoneChange = (e) => {
-    setFormData({ ...formData, buyNewPhone: e.target.value });
+    const { value } = e.target;
+    setFormData((prev) => ({ ...prev, buyNewPhone: value }));
+    if (value !== "accepted") {
+      setFormData((prev) => ({
+        ...prev,
+        phonemodel: "", // Reset phone model
+        imeistatus: "", // Reset IMEI status
+        noCracks: "", // Reset no cracks
+        screenDefects: "", // Reset screen defects
+        factoryReset: "", // Reset factory reset
+      }));
+    }
   };
 
-  const handleSmartphoneDetailsChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
-      smartphoneDetails: {
-        ...prevData.smartphoneDetails,
-        [name]: value,
-      },
-    }));
+  
+
+
+  const handleSmartphoneDetailsChange = (
+    e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  ) => {
+    const { name, value, type } = e.target;
+  
+    if (type === "radio" || name === "phonemodel") {
+      // Handle radio button changes
+      setFormData((prev) => ({ ...prev, [name]: value }));
+    } else {
+      // Handle dropdown changes
+      setSmartphoneDetails((prev) => {
+        const updatedDetails = { ...prev, [name]: value };
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          smartphoneDetails: updatedDetails,
+        }));
+        return updatedDetails;
+      });
+    }
   };
+
+
+
+  
+  // const handleSmartphoneDetailsChange = (
+  //   e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
+  // ) => {
+  //   const { name, value } = e.target;
+  
+  //   if (name === "phonemodel") {
+  //     // Update the phonemodel field in formData
+  //     setFormData((prev) => ({ ...prev, [name]: value }));
+  //   } else {
+  //     // Handle other smartphone details (brand, model, color, size)
+  //     setSmartphoneDetails((prev) => {
+  //       const updatedDetails = { ...prev, [name]: value };
+  //       setFormData((prevFormData) => ({
+  //         ...prevFormData,
+  //         smartphoneDetails: updatedDetails,
+  //       }));
+  //       return updatedDetails;
+  //     });
+  //   }
+  // };
+
 
   const customerData = {
     businesslegalname: formData.businesslegalname,
@@ -399,16 +452,17 @@ const UpdateOrder: React.FC = () => {
       },
     ]);
   };
+
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const navigate = useNavigate();
   const token = localStorage.getItem("jwt_token");
 
   const handleSecurityCheck = (status) => {
-    console.log("Security Check Status:", status);
     setIsFormBlocked(!status); // If status is false, block the form
   };
 
+  const [initialOrderData, setInitialOrderData] = useState({});
   useEffect(() => {
     if (!token) {
       Swal.fire({
@@ -434,6 +488,8 @@ const UpdateOrder: React.FC = () => {
 
         if (response.status === 200) {
           const orderData = response.data.order; // Assuming we want the order data
+          setFormData(orderData);
+          setInitialOrderData(orderData); // Store initial data for comparison
           setFormData((prev) => ({
             ...prev,
             name: orderData.name || "",
@@ -456,25 +512,35 @@ const UpdateOrder: React.FC = () => {
               color: orderData.smartphoneDetails.color || "",
               size: orderData.smartphoneDetails.size || "",
             },
-
-            billtomobile: orderData.billtomobile || "",
-            paymentMethod: orderData.paymentMethod || "",
-            creditcardpayment: orderData.creditcardpayment || "",
-            cardHolderName: orderData.cardHolderName || "",
-            cardNumber: orderData.cardNumber || "",
-            cardExpiry: orderData.cardExpiry || "",
-            cardCVC: orderData.cardCVC || "",
-            cardBillingAddress: orderData.cardBillingAddress || "",
-            cardType: orderData.cardType || "",
-            accountHolderName: orderData.accountHolderName || "",
-            sameAddress: orderData.sameAddress || "",
-            routingNumber: orderData.routingNumber || "",
-            checkingAccountNumber: orderData.checkingAccountNumber || "",
-            singleormultiaddresshipment: orderData.singleormultiaddresshipment || "",
-            businesslegalname : orderData.customerId.businesslegalname
+            paperless: orderData.paperless || "",
+            billtomobile: orderData.customerId.billtomobile || "",
+            paymentMethod: orderData.customerId.paymentMethod || "",
+            creditcardpayment: orderData.customerId.creditcardpayment || "",
+            cardHolderName: orderData.customerId.cardHolderName || "",
+            cardNumber: orderData.customerId.cardNumber || "",
+            cardExpiry: orderData.customerId.cardExpiry || "",
+            cardCVC: orderData.customerId.cardCVC || "",
+            cardBillingAddress: orderData.customerId.cardBillingAddress || "",
+            cardType: orderData.customerId.cardType || "",
+            accountHolderName: orderData.customerId.accountHolderName || "",
+            sameAddress: orderData.customerId.sameAddress || "",
+            routingNumber: orderData.customerId.routingNumber || "",
+            checkingAccountNumber:
+              orderData.customerId.checkingAccountNumber || "",
+            singleormultiaddresshipment:
+              orderData.customerId.singleormultiaddresshipment || "",
+            businesslegalname: orderData.customerId.businesslegalname,
+            businessaddress: orderData.customerId.businessaddress,
+            businesscity: orderData.customerId.businesscity,
+            businessstate: orderData.customerId.businessstate,
+            businesszip: orderData.customerId.businesszip,
+            taxid: orderData.customerId.taxid,
+            locationid: orderData.customerId.locationid,
+            contactname: orderData.customerId.contactname,
+            contactphone: orderData.customerId.contactphone,
+            contactemail: orderData.customerId.contactemail,
           }));
 
-          console.log(orderData)
           // Set existing shipping information
           if (orderData.shippingAddresses) {
             setShippingInfos(orderData.shippingAddresses);
@@ -496,18 +562,19 @@ const UpdateOrder: React.FC = () => {
               purchaseSmartphone: account.purchaseSmartphone || false,
               shippingAddress: account.shippingAddress
                 ? {
-                    attentionName: account.shippingAddress.attentionName || "",
-                    address: account.shippingAddress.address || "",
-                    city: account.shippingAddress.city || "",
-                    state: account.shippingAddress.state || "",
-                    zip: account.shippingAddress.zip || "",
+                    attentionname: account.shippingAddress.attentionname || "",
+                    shippingaddress:
+                      account.shippingAddress.shippingaddress || "",
+                    shippingcity: account.shippingAddress.shippingcity || "",
+                    shippingstate: account.shippingAddress.shippingstate || "",
+                    shippingzip: account.shippingAddress.shippingzip || "",
                   }
                 : {
-                    attentionName: "",
-                    address: "",
-                    city: "",
-                    state: "",
-                    zip: "",
+                    attentionname: "",
+                    shippingaddress: "",
+                    shippingcity: "",
+                    shippingstate: "",
+                    shippingzip: "",
                   },
             }));
             setAccountFields(formattedAccounts); // Set formatted accounts
@@ -531,63 +598,73 @@ const UpdateOrder: React.FC = () => {
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
   };
 
-  const validateForm = (): boolean => {
-    const newErrors: Record<string, string> = {};
-    if (!formData.sansPartnerID)
-      newErrors.sansPartnerID = "SANS Partner ID is required.";
-    if (!formData.agreementtype)
-      newErrors.agreementtype = "Agreement Type is required.";
-    // Add other validations as necessary
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0; // Return true if no errors
-  };
-
-  const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if (validateForm()) { // Ensure you have a validateForm function to validate inputs
-      try {
-        const response = await axios.put(
-          `https://springprobackend-production.up.railway.app/api/order/update-order/${id}`,
-          {
-            ...formData, // Include the form data
-            customerData: { // Include customer data if needed
-              businesslegalname: formData.businesslegalname,
-              businessaddress: formData.businessaddress,
-              businesscity: formData.businesscity,
-              businessstate: formData.businessstate,
-              businesszip: formData.businesszip,
-              taxid: formData.taxid,
-              contactname: formData.contactname,
-              contactphone: formData.contactphone,
-              contactemail: formData.contactemail,
-              // Add other customer fields as necessary
-            },
-            carrierInfos: carrierInfos, // Include carrier information
-            accountFields: accountFields, // Include account fields from the IMEI form
-            shippingAddresses: shippingInfos, // Include shipping addresses
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Include the token for authorization
-            },
-          }
-        );
-  
-        if (response.status === 200) {
-          console.log("Order updated successfully!");
-          setIsSubmitted(true); // Set submitted state to true
-          // Optionally, redirect or show a success message
+
+    // Function to compare and return only changed fields
+    const getChangedFields = (initial, current) => {
+      const changes = {};
+      for (const key in current) {
+        if (JSON.stringify(initial[key]) !== JSON.stringify(current[key])) {
+          changes[key] = current[key];
         }
-      } catch (error) {
-        console.error("There was an error updating the order:", error.message);
-        setErrors((prev) => ({
-          ...prev,
-          submit: "An error occurred while updating the order.",
-        }));
       }
+      return changes;
+    };
+
+    // Get the initial order data (you need to store this when fetching the order)
+    const initialOrderData = {
+      // Populate this with the initial data fetched from the backend
+    };
+
+    // Get only the changed fields
+    const changedFields = getChangedFields(initialOrderData, formData);
+
+    const payload = {
+      ...changedFields,
+      customerData: {
+        businesslegalname: formData.businesslegalname,
+        businessaddress: formData.businessaddress,
+        businesscity: formData.businesscity,
+        businessstate: formData.businessstate,
+        businesszip: formData.businesszip,
+        taxid: formData.taxid,
+        contactname: formData.contactname,
+        contactphone: formData.contactphone,
+        contactemail: formData.contactemail,
+      },
+      carrierInfos,
+      accountFields,
+      shippingAddresses: shippingInfos,
+    };
+
+    console.log("Payload being sent to the backend:", payload);
+
+    try {
+      console.log("Submitting accountFields:", accountFields);
+      const response = await axios.put(
+        `https://springprobackend-production.up.railway.app/api/order/update-order/${id}`,
+        payload,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        console.log("Order updated successfully!");
+        setIsSubmitted(true);
+        navigate(`/single-order-details/${id}`);
+      }
+    } catch (error) {
+      console.error("There was an error updating the order:", error.message);
+      setErrors((prev) => ({
+        ...prev,
+        submit: "An error occurred while updating the order.",
+      }));
     }
   };
-  
 
   return (
     <>
@@ -667,7 +744,7 @@ const UpdateOrder: React.FC = () => {
                 {/* Second Row */}
                 <div id="accountInfoSection">
                   {/* Secondary Heading */}
-                  {formData.atntaccount === "accepted" && (
+                  {formData.businesslegalname !== null && (
                     <div>
                       <h4 className="font-bold text-gray-700 mb-6 mt-3">
                         Account Information
@@ -936,8 +1013,8 @@ const UpdateOrder: React.FC = () => {
                       onSecurityCheck={handleSecurityCheck}
                       shippingInfos={shippingInfos}
                       carrierInfos={carrierInfos}
-                      accountFields={accountFields} // Pass account fields
-                      setAccountFields={setAccountFields} // Pass setter function
+                      onAccountFieldsChange={handleAccountFieldsChange}
+                      initialAccountFields={accountFields}
                     />
                   </div>
 
@@ -1027,7 +1104,7 @@ const UpdateOrder: React.FC = () => {
                     {formData.buyNewPhone === "accepted" && (
                       <div className="col-span-full">
                         {/* Phone Model Dropdown */}
-                        <div className="mt-6">
+                        <div>
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             Phone Model
                           </label>
@@ -1158,7 +1235,7 @@ const UpdateOrder: React.FC = () => {
                         </div>
 
                         {/* Factory Reset & Log out of All Accounts */}
-                        <div className="mt-4">
+                        <div className="mt-4 mb-4">
                           <h6 className="text-sm font-medium text-gray-700 mb-2">
                             Factory Reset & Log out of all Accounts?
                           </h6>
@@ -1191,6 +1268,111 @@ const UpdateOrder: React.FC = () => {
                               {errors.factoryReset}
                             </p>
                           )}
+                        </div>
+                      </div>
+                    )}
+
+                    {formData.buyNewPhone === "yes" && (
+                      <div>
+                        <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
+                          <div className="mb-4">
+                            <h6 className="text-sm font-medium text-gray-700">
+                              Select Brand
+                            </h6>
+                            <select
+                              name="brand"
+                              value={smartphoneDetails.brand}
+                              onChange={handleSmartphoneDetailsChange}
+                              className="border-b h-10 border-gray-300 w-full"
+                            >
+                              <option value="">Select Brand</option>
+                              <option value="apple">Apple</option>
+                              <option value="samsung">Samsung</option>
+                              <option value="google">Google</option>
+                              <option value="motorola">Motorola</option>
+                              <option value="sonim">Sonim</option>
+                              <option value="other">Other</option>
+                            </select>
+                          </div>
+
+                          {smartphoneDetails.brand === "apple" && (
+                            <div className="mb-4">
+                              <h6 className="text-sm font-medium text-gray-700">
+                                Select Apple Model
+                              </h6>
+                              <select
+                                name="model"
+                                value={smartphoneDetails.model}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="border-b h-10 border-gray-300 w-full"
+                              >
+                                <option value="">Select Model</option>
+                                <option value="iphone13">iPhone 13</option>
+                                <option value="iphone14">iPhone 14</option>
+                                <option value="iphone15">iPhone 15</option>
+                              </select>
+                            </div>
+                          )}
+
+                          {smartphoneDetails.brand === "samsung" && (
+                            <div className="mb-4">
+                              <h6 className="text-sm font-medium text-gray-700">
+                                Select Samsung Model
+                              </h6>
+                              <select
+                                name="model"
+                                value={smartphoneDetails.model}
+                                onChange={handleSmartphoneDetailsChange}
+                                className="border-b h-10 border-gray-300 w-full"
+                              >
+                                <option value="">Select Model</option>
+                                <option value="s24">S24</option>
+                                <option value="s24_fe">S24 FE</option>
+                                <option value="s24_plus">S24 Plus</option>
+                                <option value="s24_ultra">S24 Ultra</option>
+                              </select>
+                            </div>
+                          )}
+                        </div>
+                        <div className="grid grid-cols-1 mt-4 md:grid-cols-2 gap-6">
+                          <div className="mb-4">
+                            <h6 className="text-sm font-medium text-gray-700">
+                              Select Color
+                            </h6>
+                            <select
+                              name="color"
+                              value={smartphoneDetails.color}
+                              onChange={handleSmartphoneDetailsChange}
+                              className="border-b h-10 border-gray-300 w-full"
+                            >
+                              <option value="">Select Color</option>
+                              <option value="black">Black</option>
+                              <option value="white">White</option>
+                              <option value="blue">Blue</option>
+                              <option value="red">Red</option>
+                              <option value="green">Green</option>
+                            </select>
+                          </div>
+
+                          <div className="mb-4">
+                            <h6 className="text-sm font-medium text-gray-700">
+                              Select Data Storage Capacity
+                            </h6>
+                            <select
+                              name="size"
+                              value={smartphoneDetails.size}
+                              onChange={handleSmartphoneDetailsChange}
+                              className="border-b h-10 border-gray-300 w-full"
+                            >
+                              <option value="">Select Storage</option>
+                              <option value="64gb">64GB</option>
+                              <option value="128gb">128GB</option>
+                              <option value="256gb">256GB</option>
+                              <option value="512gb">512GB</option>
+                              <option value="1tb">1TB</option>
+                              <option value="2tb">2TB</option>
+                            </select>
+                          </div>
                         </div>
                       </div>
                     )}
@@ -1519,6 +1701,12 @@ const UpdateOrder: React.FC = () => {
                 >
                   Update Order
                 </button>
+
+                {isSubmitted && (
+                  <p className="text-center text-green-500 mt-4">
+                    Order Updated Successfully!
+                  </p>
+                )}
                 {errors.submit && (
                   <p className="text-red-500 ">{errors.submit}</p>
                 )}
