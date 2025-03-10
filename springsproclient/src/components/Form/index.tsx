@@ -621,6 +621,48 @@ const Form: React.FC = () => {
     fetchIMEINumbers();
   }, [navigate]);
 
+  const accountinfohandleChange = (
+    e: React.ChangeEvent<
+      HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
+    >
+  ) => {
+    const { name, value } = e.target;
+  
+    let formattedValue = value;
+  
+    // Format Tax ID (123-6125351)
+    if (name === "taxid") {
+      // Remove all non-numeric characters
+      const numericValue = value.replace(/\D/g, "");
+      // Add a dash after the first 3 digits
+      if (numericValue.length > 3) {
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 10)}`;
+      } else {
+        formattedValue = numericValue;
+      }
+    }
+  
+    // Format Contact Phone (123-456-7890)
+    if (name === "contactphone") {
+      // Remove all non-numeric characters
+      const numericValue = value.replace(/\D/g, "");
+      // Add dashes after the first 3 and 6 digits
+      if (numericValue.length > 6) {
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 6)}-${numericValue.slice(6, 10)}`;
+      } else if (numericValue.length > 3) {
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 6)}`;
+      } else {
+        formattedValue = numericValue;
+      }
+    }
+  
+    // Update form data
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: formattedValue,
+    }));
+  };
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -1198,87 +1240,74 @@ const Form: React.FC = () => {
 
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
-              <div>
-                <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-                  New Account Information
-                </h2>
+            <div>
+              <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+                New Account Information
+              </h2>
 
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  {[
-                    {
-                      name: "businesslegalname",
-                      label: "Business Legal Name",
-                      placeholder: "Enter Business Legal Name",
-                    },
-                    {
-                      name: "businessaddress",
-                      label: "Business Address",
-                      placeholder: "Enter Business Address",
-                    },
-                    {
-                      name: "businesscity",
-                      label: "Business City",
-                      placeholder: "Enter Business City",
-                    },
-                    {
-                      name: "businessstate",
-                      label: "Business State",
-                      placeholder: "Enter Business State",
-                    },
-                    {
-                      name: "businesszip",
-                      label: "Business Zip",
-                      placeholder: "Enter Business Zip",
-                    },
-                    {
-                      name: "taxid",
-                      label: "Tax ID",
-                      placeholder: "Enter Tax ID",
-                    },
-                    {
-                      name: "contactname",
-                      label: "Contact Name",
-                      placeholder: "Enter Contact Name",
-                    },
-                    {
-                      name: "contactphone",
-                      label: "Contact Phone",
-                      placeholder: "Enter Contact Phone",
-                    },
-                    {
-                      name: "contactemail",
-                      label: "Contact Email",
-                      placeholder: "Enter Contact Email",
-                    },
-                  ].map((field, index) => (
-                    <div key={index} className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">
-                        {field.label}
-                      </h6>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                {[
+                  { name: "businesslegalname", label: "Business Legal Name", placeholder: "Enter Business Legal Name" },
+                  { name: "businessaddress", label: "Business Address", placeholder: "Enter Business Address" },
+                  { name: "businesscity", label: "Business City", placeholder: "Enter Business City" },
+                  { name: "businessstate", label: "Business State", placeholder: "Enter Business State", isDropdown: true },
+                  { name: "businesszip", label: "Business Zip", placeholder: "Enter Business Zip" },
+                  { name: "taxid", label: "Tax ID", placeholder: "Enter Tax ID" },
+                  { name: "contactname", label: "Contact Name", placeholder: "Enter Contact Name" },
+                  { name: "contactphone", label: "Contact Phone", placeholder: "Enter Contact Phone" },
+                  { name: "contactemail", label: "Contact Email", placeholder: "Enter Contact Email" },
+                ].map((field, index) => (
+                  <div key={index} className="mb-4">
+                    <h6 className="text-sm font-medium text-gray-700">
+                      {field.label}
+                    </h6>
 
-                      {/* Exclude Existing BAN and FAN from regular input rendering */}
-                      {field.name !== "existingBAN" &&
-                        field.name !== "existingFAN" && (
-                          <input
-                            type="text"
-                            name={field.name}
-                            placeholder={field.placeholder}
-                            value={formData[field.name]}
-                            onChange={handleChange}
-                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                          />
-                        )}
+                    {/* Render dropdown if isDropdown is true, otherwise render input */}
+                    {field.isDropdown ? (
+                      <select
+                        name={field.name}
+                        value={formData[field.name]}
+                        onChange={(e) => accountinfohandleChange(e)}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                      >
+                        <option value="" className="py-2">
+                          Select a state
+                        </option>
+                        {states.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {state.name}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        value={formData[field.name]}
+                        onChange={accountinfohandleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        // Add maxLength for phone and tax ID fields
+                        maxLength={
+                          field.name === "contactphone"
+                            ? 12 // 123-456-7890 (12 characters)
+                            : field.name === "taxid"
+                            ? 10 // 123-6125351 (10 characters)
+                            : undefined
+                        }
+                      />
+                    )}
 
-                      {errors[field.name] && (
-                        <p className="text-red-500 text-sm">
-                          {errors[field.name]}
-                        </p>
-                      )}
-                    </div>
-                  ))}
-                </div>
+                    {errors[field.name] && (
+                      <p className="text-red-500 text-sm">
+                        {errors[field.name]}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
-            )}
+            </div>
+          )}
           </div>
         );
 
@@ -1735,7 +1764,7 @@ const Form: React.FC = () => {
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
                   {index > 0 && (
                     <h4 className="text-lg font-semibold">
-                      Shipping Port Information {index + 1}
+                      Order Shipping Information {index + 1}
                     </h4>
                   )}
                   {index > 0 && (
@@ -1757,13 +1786,9 @@ const Form: React.FC = () => {
                 {[
                   { name: "attentionname", label: "Attention Name" },
                   { name: "shippingaddress", label: "Shipping Address" },
-                  {
-                    name: "shippingstate",
-                    label: "Shipping State",
-                    isDropdown: true,
-                  },
-                  { name: "shippingzip", label: "Shipping Zip" },
                   { name: "shippingcity", label: "Shipping City" },
+                  { name: "shippingstate", label: "Shipping State", isDropdown: true},
+                  { name: "shippingzip", label: "Shipping Zip" },
                 ].map(({ name, label, isDropdown }) => (
                   <div className="mb-4" key={name}>
                     <h6 className="text-sm font-medium text-gray-700 mb-2">
@@ -1843,7 +1868,7 @@ const Form: React.FC = () => {
             {carrierInfos.map((info, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pb-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
                 {/* Header with Remove Button */}
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
@@ -1868,7 +1893,7 @@ const Form: React.FC = () => {
                 </div>
 
                 {/* Carrier Information Fields */}
-                <div className="mb-4">
+                <div className="mb-2">
                   <h6 className="text-sm font-medium text-gray-700 mb-2">
                     Select Carrier
                   </h6>
@@ -1895,10 +1920,8 @@ const Form: React.FC = () => {
                 {/* Repeated Fields */}
                 {[
                   { name: "accountnumber", label: "Account Number" },
-                  {
-                    name: "pinorpassword",
-                    label: "Account Passcode/Port Out Pin/Number Transfer Pin",
-                  },
+                  { name: "pinorpassword", label: "Account Passcode/Port Out Pin/Number Transfer Pin"},
+                  { name: "phonenumber", label: "Phone Number" },
                   { name: "ssnortaxid", label: "SSN or TaxID" },
                   { name: "billingname", label: "Billing Name" },
                   { name: "billingaddress", label: "Billing Address" },
@@ -1906,9 +1929,8 @@ const Form: React.FC = () => {
                   { name: "billingstate", label: "Billing State" },
                   { name: "billingzip", label: "Billing Zip" },
                   { name: "authorizedname", label: "Authorized Name" },
-                  { name: "phonenumber", label: "Phone Number" }, // Add this field
                 ].map(({ name, label }) => (
-                  <div className="mb-4" key={name}>
+                  <div className="mb-2" key={name}>
                     <h6 className="text-sm font-medium text-gray-700 mb-2">
                       {label}
                     </h6>
@@ -1929,7 +1951,7 @@ const Form: React.FC = () => {
                 ))}
 
                 {/* Unique Code (Read-Only Field) */}
-                <div className="mb-4">
+                <div className="mb-2">
                   <h6 className="text-sm font-medium text-gray-700 mb-2">
                     Unique Code
                   </h6>

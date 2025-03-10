@@ -528,18 +528,6 @@ function IMEIForm({
                       "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
                   }}>
                     <div>
-                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
-                      <select
-                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                        value={account.tradeSmartphone ? "trade" : "notrade"}
-                        onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
-                      >
-                        <option value="trade">I Want to Trade Smartphone</option>
-                        <option value="notrade">Bring Your Own Phone</option>
-                      </select>
-                    </div>
-
-                    <div>
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Purchase Smart Phone?</label>
                       <select
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
@@ -553,7 +541,19 @@ function IMEIForm({
                     </div>
 
                     <div>
-                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Want to Buy New Phone Number?</label>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
+                      <select
+                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                        value={account.tradeSmartphone ? "trade" : "notrade"}
+                        onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
+                      >
+                        <option value="trade">I Want to Trade Smartphone</option>
+                        <option value="notrade">Bring Your Own Phone</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Are You Porting New Phone Number?</label>
                       <select
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         value={account.buyPhoneNumber ? "true" : "false"}
@@ -561,8 +561,8 @@ function IMEIForm({
                           handleFieldChange(index, "buyPhoneNumber", e.target.value === "true")
                         }
                       >
-                        <option value="true">Yes</option>
-                        <option value="false">No</option>
+                        <option value="true">Buying New Phone Number</option>
+                        <option value="false">Not Porting</option>
                       </select>
                     </div>
                   </div>
