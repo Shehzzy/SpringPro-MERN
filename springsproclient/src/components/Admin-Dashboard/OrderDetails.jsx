@@ -413,6 +413,16 @@ function OrderDetails() {
                 <p>This order does not include a trade-in smartphone.</p>
               )}
 
+              {/* Admin Notes Section */}
+            <h2 className="text-xl font-bold my-6 text-cyan-blue">Admin Notes</h2>
+            <div className="mb-6 p-4 border rounded-lg bg-white">
+              {order.notes ? (
+                <p>{order.notes}</p>
+              ) : (
+                <p>No admin notes available.</p>
+              )}
+            </div>
+
             </div>
             <button
               onClick={exportToExcel}

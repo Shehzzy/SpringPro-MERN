@@ -406,6 +406,16 @@ function IMEIForm({
     if (field === "shippingAddress") {
       // If the field is shippingAddress, update the entire shippingAddress object
       updatedAccounts[index].shippingAddress = value;
+    } else if (field === "carrier") {
+      // If the field is carrier, update the carrier and pre-fill the phone number
+      const selectedCarrier = carrierInfos.find(
+        (carrier) => carrier.uniqueCode === value
+      );
+
+      if (selectedCarrier) {
+        updatedAccounts[index].carrier = value; // Update the carrier
+        updatedAccounts[index].phoneNumber = selectedCarrier.phonenumber || ""; // Pre-fill the phone number
+      }
     } else {
       // Otherwise, update the specific field
       updatedAccounts[index][field] = value;
@@ -571,6 +581,7 @@ function IMEIForm({
                       />
                     </div>
                     {!account.buyPhoneNumber && (
+
                       <div>
                         <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                         <input
@@ -632,43 +643,46 @@ function IMEIForm({
                       <label className="block inter text-sm font-medium text-gray-700 mb-2">Carrier</label>
                       <select
                         value={account.carrier}
-                        onChange={(e) =>
-                          handleFieldChange(index, "carrier", e.target.value)
-                        }
+                        onChange={(e) => handleFieldChange(index, "carrier", e.target.value)}
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                       >
                         <option value="">Select Carrier</option>
-
-                        {carrierInfos.length > 0 && carrierInfos.some(carrier => carrier.currentwirelesscarrier) ? (
+                        {carrierInfos.length > 0 && carrierInfos.some(carrier => carrier.uniqueCode) ? (
                           carrierInfos.map((carrier, idx) =>
-                            carrier.currentwirelesscarrier && (
-                              <option key={idx} value={carrier.currentwirelesscarrier}>
-                                {carrier.currentwirelesscarrier}
+                            carrier.uniqueCode && (
+                              <option key={idx} value={carrier.uniqueCode}>
+                                {carrier.currentwirelesscarrier} - {carrier.uniqueCode}
                               </option>
                             )
                           )
                         ) : (
                           <option disabled>No options available</option>
                         )}
-
-
-
                       </select>
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
                       <select
-                        value={account.shippingAddress.attentionName}
+                        value={account.shippingAddress.uniqueCode} // Save only the uniqueCode
                         onChange={(e) => {
-                          const selectedAddress = shippingInfos.find(info => info.attentionname === e.target.value);
-                          handleFieldChange(index, "shippingAddress", selectedAddress || { attentionName: "", shippingaddress: "", shippingcity: "", shippingstate: "", shippingzip: "" });
+                          const selectedAddress = shippingInfos.find(
+                            (info) => info.uniqueCode === e.target.value
+                          );
+                          handleFieldChange(index, "shippingAddress", selectedAddress || {
+                            attentionName: "",
+                            shippingaddress: "",
+                            shippingcity: "",
+                            shippingstate: "",
+                            shippingzip: "",
+                            uniqueCode: "", // Ensure uniqueCode is part of the shippingAddress object
+                          });
                         }}
                         className="w-full p-2 border border-gray-300 rounded-lg"
                       >
                         <option value="">Select Shipping Address</option>
                         {shippingInfos.map((info, idx) => (
-                          <option key={idx} value={info.attentionname}>
-                            {info.attentionname}
+                          <option key={idx} value={info.uniqueCode}>
+                            {info.attentionname} - {info.uniqueCode} {/* Display both attentionname and uniqueCode */}
                           </option>
                         ))}
                       </select>

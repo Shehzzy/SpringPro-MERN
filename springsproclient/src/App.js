@@ -44,7 +44,6 @@ function App() {
       {/* Manually adding Header and Footer only for specific routes */}
 
       {/* Routes that require Header and Footer */}
-      <CheckAccountStatus />
       <Routes>
         <Route
           path="/"
@@ -72,6 +71,7 @@ function App() {
           path="/your-orders"
           element={
             <>
+              <CheckAccountStatus />
               <Header />
               <div className="overflow-x-hidden ">
                 <Orders />
@@ -111,6 +111,7 @@ function App() {
           path="/order-form"
           element={
             <>
+              <CheckAccountStatus />
               <Header />
               <div className="overflow-x-hidden ">
                 <Form />
@@ -234,6 +235,8 @@ function App() {
           path="/admin-all-users"
           element={
             <div className="overflow-x-hidden ">
+              <CheckAccountStatus />
+
               <AllUsers />
             </div>
           }
@@ -243,6 +246,8 @@ function App() {
           path="/admin-all-orders"
           element={
             <div className="overflow-x-hidden ">
+              <CheckAccountStatus />
+
               <AllOrders />
             </div>
           }
@@ -252,6 +257,8 @@ function App() {
           path="/single-order-details/:orderId"
           element={
             <div className="overflow-x-hidden ">
+              <CheckAccountStatus />
+
               <OrderDetails />
             </div>
           }
@@ -260,7 +267,10 @@ function App() {
         <Route
           path="/update-order/:id"
           element={
+
             <div className="overflow-x-hidden ">
+              <CheckAccountStatus />
+
               <UpdateOrder />
             </div>
           }

@@ -19,6 +19,7 @@ function Orders() {
         text: "You need to log in first to access this page.",
         icon: "warning",
         confirmButtonText: "Go to Login",
+        confirmButtonColor: "#41FDFE",
       }).then(() => {
         navigate("/login");
       });

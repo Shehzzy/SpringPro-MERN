@@ -215,6 +215,7 @@ const Form: React.FC = () => {
       billingzip: "",
       authorizedname: "",
       uniqueCode: "",
+      phonenumber: "", // Add this field
     },
   ]);
 
@@ -231,7 +232,8 @@ const Form: React.FC = () => {
     if (
       name === "currentwirelesscarrier" ||
       name === "accountnumber" ||
-      name === "pinorpassword"
+      name === "pinorpassword" ||
+      name === "phonenumber" // Add this condition
     ) {
       const updatedInfo = { ...carrierInfos[index], [name]: value };
       const uniqueCode = generateUniqueCode(updatedInfo);
@@ -294,18 +296,23 @@ const Form: React.FC = () => {
     return `${attentionname}_${last4ShippingState}_${last4ShippingCity}`;
   };
 
+
   const generateUniqueCode = ({
     currentwirelesscarrier,
     accountnumber,
     pinorpassword,
+    phonenumber, // Add this field
   }) => {
     // Get the last 4 digits of the account number
     const last4AccountNumber = accountnumber.slice(-4);
-
+  
     // Get the last 4 characters of the pin/password
     const last4Pin = pinorpassword.slice(-4);
-
-    return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}`;
+  
+    // Get the last 4 digits of the phone number
+    const last4PhoneNumber = phonenumber.slice(-4);
+  
+    return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}_${last4PhoneNumber}`;
   };
 
   // Function to add a new carrier information entry
@@ -324,6 +331,7 @@ const Form: React.FC = () => {
         billingzip: "",
         authorizedname: "",
         uniqueCode: "",
+        phonenumber: "", // Add this field
       },
     ]);
   };
@@ -749,6 +757,10 @@ const Form: React.FC = () => {
       if (!info.authorizedname) {
         newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
       }
+
+      if(!info.phonenumber){
+        newErrors[`phonenumber_${index}`] = "Phone Number is required";
+      }
     });
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
@@ -975,6 +987,10 @@ const Form: React.FC = () => {
           if (!info.authorizedname) {
             newErrors[`authorizedname_${index}`] =
               "Authorized Name is required.";
+          }
+          if (!info.phonenumber) {
+            newErrors[`phonenumber_${index}`] =
+              "Phone Number is required.";
           }
         });
         break;
@@ -1890,6 +1906,7 @@ const Form: React.FC = () => {
                   { name: "billingstate", label: "Billing State" },
                   { name: "billingzip", label: "Billing Zip" },
                   { name: "authorizedname", label: "Authorized Name" },
+                  { name: "phonenumber", label: "Phone Number" }, // Add this field
                 ].map(({ name, label }) => (
                   <div className="mb-4" key={name}>
                     <h6 className="text-sm font-medium text-gray-700 mb-2">
