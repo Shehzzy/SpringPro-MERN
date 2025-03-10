@@ -31,7 +31,7 @@ function IMEIForm({
           buyPhoneNumber: false,
           tradeSmartphone: false,
           purchaseSmartphone: false,
-          shippingAddress: { attentionname: "", shippingaddress: "", shippingcity: "", shippingstate: "", shippingzip: "" },
+          shippingAddress: { attentionname: "", shippingaddress: "", shippingcity: "", shippingstate: "", shippingzip: "", uniqueCode: "" },
         },
       ]);
     }
@@ -184,13 +184,22 @@ function IMEIForm({
   //   onAccountFieldsChange(updatedAccounts);
   // };
 
-
   const handleFieldChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
 
     if (field === "shippingAddress") {
       // If the field is shippingAddress, update the entire shippingAddress object
       updatedAccounts[index].shippingAddress = value;
+    } else if (field === "carrier") {
+      // If the field is carrier, update the carrier and pre-fill the phone number
+      const selectedCarrier = carrierInfos.find(
+        (carrier) => carrier.uniqueCode === value
+      );
+
+      if (selectedCarrier) {
+        updatedAccounts[index].carrier = value; // Update the carrier
+        updatedAccounts[index].phoneNumber = selectedCarrier.phonenumber || ""; // Pre-fill the phone number
+      }
     } else {
       // Otherwise, update the specific field
       updatedAccounts[index][field] = value;
@@ -298,13 +307,13 @@ function IMEIForm({
 
               {!account.buyPhoneNumber && (
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                  <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                   <input
                     type="text"
                     placeholder="Enter Phone Number"
                     value={account.phoneNumber}
                     onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                   />
                 </div>
               )}
@@ -357,35 +366,50 @@ function IMEIForm({
             {/* Carrier and Shipping Address Fields */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Carrier</label>
+                <label className="block inter text-sm font-medium text-gray-700 mb-2">Carrier</label>
                 <select
                   value={account.carrier}
                   onChange={(e) => handleFieldChange(index, "carrier", e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                 >
                   <option value="">Select Carrier</option>
-                  {carrierInfos.map((carrier, idx) => (
-                    <option key={idx} value={carrier.currentwirelesscarrier}>
-                      {carrier.currentwirelesscarrier}
-                    </option>
-                  ))}
+                  {carrierInfos.length > 0 && carrierInfos.some(carrier => carrier.uniqueCode) ? (
+                    carrierInfos.map((carrier, idx) =>
+                      carrier.uniqueCode && (
+                        <option key={idx} value={carrier.uniqueCode}>
+                          {carrier.currentwirelesscarrier} - {carrier.uniqueCode}
+                        </option>
+                      )
+                    )
+                  ) : (
+                    <option disabled>No options available</option>
+                  )}
                 </select>
               </div>
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Shipping Address</label>
                 <select
-                  value={account.shippingAddress?.attentionname || ""}
+                  value={account.shippingAddress.uniqueCode} // Pre-select based on uniqueCode
                   onChange={(e) => {
-                    const selectedAddress = shippingInfos.find(info => info.attentionname === e.target.value);
-                    handleFieldChange(index, "shippingAddress", selectedAddress || { attentionname: "", shippingaddress: "", shippingcity: "", shippingstate: "", shippingzip: "" });
+                    const selectedAddress = shippingInfos.find(
+                      (info) => info.uniqueCode === e.target.value
+                    );
+                    handleFieldChange(index, "shippingAddress", selectedAddress || {
+                      attentionName: "",
+                      shippingaddress: "",
+                      shippingcity: "",
+                      shippingstate: "",
+                      shippingzip: "",
+                      uniqueCode: "",
+                    });
                   }}
                   className="w-full p-2 border border-gray-300 rounded-lg"
                 >
                   <option value="">Select Shipping Address</option>
                   {shippingInfos.map((info, idx) => (
-                    <option key={idx} value={info.attentionname}>
-                      {info.attentionname}
+                    <option key={idx} value={info.uniqueCode}>
+                      {info.attentionname} - {info.uniqueCode}
                     </option>
                   ))}
                 </select>

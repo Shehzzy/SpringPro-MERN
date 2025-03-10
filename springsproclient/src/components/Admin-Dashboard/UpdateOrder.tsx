@@ -1,4 +1,4 @@
-// ALot of changes left here. 
+// ALot of changes left here.
 
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
@@ -49,12 +49,12 @@ const UpdateOrder: React.FC = () => {
   const [cardType, setCardType] = useState("");
   const [ratePlan, setRatePlan] = useState("");
   const [isFormBlocked, setIsFormBlocked] = useState(false);
-    const [smartphoneDetails, setSmartphoneDetails] = useState({
-      brand: "",
-      model: "",
-      color: "",
-      size: "",
-    });
+  const [smartphoneDetails, setSmartphoneDetails] = useState({
+    brand: "",
+    model: "",
+    color: "",
+    size: "",
+  });
 
   // Callback function to receive updated accountFields data
   const handleAccountFieldsChange = (updatedAccountFields) => {
@@ -147,14 +147,11 @@ const UpdateOrder: React.FC = () => {
     }
   };
 
-  
-
-
   const handleSmartphoneDetailsChange = (
     e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   ) => {
     const { name, value, type } = e.target;
-  
+
     if (type === "radio" || name === "phonemodel") {
       // Handle radio button changes
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -171,14 +168,11 @@ const UpdateOrder: React.FC = () => {
     }
   };
 
-
-
-  
   // const handleSmartphoneDetailsChange = (
   //   e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>
   // ) => {
   //   const { name, value } = e.target;
-  
+
   //   if (name === "phonemodel") {
   //     // Update the phonemodel field in formData
   //     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -194,7 +188,6 @@ const UpdateOrder: React.FC = () => {
   //     });
   //   }
   // };
-
 
   const customerData = {
     businesslegalname: formData.businesslegalname,
@@ -253,6 +246,7 @@ const UpdateOrder: React.FC = () => {
       billingzip: "",
       authorizedname: "",
       uniqueCode: "",
+      phonenumber: "",
     },
   ]);
 
@@ -297,6 +291,7 @@ const UpdateOrder: React.FC = () => {
         billingzip: "",
         authorizedname: "",
         uniqueCode: "",
+        phonenumber: "",
       },
     ]);
   };
@@ -910,6 +905,19 @@ const UpdateOrder: React.FC = () => {
                           )}
                         </div>
                       ))}
+                      {/* Unique Code (Read-Only Field) */}
+                      <div className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700 mb-2">
+                          Unique Code
+                        </h6>
+                        <input
+                          type="text"
+                          name="uniqueCode"
+                          value={info.uniqueCode}
+                          readOnly
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                        />
+                      </div>
                     </div>
                   ))}
 
@@ -955,13 +963,35 @@ const UpdateOrder: React.FC = () => {
                           </button>
                         )}
                       </div>
+                      {/* Carrier Information Fields */}
+                      <div className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700 mb-2">
+                          Select Carrier
+                        </h6>
+                        <select
+                          name="currentwirelesscarrier"
+                          value={info.currentwirelesscarrier}
+                          onChange={(e) => handleCarrierInfoChange(e, index)}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        >
+                          <option value="">
+                            Select Current Wireless Carrier
+                          </option>
+                          {carrierOptions.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                        {errors[`currentwirelesscarrier_${index}`] && (
+                          <p className="text-red-500 text-sm">
+                            {errors[`currentwirelesscarrier_${index}`]}
+                          </p>
+                        )}
+                      </div>
 
                       {/* Carrier Information Fields */}
                       {[
-                        {
-                          name: "currentwirelesscarrier",
-                          label: "Select Carrier",
-                        },
                         { name: "accountnumber", label: "Account Number" },
                         {
                           name: "pinorpassword",
@@ -975,6 +1005,7 @@ const UpdateOrder: React.FC = () => {
                         { name: "billingstate", label: "Billing State" },
                         { name: "billingzip", label: "Billing Zip" },
                         { name: "authorizedname", label: "Authorized Name" },
+                        { name: "phonenumber", label: "Phone Number" }, // Add this field
                       ].map(({ name, label }) => (
                         <div className="mb-4" key={name}>
                           <h6 className="text-sm font-medium text-gray-700 mb-2">
@@ -990,6 +1021,18 @@ const UpdateOrder: React.FC = () => {
                           />
                         </div>
                       ))}
+                      <div className="mb-4">
+                        <h6 className="text-sm font-medium text-gray-700 mb-2">
+                          Unique Code
+                        </h6>
+                        <input
+                          type="text"
+                          name="uniqueCode"
+                          value={info.uniqueCode}
+                          readOnly
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                        />
+                      </div>
                     </div>
                   ))}
 
