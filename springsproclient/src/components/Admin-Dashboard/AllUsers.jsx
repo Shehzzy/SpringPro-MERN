@@ -25,7 +25,6 @@ function AllUsers() {
         title: "Login Required",
         text: "You need to log in first to access this page.",
         icon: "warning",
-        // confirmButtonText: "Go to Login",
         confirmButtonColor: "#41FDFE",
       }).then(() => {
         navigate("/login");
@@ -65,24 +64,120 @@ function AllUsers() {
     }
   };
 
-  // Function to enable/disable user
-  const toggleUserStatus = async (userId, currentStatus) => {
+  const updatePartnerId = async (userId, isEnabled, currentPartnerId) => {
     const token = localStorage.getItem("jwt_token");
 
-    Swal.fire({
-      title: `Are you sure?`,
-      text: `Do you want to ${currentStatus ? "disable" : "enable"} this user?`,
+    // Prompt the admin to enter a new Partner ID
+    const { value: newPartnerId } = await Swal.fire({
+      title: "Update Partner ID",
+      input: "text",
+      inputLabel: "Enter New Partner ID",
+      inputPlaceholder: currentPartnerId || "None", // Show current Partner ID if it exists
+      showCancelButton: true,
+      confirmButtonColor: "#41FDFE",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Update",
+      cancelButtonText: "Cancel",
+      inputValidator: (value) => {
+        if (!value) {
+          return "You need to enter a Partner ID!";
+        }
+      },
+    });
+
+    if (newPartnerId) {
+      try {
+        // Call the API to update the Partner ID while preserving the current status
+        const response = await axios.put(
+          "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+          { userId, isEnabled, partnerId: newPartnerId }, // Pass the current isEnabled status
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        Swal.fire("Success", "Partner ID has been updated successfully!", "success");
+        fetchUsers(); // Refresh the user list
+      } catch (error) {
+        Swal.fire("Error", "Failed to update Partner ID", "error");
+        console.error("Error updating Partner ID:", error);
+      }
+    }
+  };
+
+
+  const toggleUserStatus = async (userId, currentStatus, existingPartnerId) => {
+    const token = localStorage.getItem("jwt_token");
+
+    // Confirmation dialog for enabling/disabling
+    const confirmationMessage = currentStatus
+      ? "Are you sure you want to disable this user?"
+      : "Are you sure you want to enable this user?";
+
+    const { isConfirmed } = await Swal.fire({
+      title: "Are you sure?",
+      text: confirmationMessage,
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#41FDFE",
       cancelButtonColor: "#d33",
-      confirmButtonText: `Yes, ${currentStatus ? "disable" : "enable"}!`,
-    }).then(async (result) => {
-      if (result.isConfirmed) {
+      confirmButtonText: "Yes, proceed!",
+      cancelButtonText: "Cancel",
+    });
+
+    if (!isConfirmed) {
+      return; // Exit if the admin cancels the action
+    }
+
+    // If enabling a user
+    if (!currentStatus) {
+      // Check if the user already has a Partner ID
+      if (existingPartnerId === "None" || !existingPartnerId) {
+        // If partnerId is "None" or doesn't exist, prompt for Partner ID
+        const { value: partnerId } = await Swal.fire({
+          title: "Assign Partner ID",
+          input: "text",
+          inputLabel: "Enter Partner ID",
+          inputPlaceholder: "Partner ID",
+          showCancelButton: true,
+          confirmButtonColor: "#41FDFE",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Enable User",
+          cancelButtonText: "Cancel",
+          inputValidator: (value) => {
+            if (!value) {
+              return "You need to enter a Partner ID!";
+            }
+          },
+        });
+
+        if (partnerId) {
+          try {
+            const response = await axios.put(
+              "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+              { userId, isEnabled: true, partnerId },
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+
+            Swal.fire("Success", response.data.message, "success");
+            fetchUsers(); // Refresh user list
+          } catch (error) {
+            Swal.fire("Error", "Failed to update user status", "error");
+            console.error("Error updating user status:", error);
+          }
+        }
+      } else {
+        // If partnerId is already assigned, enable the user without asking for Partner ID
         try {
           const response = await axios.put(
             "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
-            { userId, isEnabled: !currentStatus },
+            { userId, isEnabled: true },
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -97,8 +192,28 @@ function AllUsers() {
           console.error("Error updating user status:", error);
         }
       }
-    });
+    } else {
+      // Disable user directly (no partner ID needed)
+      try {
+        const response = await axios.put(
+          "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+          { userId, isEnabled: false },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        Swal.fire("Success", response.data.message, "success");
+        fetchUsers(); // Refresh user list
+      } catch (error) {
+        Swal.fire("Error", "Failed to update user status", "error");
+        console.error("Error updating user status:", error);
+      }
+    }
   };
+
 
   const columns = [
     {
@@ -120,33 +235,45 @@ function AllUsers() {
       selector: (row) => row.role,
     },
     {
+      name: "Partner ID",
+      selector: (row) => row.partnerId,
+    },
+    {
       name: "Status",
       cell: (row) => (
         <span
-          className={`px-3 py-1 rounded-lg text-sm font-bold ${
-            row.isEnabled
-              ? "bg-green-200 text-green-800"  // Light green for enabled
-              : "bg-zinc-600 text-white"      // Light red for disabled
-          }`}
+          className={`px-3 py-1 rounded-lg text-sm font-bold ${row.isEnabled
+            ? "bg-green-200 text-green-800"
+            : "bg-zinc-600 text-white"
+            }`}
         >
           {row.isEnabled ? "Active" : "In-Active"}
         </span>
       ),
       sortable: true,
-    }
-,    
-    
+    },
+
     {
       name: "Actions",
       cell: (row) => (
-        <button
-          className={`btn ${row.isEnabled ? "btn-danger" : "btn-success"} btn-sm`}
-          onClick={() => toggleUserStatus(row._id, row.isEnabled)}
-        >
-          {row.isEnabled ? "Disable" : "Enable"}
-        </button>
+        <div className="d-flex gap-2"> {/* Use Bootstrap's flex and gap utilities */}
+          <button
+            className={`btn ${row.isEnabled ? "btn-danger" : "btn-success"} btn-sm`}
+            onClick={() => toggleUserStatus(row._id, row.isEnabled, row.partnerId)}
+          >
+            {row.isEnabled ? "Disable" : "Enable"}
+          </button>
+          <button
+            className=" bg-slate-700 text-white btn-sm"
+            onClick={() => updatePartnerId(row._id, row.isEnabled, row.partnerId)}
+          >
+            Edit SP_ID
+          </button>
+        </div>
       ),
-    },
+    }
+
+
   ];
 
   if (loading) {

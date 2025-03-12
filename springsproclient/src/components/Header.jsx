@@ -3,6 +3,8 @@ import { Link, useNavigate } from 'react-router-dom';
 import logo from "../assets/images/logo.svg";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/20/solid'
+import { jwtDecode } from 'jwt-decode';
+import { decode } from 'punycode';
 
 const Header = () => {
   const navigate = useNavigate();
@@ -11,6 +13,22 @@ const Header = () => {
   const Section = useRef(null);
   const [showLogout, setshowLogout] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [username, setUsername] = useState(''); // State to store the username
+
+
+  const getUsernameFromToken = () => {
+    const token = localStorage.getItem("jwt_token");
+    if (token) {
+      try {
+        const decoded = jwtDecode(token); // Decode the token
+        setUsername(decoded.username); // Assuming the username is stored in the token payload
+        console.log(decoded.username)
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  };
+
 
 
   // Initialize useNavigate hook
@@ -50,6 +68,7 @@ const Header = () => {
     const token = localStorage.getItem("jwt_token");
     if (token) {
       setshowLogout(true);
+      getUsernameFromToken(); // Fetch and set the username
     }
 
     window.addEventListener("scroll", SectionScroll);
@@ -164,7 +183,7 @@ const Header = () => {
                         }}
                         className="inline-flex font-bold text-xs text-white transition-all tracking-wider px-6 py-3 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                       >
-                        PROFILE
+                       {username || "PROFILE"}
                         <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                       </MenuButton>
                     </div>
@@ -283,7 +302,7 @@ const Header = () => {
                           }}
                           className="inline-flex gap-24 font-bold text-md text-white transition-all tracking-wider px-8 py-2.5 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                         >
-                          PROFILE
+                          {username || "PROFILE"}
                           <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                         </MenuButton>
                       </div>
@@ -523,7 +542,7 @@ const Header = () => {
                           }}
                           className="inline-flex gap-24 font-bold text-md text-white transition-all tracking-wider px-8 py-2.5 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                         >
-                          PROFILE
+                          {username || "PROFILE"}
                           <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                         </MenuButton>
                       </div>
@@ -688,7 +707,7 @@ const Header = () => {
                           }}
                           className="inline-flex gap-24 font-bold text-md text-white transition-all tracking-wider px-8 py-2.5 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                         >
-                          PROFILE
+                         {username || "PROFILE"} 
                           <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                         </MenuButton>
                       </div>
@@ -1007,7 +1026,7 @@ const Header = () => {
                           }}
                           className="inline-flex gap-24 font-bold text-md text-white transition-all tracking-wider px-8 py-2.5 border-2 border-tron-blue rounded-full bg-tron-blue hover:scale-85 hover:shadow-lg hover:bg-transparent no-underline"
                         >
-                          PROFILE
+                          {username || "PROFILE"}
                           <ChevronDownIcon aria-hidden="true" className="-mr-1 w-5 h-5 text-white" />
                         </MenuButton>
                       </div>
