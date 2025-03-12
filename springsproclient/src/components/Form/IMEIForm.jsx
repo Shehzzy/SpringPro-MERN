@@ -577,7 +577,7 @@ function IMEIForm({
                     </div>
 
                     <div>
-                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Are You Porting New Phone Number?</label>
+                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Porting Your Phone Number?</label>
                       <select
                         className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
                         value={account.buyPhoneNumber ? "true" : "false"}
