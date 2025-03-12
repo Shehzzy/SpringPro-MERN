@@ -250,6 +250,26 @@ const UpdateOrder: React.FC = () => {
     },
   ]);
 
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/\D/g, "");
+
+    // Limit to 10 digits
+    const limitedValue = numericValue.slice(0, 10);
+
+    // Format as XXX-XXX-XXXX
+    if (limitedValue.length > 6) {
+      return `${limitedValue.slice(0, 3)}-${limitedValue.slice(
+        3,
+        6
+      )}-${limitedValue.slice(6, 10)}`;
+    } else if (limitedValue.length > 3) {
+      return `${limitedValue.slice(0, 3)}-${limitedValue.slice(3, 6)}`;
+    } else {
+      return limitedValue;
+    }
+  };
+
   const handleCarrierInfoChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -266,8 +286,9 @@ const UpdateOrder: React.FC = () => {
             // Ensure phonenumbers is an array
             const updatedPhonenumbers = Array.isArray(info.phonenumbers)
               ? [...info.phonenumbers]
-              : [];
-            updatedPhonenumbers[phoneIndex] = value;
+              : [""];
+            // Format the phone number
+            updatedPhonenumbers[phoneIndex] = formatPhoneNumber(value);
             updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
           } else {
             // Update other fields
@@ -282,6 +303,38 @@ const UpdateOrder: React.FC = () => {
       })
     );
   };
+  // const handleCarrierInfoChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   index: number,
+  //   phoneIndex?: number
+  // ) => {
+  //   const { name, value } = e.target;
+
+  //   setCarrierInfos((prev) =>
+  //     prev.map((info, i) => {
+  //       if (i === index) {
+  //         let updatedInfo = { ...info };
+
+  //         if (name === "phonenumbers" && phoneIndex !== undefined) {
+  //           // Ensure phonenumbers is an array
+  //           const updatedPhonenumbers = Array.isArray(info.phonenumbers)
+  //             ? [...info.phonenumbers]
+  //             : [];
+  //           updatedPhonenumbers[phoneIndex] = value;
+  //           updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
+  //         } else {
+  //           // Update other fields
+  //           updatedInfo = { ...info, [name]: value };
+  //         }
+
+  //         // Generate unique code after updating the info
+  //         const uniqueCode = generateUniqueCode(updatedInfo);
+  //         return { ...updatedInfo, uniqueCode };
+  //       }
+  //       return info;
+  //     })
+  //   );
+  // };
 
   // Function to add a new carrier information entry
   const addCarrierInfo = () => {

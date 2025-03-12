@@ -219,30 +219,51 @@ const Form: React.FC = () => {
     },
   ]);
 
+  const formatPhoneNumber = (value: string): string => {
+    // Remove all non-numeric characters
+    const numericValue = value.replace(/\D/g, "");
+
+    // Limit to 10 digits
+    const limitedValue = numericValue.slice(0, 10);
+
+    // Format as XXX-XXX-XXXX
+    if (limitedValue.length > 6) {
+      return `${limitedValue.slice(0, 3)}-${limitedValue.slice(
+        3,
+        6
+      )}-${limitedValue.slice(6, 10)}`;
+    } else if (limitedValue.length > 3) {
+      return `${limitedValue.slice(0, 3)}-${limitedValue.slice(3, 6)}`;
+    } else {
+      return limitedValue;
+    }
+  };
+
   const handleCarrierInfoChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
     phoneIndex?: number
   ) => {
     const { name, value } = e.target;
-  
+
     setCarrierInfos((prev) =>
       prev.map((info, i) => {
         if (i === index) {
           let updatedInfo = { ...info };
-  
+
           if (name === "phonenumbers" && phoneIndex !== undefined) {
             // Ensure phonenumbers is an array
             const updatedPhonenumbers = Array.isArray(info.phonenumbers)
               ? [...info.phonenumbers]
               : [""];
-            updatedPhonenumbers[phoneIndex] = value;
+            // Format the phone number
+            updatedPhonenumbers[phoneIndex] = formatPhoneNumber(value);
             updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
           } else {
             // Update other fields
             updatedInfo = { ...info, [name]: value };
           }
-  
+
           // Generate unique code after updating the info
           const uniqueCode = generateUniqueCode(updatedInfo);
           return { ...updatedInfo, uniqueCode };
@@ -251,6 +272,39 @@ const Form: React.FC = () => {
       })
     );
   };
+
+  // const handleCarrierInfoChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   index: number,
+  //   phoneIndex?: number
+  // ) => {
+  //   const { name, value } = e.target;
+
+  //   setCarrierInfos((prev) =>
+  //     prev.map((info, i) => {
+  //       if (i === index) {
+  //         let updatedInfo = { ...info };
+
+  //         if (name === "phonenumbers" && phoneIndex !== undefined) {
+  //           // Ensure phonenumbers is an array
+  //           const updatedPhonenumbers = Array.isArray(info.phonenumbers)
+  //             ? [...info.phonenumbers]
+  //             : [""];
+  //           updatedPhonenumbers[phoneIndex] = value;
+  //           updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
+  //         } else {
+  //           // Update other fields
+  //           updatedInfo = { ...info, [name]: value };
+  //         }
+
+  //         // Generate unique code after updating the info
+  //         const uniqueCode = generateUniqueCode(updatedInfo);
+  //         return { ...updatedInfo, uniqueCode };
+  //       }
+  //       return info;
+  //     })
+  //   );
+  // };
 
   const [shippingInfos, setShippingInfos] = useState([
     {
@@ -262,9 +316,6 @@ const Form: React.FC = () => {
       uniqueCode: "",
     },
   ]);
-
-  console.log("Carrier", carrierInfos)
-
   // Function to handle changes in Shipping information fields
   const handleShippingInfoChange = (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -313,13 +364,13 @@ const Form: React.FC = () => {
   }) => {
     // Get the last 4 digits of the account number
     const last4AccountNumber = accountnumber.slice(-4);
-  
+
     // Get the last 4 characters of the pin/password
     const last4Pin = pinorpassword.slice(-4);
-  
+
     // Get the last 4 digits of the first phone number
     const last4PhoneNumber = phonenumbers[0] ? phonenumbers[0].slice(-4) : "";
-  
+
     return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}_${last4PhoneNumber}`;
   };
 
@@ -482,15 +533,15 @@ const Form: React.FC = () => {
   const [debouncedCardType, setDebouncedCardType] = useState("");
 
   // Debounce input change
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedCardNumber(formData.cardNumber);
-    }, 500); // Delay for 500ms after typing stops
+  // useEffect(() => {
+  //   const handler = setTimeout(() => {
+  //     setDebouncedCardNumber(formData.cardNumber);
+  //   }, 500); // Delay for 500ms after typing stops
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [formData.cardNumber]);
+  //   return () => {
+  //     clearTimeout(handler);
+  //   };
+  // }, [formData.cardNumber]);
 
   const [errors, setErrors] = useState<any>({});
   const [state, handleSubmit] = useForm("xanykyav");
@@ -568,6 +619,10 @@ const Form: React.FC = () => {
       }
     };
 
+    fetchIMEINumbers();
+  }, [navigate]);
+
+  useEffect(() => {
     const fetchUserOrderDetails = async () => {
       try {
         const response = await axios.get(
@@ -579,41 +634,36 @@ const Form: React.FC = () => {
 
         if (response.status === 200) {
           const userData = response.data.orders;
-          // console.log(userData, "User Data");
-          if (userData[0]) {
-            // Destructure and pick only the desired fields
-            const {
-              name,
-              email,
-              agreementtype,
-              eip,
-              promotion,
-              paperless,
-              specialinstruction,
-              accountnumber,
-              cardNumber, // Add this
-              cardExpiry, // Add this
-              cardCVC, // Add this
-              sansPartnerID,
-            } = userData[0];
+          const partnerID = response.data.partnerID; // Ensure this is correct
+          console.log("Partner ID from API:", partnerID); // Debugging log
 
-            // Update only the specified fields
+          if (userData[0]) {
             setFormData((prev) => ({
               ...prev,
-              name: name || "",
-              email: email || "",
-              agreementtype: agreementtype || "",
-              eip: eip || "",
-              promotion: promotion || "",
-              paperless: paperless || "",
-              specialinstruction: specialinstruction || "",
-              accountnumber: accountnumber,
-              cardNumber: cardNumber || "", // Add this
-              cardExpiry: cardExpiry || "", // Add this
-              cardCVC: cardCVC || "", // Add this
-              sansPartnerID: sansPartnerID || "", // Add this
+              name: userData[0].name || "",
+              email: userData[0].email || "",
+              agreementtype: userData[0].agreementtype || "",
+              eip: userData[0].eip || "",
+              promotion: userData[0].promotion || "",
+              paperless: userData[0].paperless || "",
+              specialinstruction: userData[0].specialinstruction || "",
+              accountnumber: userData[0].accountnumber || "",
+              cardNumber: userData[0].cardNumber || "",
+              cardExpiry: userData[0].cardExpiry || "",
+              cardCVC: userData[0].cardCVC || "",
+              sansPartnerID: partnerID || "", // Ensure this is set correctly
             }));
+
+            console.log("Updated Form Data:", {
+              ...formData,
+              sansPartnerID: partnerID || "",
+            });
           }
+          
+          setFormData((prev) => ({
+            ...prev,
+            sansPartnerID: partnerID || "",
+          }))
 
           if (userData.length > 0) {
             setIsFirstOrder(false); // Set false if user details are successfully fetched
@@ -625,10 +675,7 @@ const Form: React.FC = () => {
     };
 
     fetchUserOrderDetails();
-
-    fetchIMEINumbers();
-  }, [navigate]);
-
+  }, [token, formData]);
   const accountinfohandleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -815,10 +862,6 @@ const Form: React.FC = () => {
       }
       if (!info.authorizedname) {
         newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
-      }
-
-      if (!info.phonenumber) {
-        newErrors[`phonenumber_${index}`] = "Phone Number is required";
       }
     });
     setErrors(newErrors);
@@ -1047,9 +1090,6 @@ const Form: React.FC = () => {
             newErrors[`authorizedname_${index}`] =
               "Authorized Name is required.";
           }
-          if (!info.phonenumber) {
-            newErrors[`phonenumber_${index}`] = "Phone Number is required.";
-          }
         });
         break;
 
@@ -1125,10 +1165,10 @@ const Form: React.FC = () => {
                   <input
                     type="text"
                     name="sansPartnerID"
-                    placeholder="Enter SANS Partner ID"
                     value={formData.sansPartnerID}
                     onChange={handleChange}
                     className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                    readOnly // Disable if not the first order
                   />
                   {errors.sansPartnerID && (
                     <p className="text-red-500 text-sm">
