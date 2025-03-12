@@ -225,6 +225,27 @@ const Form: React.FC = () => {
     phoneIndex?: number
   ) => {
     const { name, value } = e.target;
+    let formattedValue = value;
+  
+    // Format phone numbers
+    if (name === "phonenumbers" && phoneIndex !== undefined) {
+      // Remove all non-numeric characters
+      const numericValue = value.replace(/\D/g, "");
+      // Add dashes after the first 3 and 6 digits
+      if (numericValue.length > 6) {
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(
+          3,
+          6
+        )}-${numericValue.slice(6, 10)}`;
+      } else if (numericValue.length > 3) {
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(
+          3,
+          6
+        )}`;
+      } else {
+        formattedValue = numericValue;
+      }
+    }
   
     setCarrierInfos((prev) =>
       prev.map((info, i) => {
@@ -236,7 +257,7 @@ const Form: React.FC = () => {
             const updatedPhonenumbers = Array.isArray(info.phonenumbers)
               ? [...info.phonenumbers]
               : [""];
-            updatedPhonenumbers[phoneIndex] = value;
+            updatedPhonenumbers[phoneIndex] = formattedValue; // Use formattedValue here
             updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
           } else {
             // Update other fields
@@ -318,7 +339,7 @@ const Form: React.FC = () => {
     const last4Pin = pinorpassword.slice(-4);
   
     // Get the last 4 digits of the first phone number
-    const last4PhoneNumber = phonenumbers[0] ? phonenumbers[0].slice(-4) : "";
+    const last4PhoneNumber = phonenumbers[0] ? phonenumbers[0].slice(-3) : "";
   
     return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}_${last4PhoneNumber}`;
   };
@@ -1091,7 +1112,7 @@ const Form: React.FC = () => {
           <div className="max-w-4xl mx-auto p-8 bg-white shadow-lg rounded-lg border text-left">
             {/* Heading */}
             <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-              AT&T Account Option
+              Mobility Account Configuration
             </h2>
 
             {/* Form Section */}
@@ -1161,7 +1182,7 @@ const Form: React.FC = () => {
                 {/* Add AT&T Account */}
                 <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
-                    Create AT&T Account?
+                    Create Mobility Account (BAN)?
                   </h6>
                   <select
                     name="atntaccount"
@@ -1204,7 +1225,7 @@ const Form: React.FC = () => {
                   {[
                     {
                       name: "existingBAN",
-                      label: "Existing BAN (AT&T Account)",
+                      label: "Existing BAN",
                       placeholder: "Enter Existing BAN",
                     },
                   ].map((field, index) => (
@@ -1956,10 +1977,7 @@ const Form: React.FC = () => {
                 {/* Shared Fields (Account Number, Pin, etc.) */}
                 {[
                   { name: "accountnumber", label: "Account Number" },
-                  {
-                    name: "pinorpassword",
-                    label: "Account Passcode/Port Out Pin",
-                  },
+                  { name: "pinorpassword", label: "Account Passcode/Port Out Pin" },
                   { name: "ssnortaxid", label: "SSN or TaxID" },
                   { name: "billingname", label: "Billing Name" },
                   { name: "billingaddress", label: "Billing Address" },
@@ -1996,19 +2014,17 @@ const Form: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Array.isArray(info.phonenumbers) &&
                       info.phonenumbers.map((phoneNumber, phoneIndex) => (
-                        <div
-                          key={phoneIndex}
-                          className="flex items-center gap-2"
-                        >
+                        <div key={phoneIndex} className="flex items-center gap-2">
                           <input
                             type="text"
-                            name="phonenumbers"
+                            name="phonenumbers" // Ensure the name is "phonenumbers"
                             placeholder={`Enter Phone Number ${phoneIndex + 1}`}
                             value={phoneNumber}
                             onChange={(e) =>
                               handleCarrierInfoChange(e, index, phoneIndex)
                             }
                             className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                            maxLength={12} // Enforce max length for formatted phone number
                           />
                           <button
                             type="button"
