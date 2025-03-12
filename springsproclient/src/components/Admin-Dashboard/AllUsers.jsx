@@ -256,18 +256,18 @@ function AllUsers() {
     {
       name: "Actions",
       cell: (row) => (
-        <div className="d-flex gap-2"> {/* Use Bootstrap's flex and gap utilities */}
+        <div className="d-flex gap-1 py-1 md:flex-row flex-column justify-content-between">
           <button
-            className={`btn ${row.isEnabled ? "btn-danger" : "btn-success"} btn-sm`}
+            className={`btn rounded ${row.isEnabled ? "btn-danger" : "btn-success"} btn-sm`}
             onClick={() => toggleUserStatus(row._id, row.isEnabled, row.partnerId)}
           >
             {row.isEnabled ? "Disable" : "Enable"}
           </button>
           <button
-            className=" bg-slate-700 text-white btn-sm"
+            className=" bg-slate-500 py-2 px-2 rounded text-center no-underline text-white inter"
             onClick={() => updatePartnerId(row._id, row.isEnabled, row.partnerId)}
           >
-            Edit SP_ID
+            Edit Partner ID
           </button>
         </div>
       ),
