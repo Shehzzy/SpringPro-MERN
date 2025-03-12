@@ -184,29 +184,31 @@ function IMEIForm({
   //   onAccountFieldsChange(updatedAccounts);
   // };
 
+
   const handleFieldChange = (index, field, value) => {
     const updatedAccounts = [...accountFields];
-
+  
     if (field === "shippingAddress") {
       // If the field is shippingAddress, update the entire shippingAddress object
       updatedAccounts[index].shippingAddress = value;
     } else if (field === "carrier") {
-      // If the field is carrier, update the carrier and pre-fill the phone number
+      // If the field is carrier, update the carrier and pre-fill the phone number dropdown
       const selectedCarrier = carrierInfos.find(
         (carrier) => carrier.uniqueCode === value
       );
-
+  
       if (selectedCarrier) {
         updatedAccounts[index].carrier = value; // Update the carrier
-        updatedAccounts[index].phoneNumber = selectedCarrier.phonenumber || ""; // Pre-fill the phone number
+        updatedAccounts[index].phoneNumber = ""; // Reset the phone number initially
+        updatedAccounts[index].carrierPhoneNumbers = selectedCarrier.phonenumbers || []; // Store all phone numbers for the selected carrier
       }
     } else {
       // Otherwise, update the specific field
       updatedAccounts[index][field] = value;
     }
-
+  
     setAccountFields(updatedAccounts);
-
+  
     // Send the updated accountFields back to the parent
     onAccountFieldsChange(updatedAccounts);
   };
@@ -215,15 +217,33 @@ function IMEIForm({
 
   const handleTradeSmartphoneChange = (index, value) => {
     const updatedAccounts = [...accountFields];
-    updatedAccounts[index].tradeSmartphone = value === "trade";
 
-    // If "Trade Smartphone" is selected, automatically enable "Purchase Smartphone"
     if (value === "trade") {
-      updatedAccounts[index].purchaseSmartphone = true;
+      updatedAccounts[index].tradeSmartphone = true;
+      updatedAccounts[index].purchaseSmartphone = true; // If trading, they are purchasing
+    } else if (value === "notrade") {
+      updatedAccounts[index].tradeSmartphone = false;
+      updatedAccounts[index].purchaseSmartphone = false; // If not trading, they are not purchasing
+    } else if (value === "noSmartphone") {
+      updatedAccounts[index].tradeSmartphone = false;
+      updatedAccounts[index].purchaseSmartphone = true; // If no smartphone to trade, they are purchasing
     }
 
     setAccountFields(updatedAccounts);
   };
+
+
+  // const handleTradeSmartphoneChange = (index, value) => {
+  //   const updatedAccounts = [...accountFields];
+  //   updatedAccounts[index].tradeSmartphone = value === "trade";
+
+  //   // If "Trade Smartphone" is selected, automatically enable "Purchase Smartphone"
+  //   if (value === "trade") {
+  //     updatedAccounts[index].purchaseSmartphone = true;
+  //   }
+
+  //   setAccountFields(updatedAccounts);
+  // };
 
   const handlePurchaseSmartphoneChange = (index, value) => {
     const updatedAccounts = [...accountFields];
@@ -255,14 +275,18 @@ function IMEIForm({
             {/* Trade/Purchase Options with Gradient Background */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6 px-3 py-3 rounded bg-slate-600 ">
               <div>
-                <label className="block text-sm font-medium text-white mb-2">Trade Smart Phone?</label>
+                <label className="block inter text-sm font-medium text-gray-700 mb-2">Trade Smart Phone?</label>
                 <select
-                  value={account.tradeSmartphone ? "trade" : "notrade"}
+                  className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+                  value={
+                    account.tradeSmartphone ? "trade" :
+                      account.purchaseSmartphone ? "noSmartphone" : "notrade"
+                  }
                   onChange={(e) => handleTradeSmartphoneChange(index, e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
                 >
                   <option value="trade">I Want to Trade Smartphone</option>
                   <option value="notrade">Bring Your Own Phone</option>
+                  <option value="noSmartphone">I don't have a smartphone to trade</option>
                 </select>
               </div>
 
@@ -306,16 +330,34 @@ function IMEIForm({
               </div>
 
               {!account.buyPhoneNumber && (
+               
                 <div>
-                  <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                  <input
-                    type="text"
-                    placeholder="Enter Phone Number"
-                    value={account.phoneNumber}
-                    onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                    className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                  />
-                </div>
+  <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+  {account.carrierPhoneNumbers && account.carrierPhoneNumbers.length > 1 ? (
+    <select
+      value={account.phoneNumber}
+      onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+      className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+    >
+      <option value="">Select Phone Number</option>
+      {account.carrierPhoneNumbers.map((phoneNumber, idx) => (
+        <option key={idx} value={phoneNumber}>
+          {phoneNumber}
+        </option>
+      ))}
+    </select>
+  ) : (
+    <input
+      type="text"
+      placeholder="Enter Phone Number"
+      value={account.phoneNumber}
+      onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
+      className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+    />
+  )}
+</div>
+
+
               )}
 
               {(account.tradeSmartphone && account.purchaseSmartphone) ||

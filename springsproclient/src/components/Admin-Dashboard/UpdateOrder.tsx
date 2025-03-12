@@ -246,33 +246,41 @@ const UpdateOrder: React.FC = () => {
       billingzip: "",
       authorizedname: "",
       uniqueCode: "",
-      phonenumber: "",
+      phonenumbers: [""], // Array of phone numbers for this carrier
     },
   ]);
 
-  // Function to handle changes in carrier information fields
   const handleCarrierInfoChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
+    phoneIndex?: number
   ) => {
     const { name, value } = e.target;
+
     setCarrierInfos((prev) =>
-      prev.map((info, i) => (i === index ? { ...info, [name]: value } : info))
+      prev.map((info, i) => {
+        if (i === index) {
+          let updatedInfo = { ...info };
+
+          if (name === "phonenumbers" && phoneIndex !== undefined) {
+            // Ensure phonenumbers is an array
+            const updatedPhonenumbers = Array.isArray(info.phonenumbers)
+              ? [...info.phonenumbers]
+              : [];
+            updatedPhonenumbers[phoneIndex] = value;
+            updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
+          } else {
+            // Update other fields
+            updatedInfo = { ...info, [name]: value };
+          }
+
+          // Generate unique code after updating the info
+          const uniqueCode = generateUniqueCode(updatedInfo);
+          return { ...updatedInfo, uniqueCode };
+        }
+        return info;
+      })
     );
-    // Generate unique code whenever a relevant field changes
-    if (
-      name === "currentwirelesscarrier" ||
-      name === "accountnumber" ||
-      name === "pinorpassword"
-    ) {
-      const updatedInfo = { ...carrierInfos[index], [name]: value };
-      const uniqueCode = generateUniqueCode(updatedInfo);
-      setCarrierInfos((prev) =>
-        prev.map((info, i) =>
-          i === index ? { ...updatedInfo, uniqueCode } : info
-        )
-      );
-    }
   };
 
   // Function to add a new carrier information entry
@@ -291,7 +299,7 @@ const UpdateOrder: React.FC = () => {
         billingzip: "",
         authorizedname: "",
         uniqueCode: "",
-        phonenumber: "",
+        phonenumbers: [""],
       },
     ]);
   };
@@ -425,6 +433,7 @@ const UpdateOrder: React.FC = () => {
     currentwirelesscarrier,
     accountnumber,
     pinorpassword,
+    phonenumbers,
   }) => {
     // Get the last 4 digits of the account number
     const last4AccountNumber = accountnumber.slice(-4);
@@ -432,7 +441,10 @@ const UpdateOrder: React.FC = () => {
     // Get the last 4 characters of the pin/password
     const last4Pin = pinorpassword.slice(-4);
 
-    return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}`;
+    // Get the last 4 digits of the first phone number
+    const last4PhoneNumber = phonenumbers[0] ? phonenumbers[0].slice(-4) : "";
+
+    return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}_${last4PhoneNumber}`;
   };
 
   // Function to add a new carrier information entry
@@ -545,7 +557,17 @@ const UpdateOrder: React.FC = () => {
 
           // Set existing carrier information
           if (orderData.carrierInfos) {
-            setCarrierInfos(orderData.carrierInfos);
+            // Ensure phonenumbers is an array for each carrier
+            const formattedCarrierInfos = orderData.carrierInfos.map(
+              (carrier) => ({
+                ...carrier,
+                phonenumbers: Array.isArray(carrier.phonenumbers)
+                  ? carrier.phonenumbers
+                  : [],
+              })
+            );
+
+            setCarrierInfos(formattedCarrierInfos);
           }
 
           if (orderData.accounts) {
@@ -937,34 +959,14 @@ const UpdateOrder: React.FC = () => {
                   <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mt-5">
                     Carrier Port Information
                   </h3>
+
                   {carrierInfos.map((info, index) => (
                     <div
                       key={index}
-                      className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 pb-6"
+                      className="grid grid-cols-1 md:grid-cols-2 gap-4"
                     >
-                      {/* Header with Remove Button */}
-                      <div className="col-span-1 md:col-span-2 flex justify-between items-center">
-                        {index > 0 && (
-                          <h4 className="text-lg font-semibold">
-                            Carrier Port Information {index + 1}
-                          </h4>
-                        )}
-                        {index > 0 && (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setCarrierInfos((prev) =>
-                                prev.filter((_, i) => i !== index)
-                              );
-                            }}
-                            className="text-red-500 hover:text-red-700 text-sm md:text-base"
-                          >
-                            - Remove
-                          </button>
-                        )}
-                      </div>
                       {/* Carrier Information Fields */}
-                      <div className="mb-4">
+                      <div className="mb-2">
                         <h6 className="text-sm font-medium text-gray-700 mb-2">
                           Select Carrier
                         </h6>
@@ -990,13 +992,12 @@ const UpdateOrder: React.FC = () => {
                         )}
                       </div>
 
-                      {/* Carrier Information Fields */}
+                      {/* Shared Fields (Account Number, Pin, etc.) */}
                       {[
                         { name: "accountnumber", label: "Account Number" },
                         {
                           name: "pinorpassword",
-                          label:
-                            "Account Passcode/Port Out Pin/Number Transfer Pin",
+                          label: "Account Passcode/Port Out Pin",
                         },
                         { name: "ssnortaxid", label: "SSN or TaxID" },
                         { name: "billingname", label: "Billing Name" },
@@ -1005,9 +1006,8 @@ const UpdateOrder: React.FC = () => {
                         { name: "billingstate", label: "Billing State" },
                         { name: "billingzip", label: "Billing Zip" },
                         { name: "authorizedname", label: "Authorized Name" },
-                        { name: "phonenumber", label: "Phone Number" }, // Add this field
                       ].map(({ name, label }) => (
-                        <div className="mb-4" key={name}>
+                        <div className="mb-2" key={name}>
                           <h6 className="text-sm font-medium text-gray-700 mb-2">
                             {label}
                           </h6>
@@ -1019,9 +1019,99 @@ const UpdateOrder: React.FC = () => {
                             onChange={(e) => handleCarrierInfoChange(e, index)}
                             className="border-b focus:outline-none border-gray-300 py-2 w-full"
                           />
+                          {errors[`${name}_${index}`] && (
+                            <p className="text-red-500 text-sm">
+                              {errors[`${name}_${index}`]}
+                            </p>
+                          )}
                         </div>
                       ))}
-                      <div className="mb-4">
+
+                      {/* Phone Numbers Section */}
+                      <div className="col-span-full">
+                        <h6 className="text-sm font-medium text-gray-700 mb-2">
+                          Phone Numbers
+                        </h6>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                          {Array.isArray(info.phonenumbers) &&
+                            info.phonenumbers.map((phoneNumber, phoneIndex) => (
+                              <div
+                                key={phoneIndex}
+                                className="flex items-center gap-2"
+                              >
+                                <input
+                                  type="text"
+                                  name="phonenumbers"
+                                  placeholder={`Enter Phone Number ${
+                                    phoneIndex + 1
+                                  }`}
+                                  value={phoneNumber}
+                                  onChange={(e) =>
+                                    handleCarrierInfoChange(
+                                      e,
+                                      index,
+                                      phoneIndex
+                                    )
+                                  }
+                                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setCarrierInfos((prev) =>
+                                      prev.map((info, i) =>
+                                        i === index
+                                          ? {
+                                              ...info,
+                                              phonenumbers:
+                                                info.phonenumbers.filter(
+                                                  (_, idx) => idx !== phoneIndex
+                                                ),
+                                            }
+                                          : info
+                                      )
+                                    );
+                                  }}
+                                  className="text-xs hover:text-danger"
+                                >
+                                  - Remove
+                                </button>
+                                {errors[
+                                  `phonenumber_${index}_${phoneIndex}`
+                                ] && (
+                                  <p className="text-red-500 text-sm">
+                                    {
+                                      errors[
+                                        `phonenumber_${index}_${phoneIndex}`
+                                      ]
+                                    }
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setCarrierInfos((prev) =>
+                              prev.map((info, i) =>
+                                i === index
+                                  ? {
+                                      ...info,
+                                      phonenumbers: [...info.phonenumbers, ""],
+                                    }
+                                  : info
+                              )
+                            );
+                          }}
+                          className="md:w-auto text-white px-6 py-2 bg-slate-800 rounded"
+                        >
+                          + Add Another Phone Number
+                        </button>
+                      </div>
+
+                      {/* Unique Code (Read-Only Field) */}
+                      <div className="mb-2">
                         <h6 className="text-sm font-medium text-gray-700 mb-2">
                           Unique Code
                         </h6>
@@ -1030,7 +1120,7 @@ const UpdateOrder: React.FC = () => {
                           name="uniqueCode"
                           value={info.uniqueCode}
                           readOnly
-                          className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
                         />
                       </div>
                     </div>
@@ -1040,7 +1130,7 @@ const UpdateOrder: React.FC = () => {
                   <button
                     type="button"
                     onClick={addCarrierInfo}
-                    className="md:w-auto text-white px-6 py-2 bg-slate-800 rounded"
+                    className="md:w-auto text-white px-6 py-2 bg-slate-800 rounded mt-3"
                   >
                     + Add Another Carrier Information
                   </button>

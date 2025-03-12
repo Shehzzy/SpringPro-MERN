@@ -215,34 +215,41 @@ const Form: React.FC = () => {
       billingzip: "",
       authorizedname: "",
       uniqueCode: "",
-      phonenumber: "", // Add this field
+      phonenumbers: [""], // Array of phone numbers for this carrier
     },
   ]);
 
-  // Function to handle changes in carrier information fields
   const handleCarrierInfoChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number
+    index: number,
+    phoneIndex?: number
   ) => {
     const { name, value } = e.target;
+  
     setCarrierInfos((prev) =>
-      prev.map((info, i) => (i === index ? { ...info, [name]: value } : info))
+      prev.map((info, i) => {
+        if (i === index) {
+          let updatedInfo = { ...info };
+  
+          if (name === "phonenumbers" && phoneIndex !== undefined) {
+            // Ensure phonenumbers is an array
+            const updatedPhonenumbers = Array.isArray(info.phonenumbers)
+              ? [...info.phonenumbers]
+              : [""];
+            updatedPhonenumbers[phoneIndex] = value;
+            updatedInfo = { ...info, phonenumbers: updatedPhonenumbers };
+          } else {
+            // Update other fields
+            updatedInfo = { ...info, [name]: value };
+          }
+  
+          // Generate unique code after updating the info
+          const uniqueCode = generateUniqueCode(updatedInfo);
+          return { ...updatedInfo, uniqueCode };
+        }
+        return info;
+      })
     );
-    // Generate unique code whenever a relevant field changes
-    if (
-      name === "currentwirelesscarrier" ||
-      name === "accountnumber" ||
-      name === "pinorpassword" ||
-      name === "phonenumber" // Add this condition
-    ) {
-      const updatedInfo = { ...carrierInfos[index], [name]: value };
-      const uniqueCode = generateUniqueCode(updatedInfo);
-      setCarrierInfos((prev) =>
-        prev.map((info, i) =>
-          i === index ? { ...updatedInfo, uniqueCode } : info
-        )
-      );
-    }
   };
 
   const [shippingInfos, setShippingInfos] = useState([
@@ -255,6 +262,8 @@ const Form: React.FC = () => {
       uniqueCode: "",
     },
   ]);
+
+  console.log("Carrier", carrierInfos)
 
   // Function to handle changes in Shipping information fields
   const handleShippingInfoChange = (
@@ -296,12 +305,11 @@ const Form: React.FC = () => {
     return `${attentionname}_${last4ShippingState}_${last4ShippingCity}`;
   };
 
-
   const generateUniqueCode = ({
     currentwirelesscarrier,
     accountnumber,
     pinorpassword,
-    phonenumber, // Add this field
+    phonenumbers,
   }) => {
     // Get the last 4 digits of the account number
     const last4AccountNumber = accountnumber.slice(-4);
@@ -309,8 +317,8 @@ const Form: React.FC = () => {
     // Get the last 4 characters of the pin/password
     const last4Pin = pinorpassword.slice(-4);
   
-    // Get the last 4 digits of the phone number
-    const last4PhoneNumber = phonenumber.slice(-4);
+    // Get the last 4 digits of the first phone number
+    const last4PhoneNumber = phonenumbers[0] ? phonenumbers[0].slice(-4) : "";
   
     return `${currentwirelesscarrier}_${last4AccountNumber}_${last4Pin}_${last4PhoneNumber}`;
   };
@@ -331,7 +339,7 @@ const Form: React.FC = () => {
         billingzip: "",
         authorizedname: "",
         uniqueCode: "",
-        phonenumber: "", // Add this field
+        phonenumbers: [""], // Array of phone numbers for this carrier
       },
     ]);
   };
@@ -627,35 +635,44 @@ const Form: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-  
+
     let formattedValue = value;
-  
+
     // Format Tax ID (123-6125351)
     if (name === "taxid") {
       // Remove all non-numeric characters
       const numericValue = value.replace(/\D/g, "");
       // Add a dash after the first 3 digits
       if (numericValue.length > 3) {
-        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 10)}`;
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(
+          3,
+          10
+        )}`;
       } else {
         formattedValue = numericValue;
       }
     }
-  
+
     // Format Contact Phone (123-456-7890)
     if (name === "contactphone") {
       // Remove all non-numeric characters
       const numericValue = value.replace(/\D/g, "");
       // Add dashes after the first 3 and 6 digits
       if (numericValue.length > 6) {
-        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 6)}-${numericValue.slice(6, 10)}`;
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(
+          3,
+          6
+        )}-${numericValue.slice(6, 10)}`;
       } else if (numericValue.length > 3) {
-        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(3, 6)}`;
+        formattedValue = `${numericValue.slice(0, 3)}-${numericValue.slice(
+          3,
+          6
+        )}`;
       } else {
         formattedValue = numericValue;
       }
     }
-  
+
     // Update form data
     setFormData((prevData) => ({
       ...prevData,
@@ -800,7 +817,7 @@ const Form: React.FC = () => {
         newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
       }
 
-      if(!info.phonenumber){
+      if (!info.phonenumber) {
         newErrors[`phonenumber_${index}`] = "Phone Number is required";
       }
     });
@@ -1031,8 +1048,7 @@ const Form: React.FC = () => {
               "Authorized Name is required.";
           }
           if (!info.phonenumber) {
-            newErrors[`phonenumber_${index}`] =
-              "Phone Number is required.";
+            newErrors[`phonenumber_${index}`] = "Phone Number is required.";
           }
         });
         break;
@@ -1240,74 +1256,111 @@ const Form: React.FC = () => {
 
             {/* Secondary Heading */}
             {formData.atntaccount === "accepted" && (
-            <div>
-              <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
-                New Account Information
-              </h2>
+              <div>
+                <h2 className="text-2xl text-gray-800 font-semibold mb-8 text-left">
+                  New Account Information
+                </h2>
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {[
-                  { name: "businesslegalname", label: "Business Legal Name", placeholder: "Enter Business Legal Name" },
-                  { name: "businessaddress", label: "Business Address", placeholder: "Enter Business Address" },
-                  { name: "businesscity", label: "Business City", placeholder: "Enter Business City" },
-                  { name: "businessstate", label: "Business State", placeholder: "Enter Business State", isDropdown: true },
-                  { name: "businesszip", label: "Business Zip", placeholder: "Enter Business Zip" },
-                  { name: "taxid", label: "Tax ID", placeholder: "Enter Tax ID" },
-                  { name: "contactname", label: "Contact Name", placeholder: "Enter Contact Name" },
-                  { name: "contactphone", label: "Contact Phone", placeholder: "Enter Contact Phone" },
-                  { name: "contactemail", label: "Contact Email", placeholder: "Enter Contact Email" },
-                ].map((field, index) => (
-                  <div key={index} className="mb-4">
-                    <h6 className="text-sm font-medium text-gray-700">
-                      {field.label}
-                    </h6>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    {
+                      name: "businesslegalname",
+                      label: "Business Legal Name",
+                      placeholder: "Enter Business Legal Name",
+                    },
+                    {
+                      name: "businessaddress",
+                      label: "Business Address",
+                      placeholder: "Enter Business Address",
+                    },
+                    {
+                      name: "businesscity",
+                      label: "Business City",
+                      placeholder: "Enter Business City",
+                    },
+                    {
+                      name: "businessstate",
+                      label: "Business State",
+                      placeholder: "Enter Business State",
+                      isDropdown: true,
+                    },
+                    {
+                      name: "businesszip",
+                      label: "Business Zip",
+                      placeholder: "Enter Business Zip",
+                    },
+                    {
+                      name: "taxid",
+                      label: "Tax ID",
+                      placeholder: "Enter Tax ID",
+                    },
+                    {
+                      name: "contactname",
+                      label: "Contact Name",
+                      placeholder: "Enter Contact Name",
+                    },
+                    {
+                      name: "contactphone",
+                      label: "Contact Phone",
+                      placeholder: "Enter Contact Phone",
+                    },
+                    {
+                      name: "contactemail",
+                      label: "Contact Email",
+                      placeholder: "Enter Contact Email",
+                    },
+                  ].map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        {field.label}
+                      </h6>
 
-                    {/* Render dropdown if isDropdown is true, otherwise render input */}
-                    {field.isDropdown ? (
-                      <select
-                        name={field.name}
-                        value={formData[field.name]}
-                        onChange={(e) => accountinfohandleChange(e)}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
-                      >
-                        <option value="" className="py-2">
-                          Select a state
-                        </option>
-                        {states.map((state) => (
-                          <option key={state.code} value={state.code}>
-                            {state.name}
+                      {/* Render dropdown if isDropdown is true, otherwise render input */}
+                      {field.isDropdown ? (
+                        <select
+                          name={field.name}
+                          value={formData[field.name]}
+                          onChange={(e) => accountinfohandleChange(e)}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full bg-white"
+                        >
+                          <option value="" className="py-2">
+                            Select a state
                           </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        value={formData[field.name]}
-                        onChange={accountinfohandleChange}
-                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                        // Add maxLength for phone and tax ID fields
-                        maxLength={
-                          field.name === "contactphone"
-                            ? 12 // 123-456-7890 (12 characters)
-                            : field.name === "taxid"
-                            ? 10 // 123-6125351 (10 characters)
-                            : undefined
-                        }
-                      />
-                    )}
+                          {states.map((state) => (
+                            <option key={state.code} value={state.code}>
+                              {state.name}
+                            </option>
+                          ))}
+                        </select>
+                      ) : (
+                        <input
+                          type="text"
+                          name={field.name}
+                          placeholder={field.placeholder}
+                          value={formData[field.name]}
+                          onChange={accountinfohandleChange}
+                          className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          // Add maxLength for phone and tax ID fields
+                          maxLength={
+                            field.name === "contactphone"
+                              ? 12 // 123-456-7890 (12 characters)
+                              : field.name === "taxid"
+                              ? 10 // 123-6125351 (10 characters)
+                              : undefined
+                          }
+                        />
+                      )}
 
-                    {errors[field.name] && (
-                      <p className="text-red-500 text-sm">
-                        {errors[field.name]}
-                      </p>
-                    )}
-                  </div>
-                ))}
+                      {errors[field.name] && (
+                        <p className="text-red-500 text-sm">
+                          {errors[field.name]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
               </div>
-            </div>
-          )}
+            )}
           </div>
         );
 
@@ -1787,7 +1840,11 @@ const Form: React.FC = () => {
                   { name: "attentionname", label: "Attention Name" },
                   { name: "shippingaddress", label: "Shipping Address" },
                   { name: "shippingcity", label: "Shipping City" },
-                  { name: "shippingstate", label: "Shipping State", isDropdown: true},
+                  {
+                    name: "shippingstate",
+                    label: "Shipping State",
+                    isDropdown: true,
+                  },
                   { name: "shippingzip", label: "Shipping Zip" },
                 ].map(({ name, label, isDropdown }) => (
                   <div className="mb-4" key={name}>
@@ -1865,33 +1922,12 @@ const Form: React.FC = () => {
             <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mb-4">
               Carrier Port Information
             </h3>
+
             {carrierInfos.map((info, index) => (
               <div
                 key={index}
                 className="grid grid-cols-1 md:grid-cols-2 gap-4"
               >
-                {/* Header with Remove Button */}
-                <div className="col-span-1 md:col-span-2 flex justify-between items-center">
-                  {index > 0 && (
-                    <h4 className="text-lg font-semibold">
-                      Carrier Port Information {index + 1}
-                    </h4>
-                  )}
-                  {index > 0 && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setCarrierInfos((prev) =>
-                          prev.filter((_, i) => i !== index)
-                        );
-                      }}
-                      className="text-red-500 hover:text-red-700 text-sm md:text-base"
-                    >
-                      - Remove
-                    </button>
-                  )}
-                </div>
-
                 {/* Carrier Information Fields */}
                 <div className="mb-2">
                   <h6 className="text-sm font-medium text-gray-700 mb-2">
@@ -1917,11 +1953,13 @@ const Form: React.FC = () => {
                   )}
                 </div>
 
-                {/* Repeated Fields */}
+                {/* Shared Fields (Account Number, Pin, etc.) */}
                 {[
                   { name: "accountnumber", label: "Account Number" },
-                  { name: "pinorpassword", label: "Account Passcode/Port Out Pin/Number Transfer Pin"},
-                  { name: "phonenumber", label: "Phone Number" },
+                  {
+                    name: "pinorpassword",
+                    label: "Account Passcode/Port Out Pin",
+                  },
                   { name: "ssnortaxid", label: "SSN or TaxID" },
                   { name: "billingname", label: "Billing Name" },
                   { name: "billingaddress", label: "Billing Address" },
@@ -1949,6 +1987,80 @@ const Form: React.FC = () => {
                     )}
                   </div>
                 ))}
+
+                {/* Phone Numbers Section */}
+                <div className="col-span-full">
+                  <h6 className="text-sm font-medium text-gray-700 mb-2">
+                    Phone Numbers
+                  </h6>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {Array.isArray(info.phonenumbers) &&
+                      info.phonenumbers.map((phoneNumber, phoneIndex) => (
+                        <div
+                          key={phoneIndex}
+                          className="flex items-center gap-2"
+                        >
+                          <input
+                            type="text"
+                            name="phonenumbers"
+                            placeholder={`Enter Phone Number ${phoneIndex + 1}`}
+                            value={phoneNumber}
+                            onChange={(e) =>
+                              handleCarrierInfoChange(e, index, phoneIndex)
+                            }
+                            className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setCarrierInfos((prev) =>
+                                prev.map((info, i) =>
+                                  i === index
+                                    ? {
+                                        ...info,
+                                        phonenumbers: info.phonenumbers.filter(
+                                          (_, idx) => idx !== phoneIndex
+                                        ),
+                                      }
+                                    : info
+                                )
+                              );
+                            }}
+                            className="text-xs hover:text-danger"
+                          >
+                            - Remove
+                          </button>
+                          {errors[`phonenumber_${index}_${phoneIndex}`] && (
+                            <p className="text-red-500 text-sm">
+                              {errors[`phonenumber_${index}_${phoneIndex}`]}
+                            </p>
+                          )}
+                        </div>
+                      ))}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCarrierInfos((prev) =>
+                        prev.map((info, i) =>
+                          i === index
+                            ? {
+                                ...info,
+                                phonenumbers: [...info.phonenumbers, ""],
+                              }
+                            : info
+                        )
+                      );
+                    }}
+                    style={{
+                      background:
+                        "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+                    }}
+                    className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
+                  >
+                    + Add Another Phone Number
+                  </button>
+                </div>
 
                 {/* Unique Code (Read-Only Field) */}
                 <div className="mb-2">
@@ -2593,8 +2705,6 @@ const Form: React.FC = () => {
               Form Submitted Successfully!
             </p>
           )}
-
-
 
           {isFormBlocked && (
             <p className="text-center text-red mt-4">
