@@ -9,6 +9,8 @@ import IMEIForm from "./IMEIForm";
 import creditCardType from "credit-card-type";
 import LineConfiguration from "./LineConfiguration";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import Devices from "../../assets/National_Retail_Pricing.json";
+
 import {
   faCcVisa,
   faCcMastercard,
@@ -531,16 +533,51 @@ const Form: React.FC = () => {
   );
   const [debouncedCardType, setDebouncedCardType] = useState("");
 
-  // Debounce input change
-  // useEffect(() => {
-  //   const handler = setTimeout(() => {
-  //     setDebouncedCardNumber(formData.cardNumber);
-  //   }, 500); // Delay for 500ms after typing stops
+  // Define the device type
+  type Device = {
+    Manufacturer: string;
+    "Model Name": string;
+    "Standard Retail": number;
+    "Device Payment Monthly": string;
+  };
 
-  //   return () => {
-  //     clearTimeout(handler);
-  //   };
-  // }, [formData.cardNumber]);
+  const [search, setSearch] = useState("");
+  const [filteredDevices, setFilteredDevices] = useState<Device[]>([]);
+  const [selectedDevice, setSelectedDevice] = useState(null);
+
+  useEffect(() => {
+
+    if (search === "") {
+      setSelectedDevice(null);
+    }
+
+    
+    if (search) {
+      const matches = Devices.filter((device) =>
+        device["Model Name"].toLowerCase().includes(search.toLowerCase())
+      );
+      setFilteredDevices(matches);
+    } else {
+      setFilteredDevices([]);
+    }
+  }, [search]);
+
+  const handleDeviceSelect = (device) => {
+    setSearch(device["Model Name"]);
+    setSelectedDevice(device);
+    setFilteredDevices([]);
+  };
+
+  // Debounce input change
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedCardNumber(formData.cardNumber);
+    }, 500); // Delay for 500ms after typing stops
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [formData.cardNumber]);
 
   const [errors, setErrors] = useState<any>({});
   const [state, handleSubmit] = useForm("xanykyav");
@@ -658,11 +695,11 @@ const Form: React.FC = () => {
               sansPartnerID: partnerID || "",
             });
           }
-          
+
           setFormData((prev) => ({
             ...prev,
             sansPartnerID: partnerID || "",
-          }))
+          }));
 
           if (userData.length > 0) {
             setIsFirstOrder(false); // Set false if user details are successfully fetched
@@ -1995,7 +2032,10 @@ const Form: React.FC = () => {
                 {/* Shared Fields (Account Number, Pin, etc.) */}
                 {[
                   { name: "accountnumber", label: "Account Number" },
-                  { name: "pinorpassword", label: "Account Passcode/Port Out Pin" },
+                  {
+                    name: "pinorpassword",
+                    label: "Account Passcode/Port Out Pin",
+                  },
                   { name: "ssnortaxid", label: "SSN or TaxID" },
                   { name: "billingname", label: "Billing Name" },
                   { name: "billingaddress", label: "Billing Address" },
@@ -2032,7 +2072,10 @@ const Form: React.FC = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {Array.isArray(info.phonenumbers) &&
                       info.phonenumbers.map((phoneNumber, phoneIndex) => (
-                        <div key={phoneIndex} className="flex items-center gap-2">
+                        <div
+                          key={phoneIndex}
+                          className="flex items-center gap-2"
+                        >
                           <input
                             type="text"
                             name="phonenumbers" // Ensure the name is "phonenumbers"
@@ -2187,21 +2230,23 @@ const Form: React.FC = () => {
                 </div>
 
                 {/* Smartphone Purchase Options */}
+
                 <div>
                   <h3 className="lg:text-xl text-base text-gray-800 font-semibold mb-4 sm:text-center text-start">
                     Smartphone Purchase/Trade Options
                   </h3>
 
-                  {/* Promotions */}
                   <div className="w-full">
                     <select
                       name="buyNewPhone"
                       value={buyNewPhone}
-                      onChange={handleBuyNewPhoneChange}
+                      onChange={(e) => setBuyNewPhone(e.target.value)}
                       className="border-b h-10 border-gray-300 w-full"
                     >
                       <option value="">Select</option>
-                      <option value="yes">I want to buy new smartphone</option>
+                      <option value="yes">
+                        I want to buy a new smartphone
+                      </option>
                       <option value="accepted">Trade in promotion</option>
                       <option value="no">
                         No, I don't want a new phone or promotion
@@ -2213,7 +2258,60 @@ const Form: React.FC = () => {
                       </p>
                     )}
                   </div>
+
+                 
                 </div>
+
+                {buyNewPhone === "yes" && (
+                    <div className="">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Search for a device
+                      </label>
+                      <input
+                        type="text"
+                        value={search}
+                        onChange={(e) => setSearch(e.target.value)}
+                        className="border p-2 w-full"
+                        placeholder="Type to search..."
+                      />
+                      {filteredDevices.length > 0 && (
+                        <ul className="border mt-1 max-h-40 overflow-y-auto">
+                          {filteredDevices.map((device, index) => (
+                            <li
+                              key={index}
+                              className="p-2 hover:bg-gray-200 cursor-pointer"
+                              onClick={() => handleDeviceSelect(device)}
+                            >
+                              {device["Model Name"]}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  )}
+
+                  {selectedDevice && (
+                    <div className="mt-4 p-4 border rounded">
+                      <h4 className="font-semibold">Selected Device:</h4>
+                      <p>
+                        <strong>Manufacturer:</strong>{" "}
+                        {selectedDevice["Manufacturer"]}
+                      </p>
+                      <p>
+                        <strong>Model:</strong> {selectedDevice["Model Name"]}
+                      </p>
+                      <p>
+                        <strong>Retail Price:</strong> $
+                        {selectedDevice["Standard Retail"]}
+                      </p>
+                      <p>
+                        <strong>Monthly Installment:</strong> $
+                        {selectedDevice["Device Payment Monthly"]}
+                      </p>
+                    </div>
+                  )}
+
+                  
                 {/* <div className="mb-4">
                 <select
                   name="buyNewPhone"
