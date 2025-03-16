@@ -29,6 +29,19 @@ left:0 !important;
     background-size: contain;
   }
   
+  @keyframes slides {
+    0% {
+      transform: translateX(0%);
+    }
+    100% {
+      transform: translateX(-50%);
+    }
+  }
+  
+  .slides {
+    animation: slides 20s linear infinite;
+  }
+
   @keyframes slide {
     0% {
       left:600px;

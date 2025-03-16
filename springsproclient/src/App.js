@@ -20,6 +20,7 @@ import Products from "./components/Products";
 import ScrollTop from "./components/ScrollTop.jsx";
 import BillsAndServices from "./components/BillandServices/index.jsx";
 import Technology from "./components/Technology";
+import Certifications from "./components/Certifications";
 import Mobility from "./components/FirstNetMobility/index.jsx";
 import Business from "./components/Partner/index.jsx";
 import Footer from "./components/Footer";
@@ -54,6 +55,7 @@ function App() {
                 <Hero />
                 <Tags />
                 <Network />
+                <Certifications />
                 <BillService />
                 <FeedBack />
                 {/* <Story /> */}
