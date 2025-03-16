@@ -105,16 +105,16 @@ const Login: React.FC = () => {
   
 
   return (
-    <section className="py-10 mt-[120px] px-8 text-center bg-white">
-      <div className="container mx-auto w-full ">
-        <h2 className="text-4xl sm:text-5xl font-bold text-black mb-2">
+    <section className="md:py-10 md:mt-[120px] mt-[90px] md:px-8 text-center bg-white">
+      <div className="container w-full ">
+        <h2 className="text-[26px] sm:text-5xl font-bold text-black mb-2">
           Login to Your Account
         </h2>
-        <p className="text-md text-black mt-4 mb-6">
-          Please enter your email and password to log in.
+        <p className="md:text-lg text-sm text-black mt-3 md:mb-6 mb-12">
+          Please enter below details to log in.
         </p>
 
-        <form onSubmit={onSubmit} className="max-w-2xl mx-auto space-y-6">
+        <form onSubmit={onSubmit} className="max-w-2xl mx-auto space-y-6 p-1">
           <div>
             <div className="grid grid-cols-1 gap-4">
               <div className="w-full">
@@ -150,7 +150,7 @@ const Login: React.FC = () => {
 
             <button
               type="submit"
-              className="bg-[#41FDFE] text-black px-6 py-3 rounded-full"
+              className="bg-[#41FDFE] text-white font-bold px-6 py-2 rounded inter"
             >
               Login
             </button>
@@ -160,7 +160,7 @@ const Login: React.FC = () => {
             <div>
               <Link
                 to={"/signup"}
-                className="transition-all text-black hover:text-[#41FDFE] inter text-md px-4 py-3"
+                className="text-center transition-all no-underline text-black hover:text-[#41FDFE] inter md:text-md text-sm"
               >
                 Don't have an account? Signup
               </Link>

@@ -129,28 +129,28 @@ const Signup: React.FC = () => {
   };
 
   return (
-    <section className="m-[80px] px-8 text-center bg-white overflow-hidden">
+    <section className="md:m-[80px] md:px-8 p-2 text-center bg-white overflow-hidden">
       <div className="container w-full ">
-        <h2 className="text-4xl sm:text-5xl font-bold text-black mb-2">
+        <h2 className="sm:text-5xl text-2xl font-bold text-black md:pt-0 pt-6 mb-2">
           Create Your Account
         </h2>
-        <p className="text-md text-black mt-2 mb-6">
+        <p className="md:text-lg text-sm text-black mt-2 md:mb-0 mb-10">
           Please enter your details to sign up.
         </p>
 
         <form onSubmit={onSubmit} className="max-w-4xl mx-auto space-y-6">
           <div>
-            <div className="grid grid-cols-1 gap-4 my-16">
-              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-4 md:my-16 my-8">
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-black text-start">First Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">First Name</h6>
                   <input
                     type="text"
                     name="fname"
                     placeholder="Enter your first name"
                     value={formData.fname}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.fname && (
                     <p className="text-start text-danger text-sm">{errors.fname}</p>
@@ -158,14 +158,14 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div className="w-full">
-                  <h6 className="text-black text-start">Last Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Last Name</h6>
                   <input
                     type="text"
                     name="lname"
                     placeholder="Enter your last name"
                     value={formData.lname}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.lname && (
                     <p className="text-start text-danger text-sm">{errors.fname}</p>
@@ -173,90 +173,88 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div className="w-full">
-                  <h6 className="text-black text-start">Company Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Company Name</h6>
                   <input
                     type="text"
                     name="companyname"
                     placeholder="Enter your company name"
                     value={formData.companyname}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.companyname && (
                     <p className="text-start text-danger text-sm">{errors.companyname}</p>
                  )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-black text-start">Phone Number</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Phone Number</h6>
                   <input
                     type="text"
                     name="phone"
                     placeholder="Enter your phone number"
                     value={formData.phone}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                    {errors.phone && (
                     <p className="text-start text-danger text-sm">{errors.phone}</p>
                  )}
                 </div>
                 <div>
-                  <h6 className="text-black text-start">Email</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Email</h6>
                   <input
                     type="email"
                     name="email"
                     placeholder="Enter your email"
                     value={formData.email}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                    {errors.email && (
                     <p className="text-start text-danger text-sm">{errors.email}</p>
                  )}
                 </div>
                 <div className="w-full">
-                  <h6 className="text-black text-start">Date Of Birth</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Date Of Birth</h6>
                   <input
                     type="date"
                     name="dob"
                     placeholder="Enter your date of birth"
                     value={formData.dob}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                    {errors.dob && (
                     <p className="text-start text-danger text-sm">{errors.dob}</p>
                  )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-black text-start">
-                    Government Identification
-                  </h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Government Identification</h6>
                   <input
                     type="text"
                     name="government_identification"
                     placeholder="Enter your government identification"
                     value={formData.government_identification}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.government_identification && (
                     <p className="text-start text-danger text-sm">{errors.government_identification}</p>
                   )}
                 </div>
                 <div className="w-full">
-                  <h6 className="text-black text-start">EIN/TAX ID</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">EIN/TAX ID</h6>
                   <input
                     type="text"
                     name="tax_id"
                     placeholder="Enter your tax id"
                     value={formData.tax_id}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.tax_id && (
                     <p className="text-start text-danger text-sm">{errors.tax_id}</p>
@@ -264,14 +262,14 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div className="w-full">
-                  <h6 className="text-black text-start">SSN</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">SSN</h6>
                   <input
                     type="text"
                     name="ssn"
                     placeholder="Enter your SSN"
                     value={formData.ssn}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.ssn && (
                     <p className="text-start text-danger text-sm">{errors.ssn}</p>
@@ -279,16 +277,16 @@ const Signup: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 mt-2 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div>
-                  <h6 className="text-black text-start">Password</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Password</h6>
                   <input
                     type="password"
                     name="password"
                     placeholder="Enter your password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.password && (
                     <p className="text-start text-danger text-sm">{errors.password}</p>
@@ -296,14 +294,14 @@ const Signup: React.FC = () => {
                 </div>
 
                 <div>
-                  <h6 className="text-black text-start">Confirm Password</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">Confirm Password</h6>
                   <input
                     type="password"
                     name="confirmPassword"
                     placeholder="Confirm your password"
                     value={formData.confirmPassword}
                     onChange={handleChange}
-                    className="border p-2 mt-2 rounded-lg focus:outline-none border-black py-2 w-full"
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.confirmPassword && (
                     <p className="text-danger text-start text-sm">{errors.confirmPassword}</p>
@@ -328,17 +326,17 @@ const Signup: React.FC = () => {
             <button
               type="submit"
               disabled={state.submitting}
-              className="bg-[#41FDFE] text-black px-6 py-3 rounded-full"
+              className="bg-[#41FDFE] text-white font-bold px-6 py-2 rounded inter"
             >
               Sign Up
             </button>
           </div>
 
           <div className="flex justify-start items-center">
-            <div>
+            <div className="pb-6">
               <Link
                 to={"/login"}
-                className="transition-all text-black hover:text-[#41FDFE] inter text-md px-4 py-3"
+                className="text-center transition-all no-underline text-black hover:text-[#41FDFE] inter md:text-md text-sm"
               >
                 Already have an account? Login
               </Link>
