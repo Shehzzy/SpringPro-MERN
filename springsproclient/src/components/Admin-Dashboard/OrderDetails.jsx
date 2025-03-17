@@ -17,6 +17,10 @@ function OrderDetails() {
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [adminData, setadminData] = useState({
+    attuid: "",
+    spid: ""
+  });
   const token = localStorage.getItem("jwt_token");
 
   // Decode the JWT token
@@ -94,22 +98,47 @@ function OrderDetails() {
   }, [orderId, token, navigate, userRole]);
 
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("https://springprobackend-production.up.railway.app/api/auth/get-admin-data", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            role: userRole,
+          },
+        });
+
+        // Handle the response data
+        console.log("API Response:", response.data);
+        setadminData({
+          attuid: response.data.adminFields[0]?.attuid,
+          spid: response.data.adminFields[0]?.spid,
+        })
+      } catch (error) {
+        // Handle errors
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [token, userRole]);
+
   const exportToExcel = async () => {
     try {
       if (!order) {
         alert("No order data available");
         return;
       }
-  
+
       const workbook = new ExcelJS.Workbook();
       const sheet = workbook.addWorksheet("Order Details");
-  
+
       // Column Configuration
       sheet.columns = [
         { header: "Field", key: "field", width: 25 },
         { header: "Values", key: "values", width: 50 },
       ];
-  
+
       // Styling
       const blackBorder = { argb: "FF000000" };
       const borderStyle = {
@@ -118,7 +147,7 @@ function OrderDetails() {
         left: { style: "medium", color: blackBorder },
         right: { style: "medium", color: blackBorder },
       };
-  
+
       // Header Styling
       sheet.getRow(1).eachCell((cell) => {
         cell.fill = {
@@ -130,9 +159,13 @@ function OrderDetails() {
         cell.border = borderStyle;
         cell.alignment = { vertical: "middle", horizontal: "center" };
       });
-  
+
       // Data Population
       const data = [
+
+        // ADMIN Info
+        { field: "ATTUID", values: adminData?.attuid || "N/A" },
+        { field: "SPID", values: adminData?.spid || "N/A" },
         // Customer Information
         { field: "Business Legal Name", values: order.customerId?.businesslegalname || "N/A" },
         { field: "Business Address", values: order.customerId?.businessaddress || "N/A" },
@@ -161,7 +194,7 @@ function OrderDetails() {
         { field: "Shipping City", values: order.customerId?.shippingcity || "N/A" },
         { field: "Shipping State", values: order.customerId?.shippingstate || "N/A" },
         { field: "Shipping Zip", values: order.customerId?.shippingzip || "N/A" },
-  
+
         // Order Information
         { field: "SANS Partner ID", values: order.sansPartnerID || "N/A" },
         { field: "Agreement Type", values: order.agreementtype || "N/A" },
@@ -188,10 +221,10 @@ function OrderDetails() {
         { field: "Promo Code", values: order.promoCode || "N/A" },
         { field: "Status", values: order.status || "N/A" },
         { field: "Order Date", values: new Date(order.createdAt).toLocaleDateString("en-US") },
-  
+
         // IMEI Numbers
         { field: "IMEI Numbers", values: order.imeiNumbers.map((imei) => imei.imei).join(", ") || "N/A" },
-  
+
         // Carrier Information
         ...(order.carrierInfos?.map((carrier, index) => [
           { field: `Carrier ${index + 1} - Current Wireless Carrier`, values: carrier.currentwirelesscarrier || "N/A" },
@@ -205,8 +238,12 @@ function OrderDetails() {
           { field: `Carrier ${index + 1} - Billing Zip`, values: carrier.billingzip || "N/A" },
           { field: `Carrier ${index + 1} - Authorized Name`, values: carrier.authorizedname || "N/A" },
           { field: `Carrier ${index + 1} - Unique Code`, values: carrier.uniqueCode || "N/A" },
+          ...(carrier.phonenumbers?.map((phoneNumber, phoneIndex) => ({
+            field: `Carrier ${index + 1} - Phone Number ${phoneIndex + 1}`,
+            values: phoneNumber || "N/A",
+          })) || []),
         ]).flat() || []),
-  
+
         // Shipping Addresses
         ...(order.shippingAddresses?.map((address, index) => [
           { field: `Shipping Address ${index + 1} - Attention Name`, values: address.attentionname || "N/A" },
@@ -216,7 +253,7 @@ function OrderDetails() {
           { field: `Shipping Address ${index + 1} - Zip`, values: address.shippingzip || "N/A" },
           { field: `Shipping Address ${index + 1} - Unique Code`, values: address.uniqueCode || "N/A" },
         ]).flat() || []),
-  
+
         // Accounts
         ...(order.accounts?.map((account, index) => [
           { field: `Account ${index + 1} - Port Out PIN`, values: account.portOutPin || "N/A" },
@@ -234,11 +271,11 @@ function OrderDetails() {
           { field: `Account ${index + 1} - Shipping Address - Unique Code`, values: account.shippingAddress?.uniqueCode || "N/A" },
         ]).flat() || []),
       ];
-  
+
       // Add data to the sheet
       data.forEach((item) => {
         const row = sheet.addRow([item.field, item.values]);
-  
+
         // Apply Cell Styling
         row.eachCell((cell) => {
           cell.border = borderStyle;
@@ -250,7 +287,7 @@ function OrderDetails() {
           cell.alignment = { vertical: "top", horizontal: "left" };
         });
       });
-  
+
       // Save the Excel file
       const buffer = await workbook.xlsx.writeBuffer();
       const blob = new Blob([buffer], {
@@ -314,6 +351,11 @@ function OrderDetails() {
                 <div><strong>EIP:</strong> {order.eip || "N/A"}</div>
                 <div><strong>Paperless:</strong> {order.paperless || "N/A"}</div>
                 <div><strong>Special Instruction:</strong> {order.specialinstruction || "N/A"}</div>
+                <div><strong>Is Tax Exempt? </strong> {order.isTaxExempt || "N/A"}</div>
+                <div><strong>Tax Exempt Number: </strong> {order.taxExemptNumber || "N/A"}</div>
+                <div><strong>Best Time To Call? </strong> {order.bestTimeToCall || "N/A"}</div>
+                <div><strong>TimeZone: </strong> {order.timezone || "N/A"}</div>
+
                 <div><strong>Existing BAN:</strong> {order.existingBAN || "N/A"}</div>
                 <div><strong>Buy New Phone:</strong> {order.buyNewPhone === "yes" ? "Wanted to buy new phone" : order.buyNewPhone === "accepted" ? "Trade in promotion" : order.buyNewPhone === "no" ? "No, they didn't want a new phone or promotion" : "N/A"}</div>
 
@@ -353,6 +395,16 @@ function OrderDetails() {
                       <strong>Billing State:</strong> {carrier.billingstate || "N/A"} <br />
                       <strong>Billing Zip:</strong> {carrier.billingzip || "N/A"} <br />
                       <strong>Authorized Name:</strong> {carrier.authorizedname || "N/A"} <br />
+                      <strong>Phone Numbers:</strong>
+                      {carrier.phonenumbers?.length > 0 ? (
+                        carrier.phonenumbers.map((phoneNumber, phoneIndex) => (
+                          <div key={phoneIndex}>
+                            Phone Number {phoneIndex + 1}: {phoneNumber || "N/A"}
+                          </div>
+                        ))
+                      ) : (
+                        <div>N/A</div>
+                      )}
                       <strong>Unique Code:</strong> {carrier.uniqueCode || "N/A"} <br />
                     </div>
                   </div>
@@ -414,14 +466,14 @@ function OrderDetails() {
               )}
 
               {/* Admin Notes Section */}
-            <h2 className="text-xl font-bold my-6 text-cyan-blue">Admin Notes</h2>
-            <div className="mb-6 p-4 border rounded-lg bg-white">
-              {order.notes ? (
-                <p>{order.notes}</p>
-              ) : (
-                <p>No admin notes available.</p>
-              )}
-            </div>
+              <h2 className="text-xl font-bold my-6 text-cyan-blue">Admin Notes</h2>
+              <div className="mb-6 p-4 border rounded-lg bg-white">
+                {order.notes ? (
+                  <p>{order.notes}</p>
+                ) : (
+                  <p>No admin notes available.</p>
+                )}
+              </div>
 
             </div>
             <button

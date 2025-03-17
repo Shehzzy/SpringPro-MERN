@@ -10,6 +10,7 @@ import creditCardType from "credit-card-type";
 import LineConfiguration from "./LineConfiguration";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Devices from "../../assets/National_Retail_Pricing.json";
+import TimezoneSelect from "react-timezone-select";
 
 import {
   faCcVisa,
@@ -39,6 +40,8 @@ const Form: React.FC = () => {
   const [cardType, setCardType] = useState("");
 
   const [linesData, setLinesData] = useState([]);
+
+
 
   // Callback function to receive updated accountFields data
   const handleAccountFieldsChange = (updatedAccountFields) => {
@@ -493,6 +496,10 @@ const Form: React.FC = () => {
     buyPhoneNumber: buyPhoneNumber,
     phoneUniqueCode: phoneUniqueCode || "",
     promoCode: promoCode,
+    isTaxExempt: "", // New field for tax exemption
+    taxExemptNumber: "", // New field for tax exemption number
+    bestTimeToCall: "", // New field for best time to call
+    timezone: "", // New field for timezone
   });
 
   const customerData = {
@@ -546,12 +553,10 @@ const Form: React.FC = () => {
   const [selectedDevice, setSelectedDevice] = useState(null);
 
   useEffect(() => {
-
     if (search === "") {
       setSelectedDevice(null);
     }
 
-    
     if (search) {
       const matches = Devices.filter((device) =>
         device["Model Name"].toLowerCase().includes(search.toLowerCase())
@@ -898,6 +903,26 @@ const Form: React.FC = () => {
       }
       if (!info.authorizedname) {
         newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
+      }
+
+      // Validate Tax Exempt fields
+      if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
+        newErrors.taxExemptNumber = "Tax Exempt Number is required.";
+      } else if (
+        formData.isTaxExempt === "yes" &&
+        (formData.taxExemptNumber.length < 6 ||
+          formData.taxExemptNumber.length > 9)
+      ) {
+        newErrors.taxExemptNumber =
+          "Tax Exempt Number must be 6-9 digits long.";
+      }
+
+      // Validate Best Time to Call and Timezone
+      if (!formData.bestTimeToCall) {
+        newErrors.bestTimeToCall = "Best Time to Call is required.";
+      }
+      if (!formData.timezone) {
+        newErrors.timezone = "Timezone is required.";
       }
     });
     setErrors(newErrors);
@@ -1254,6 +1279,70 @@ const Form: React.FC = () => {
                   )} */}
                 </div>
               </div>
+
+              {/* Tax Exempt Field */}
+              <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+                <div className="w-full">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Is Tax Exempt?
+                  </h6>
+                  <select
+                    name="isTaxExempt"
+                    value={formData.isTaxExempt}
+                    onChange={handleChange}
+                    className="border-b h-10 border-gray-300 py-2 w-full"
+                  >
+                    <option value="">Select An Option</option>
+                    <option value="yes">Yes</option>
+                    <option value="no">No</option>
+                  </select>
+                  {errors.isTaxExempt && (
+                    <p className="text-red-500 text-sm">{errors.isTaxExempt}</p>
+                  )}
+                </div>
+
+                {/* Conditionally render Tax Exempt Number field */}
+                {formData.isTaxExempt === "yes" && (
+                  <div className="w-full">
+                    <h6 className="text-sm font-medium text-gray-700">
+                      Tax Exempt Number
+                    </h6>
+                    <input
+                      type="text"
+                      name="taxExemptNumber"
+                      placeholder="Enter 6-9 digit number"
+                      value={formData.taxExemptNumber}
+                      onChange={handleChange}
+                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                      maxLength={9} // Limit input to 9 digits
+                    />
+                    {errors.taxExemptNumber && (
+                      <p className="text-red-500 text-sm">
+                        {errors.taxExemptNumber}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div className="w-full mb-5">
+                  <h6 className="text-sm font-medium text-gray-700">
+                    Special Instruction
+                  </h6>
+                  <textarea
+                    name="specialinstruction"
+                    value={formData.specialinstruction}
+                    className="w-full border border-gray-300 rounded-lg p-2"
+                    onChange={handleChange}
+                    placeholder="Type here..."
+                    style={{ resize: "none" }}
+                  ></textarea>
+                  {errors.specialinstruction && (
+                    <p className="text-red-500 text-sm">
+                      {errors.specialinstruction}
+                    </p>
+                  )}
+                </div>
+              </div>
             </form>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
@@ -1301,24 +1390,6 @@ const Form: React.FC = () => {
                 </div>
               )}
               {/* Special Instructions */}
-              <div className="w-full mb-5">
-                <h6 className="text-sm font-medium text-gray-700">
-                  Special Instruction
-                </h6>
-                <textarea
-                  name="specialinstruction"
-                  value={formData.specialinstruction}
-                  className="w-full border border-gray-300 rounded-lg p-2"
-                  onChange={handleChange}
-                  placeholder="Type here..."
-                  style={{ resize: "none" }}
-                ></textarea>
-                {errors.specialinstruction && (
-                  <p className="text-red-500 text-sm">
-                    {errors.specialinstruction}
-                  </p>
-                )}
-              </div>
             </div>
 
             {/* Order Assignment */}
@@ -1757,6 +1828,57 @@ const Form: React.FC = () => {
                   </div>
                 </div>
               )}
+            </div>
+
+            {/* Best Time to Call and Timezone Fields */}
+            <div className="grid grid-cols-1 mt-10 md:grid-cols-2 gap-6">
+              <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">
+                  Best Time to Call?
+                </h6>
+                <input
+                  type="time"
+                  name="bestTimeToCall"
+                  value={formData.bestTimeToCall}
+                  onChange={handleChange}
+                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                />
+                {errors.bestTimeToCall && (
+                  <p className="text-red-500 text-sm">
+                    {errors.bestTimeToCall}
+                  </p>
+                )}
+              </div>
+
+              <div className="w-full">
+                <h6 className="text-sm font-medium text-gray-700">Timezone</h6>
+                <TimezoneSelect
+                  value={formData.timezone}
+                  onChange={(selectedTimezone) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      timezone: selectedTimezone.value,
+                    }))
+                  }
+                  className="custom-timezone-select" 
+                  style={{
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    padding: "8px",
+                    backgroundColor: "#f9fafb",
+                  }}
+                  menuClassName="custom-timezone-menu" 
+                  menuStyle={{
+                    backgroundColor: "#fff",
+                    border: "1px solid #ccc",
+                    borderRadius: "8px",
+                    boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+                  }}
+                />
+                {errors.timezone && (
+                  <p className="text-red-500 text-sm">{errors.timezone}</p>
+                )}
+              </div>
             </div>
           </div>
         );
@@ -2258,60 +2380,57 @@ const Form: React.FC = () => {
                       </p>
                     )}
                   </div>
-
-                 
                 </div>
 
                 {buyNewPhone === "yes" && (
-                    <div className="">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Search for a device
-                      </label>
-                      <input
-                        type="text"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                        className="border p-2 w-full"
-                        placeholder="Type to search..."
-                      />
-                      {filteredDevices.length > 0 && (
-                        <ul className="border mt-1 max-h-40 overflow-y-auto">
-                          {filteredDevices.map((device, index) => (
-                            <li
-                              key={index}
-                              className="p-2 hover:bg-gray-200 cursor-pointer"
-                              onClick={() => handleDeviceSelect(device)}
-                            >
-                              {device["Model Name"]}
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  )}
+                  <div className="">
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Search for a device
+                    </label>
+                    <input
+                      type="text"
+                      value={search}
+                      onChange={(e) => setSearch(e.target.value)}
+                      className="border p-2 w-full"
+                      placeholder="Type to search..."
+                    />
+                    {filteredDevices.length > 0 && (
+                      <ul className="border mt-1 max-h-40 overflow-y-auto">
+                        {filteredDevices.map((device, index) => (
+                          <li
+                            key={index}
+                            className="p-2 hover:bg-gray-200 cursor-pointer"
+                            onClick={() => handleDeviceSelect(device)}
+                          >
+                            {device["Model Name"]}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                )}
 
-                  {selectedDevice && (
-                    <div className="mt-4 p-4 border rounded">
-                      <h4 className="font-semibold">Selected Device:</h4>
-                      <p>
-                        <strong>Manufacturer:</strong>{" "}
-                        {selectedDevice["Manufacturer"]}
-                      </p>
-                      <p>
-                        <strong>Model:</strong> {selectedDevice["Model Name"]}
-                      </p>
-                      <p>
-                        <strong>Retail Price:</strong> $
-                        {selectedDevice["Standard Retail"]}
-                      </p>
-                      <p>
-                        <strong>Monthly Installment:</strong> $
-                        {selectedDevice["Device Payment Monthly"]}
-                      </p>
-                    </div>
-                  )}
+                {selectedDevice && (
+                  <div className="mt-4 p-4 border rounded">
+                    <h4 className="font-semibold">Selected Device:</h4>
+                    <p>
+                      <strong>Manufacturer:</strong>{" "}
+                      {selectedDevice["Manufacturer"]}
+                    </p>
+                    <p>
+                      <strong>Model:</strong> {selectedDevice["Model Name"]}
+                    </p>
+                    <p>
+                      <strong>Retail Price:</strong> $
+                      {selectedDevice["Standard Retail"]}
+                    </p>
+                    <p>
+                      <strong>Monthly Installment:</strong> $
+                      {selectedDevice["Device Payment Monthly"]}
+                    </p>
+                  </div>
+                )}
 
-                  
                 {/* <div className="mb-4">
                 <select
                   name="buyNewPhone"

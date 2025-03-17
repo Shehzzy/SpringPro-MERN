@@ -31,7 +31,17 @@ const Signup: React.FC = () => {
     tax_id: "",
     ssn: "",
     dob: "",
+    role: "user", // Default role
+    attuid: "",
+    spid: "",
   });
+
+  const handleRoleToggle = () => {
+    setFormData((prev) => ({
+      ...prev,
+      role: prev.role === "user" ? "admin" : "user", // Toggle between "user" and "admin"
+    }));
+  };
 
   const [errors, setErrors] = useState<any>({});
   const [successMessage, setSuccessMessage] = useState("");
@@ -55,16 +65,25 @@ const Signup: React.FC = () => {
     if (!formData.phone) newErrors.phone = "Phone Number is required";
     if (!formData.companyname)
       newErrors.companyname = "Company Name is required";
-    if (!formData.government_identification)
-      newErrors.government_identification =
-        "Government Identification is required";
+
+    if (formData.role === "user") {
+      if (!formData.government_identification)
+        newErrors.government_identification =
+          "Government Identification is required";
+      if (!formData.ssn) newErrors.ssn = "SSN is required";
+      if (!formData.tax_id) newErrors.tax_id = "EIN/TAX ID is required";
+    }
+
     if (!formData.dob) newErrors.dob = "Date of Birth is required";
-    if (!formData.ssn) newErrors.ssn = "SSN is required";
-    if (!formData.tax_id) newErrors.tax_id = "EIN/TAX ID is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
     if (!formData.confirmPassword)
       newErrors.confirmPassword = "Confirm Password is required";
+
+    if (formData.role === "admin") {
+      if (!formData.attuid) newErrors.attuid = "ATTUID is required";
+      if (!formData.spid) newErrors.spid = "SPID is required";
+    }
 
     if (formData.password !== formData.confirmPassword) {
       setErrors(["Passwords do not match"]);
@@ -91,7 +110,9 @@ const Signup: React.FC = () => {
             tax_id: formData.tax_id,
             email: formData.email,
             password: formData.password,
-            role: "user",
+            role: formData.role,
+            attuid: formData.attuid,
+            spid: formData.spid,
           }
         );
 
@@ -106,14 +127,17 @@ const Signup: React.FC = () => {
             email: "",
             password: "",
             confirmPassword: "",
-            fname:"",
-            lname:"",
-            phone:"",
-            companyname:"",
-            government_identification:"",
-            tax_id:"",
-            ssn:"",
-            dob:"",
+            fname: "",
+            lname: "",
+            phone: "",
+            companyname: "",
+            government_identification: "",
+            tax_id: "",
+            ssn: "",
+            dob: "",
+            role: "user",
+            attuid: "",
+            spid: "",
           });
 
           // Delay redirection to show success message
@@ -143,7 +167,9 @@ const Signup: React.FC = () => {
             <div className="grid grid-cols-1 gap-4 md:my-16 my-8">
               <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">First Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    First Name
+                  </h6>
                   <input
                     type="text"
                     name="fname"
@@ -153,12 +179,16 @@ const Signup: React.FC = () => {
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.fname && (
-                    <p className="text-start text-danger text-sm">{errors.fname}</p>
-                 )}
+                    <p className="text-start text-danger text-sm">
+                      {errors.fname}
+                    </p>
+                  )}
                 </div>
 
                 <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">Last Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Last Name
+                  </h6>
                   <input
                     type="text"
                     name="lname"
@@ -168,12 +198,16 @@ const Signup: React.FC = () => {
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.lname && (
-                    <p className="text-start text-danger text-sm">{errors.fname}</p>
-                 )}
+                    <p className="text-start text-danger text-sm">
+                      {errors.fname}
+                    </p>
+                  )}
                 </div>
 
                 <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">Company Name</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Company Name
+                  </h6>
                   <input
                     type="text"
                     name="companyname"
@@ -183,13 +217,17 @@ const Signup: React.FC = () => {
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.companyname && (
-                    <p className="text-start text-danger text-sm">{errors.companyname}</p>
-                 )}
+                    <p className="text-start text-danger text-sm">
+                      {errors.companyname}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">Phone Number</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Phone Number
+                  </h6>
                   <input
                     type="text"
                     name="phone"
@@ -198,12 +236,16 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
-                   {errors.phone && (
-                    <p className="text-start text-danger text-sm">{errors.phone}</p>
-                 )}
+                  {errors.phone && (
+                    <p className="text-start text-danger text-sm">
+                      {errors.phone}
+                    </p>
+                  )}
                 </div>
                 <div>
-                  <h6 className="text-black text-start md:text-md text-sm">Email</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Email
+                  </h6>
                   <input
                     type="email"
                     name="email"
@@ -212,12 +254,16 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
-                   {errors.email && (
-                    <p className="text-start text-danger text-sm">{errors.email}</p>
-                 )}
+                  {errors.email && (
+                    <p className="text-start text-danger text-sm">
+                      {errors.email}
+                    </p>
+                  )}
                 </div>
                 <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">Date Of Birth</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Date Of Birth
+                  </h6>
                   <input
                     type="date"
                     name="dob"
@@ -226,60 +272,79 @@ const Signup: React.FC = () => {
                     onChange={handleChange}
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
-                   {errors.dob && (
-                    <p className="text-start text-danger text-sm">{errors.dob}</p>
-                 )}
+                  {errors.dob && (
+                    <p className="text-start text-danger text-sm">
+                      {errors.dob}
+                    </p>
+                  )}
                 </div>
               </div>
-              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
-                <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">Government Identification</h6>
-                  <input
-                    type="text"
-                    name="government_identification"
-                    placeholder="Enter your government identification"
-                    value={formData.government_identification}
-                    onChange={handleChange}
-                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                  />
-                  {errors.government_identification && (
-                    <p className="text-start text-danger text-sm">{errors.government_identification}</p>
-                  )}
-                </div>
-                <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">EIN/TAX ID</h6>
-                  <input
-                    type="text"
-                    name="tax_id"
-                    placeholder="Enter your tax id"
-                    value={formData.tax_id}
-                    onChange={handleChange}
-                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                  />
-                  {errors.tax_id && (
-                    <p className="text-start text-danger text-sm">{errors.tax_id}</p>
-                  )}
-                </div>
 
-                <div className="w-full">
-                  <h6 className="text-black text-start md:text-md text-sm">SSN</h6>
-                  <input
-                    type="text"
-                    name="ssn"
-                    placeholder="Enter your SSN"
-                    value={formData.ssn}
-                    onChange={handleChange}
-                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                  />
-                  {errors.ssn && (
-                    <p className="text-start text-danger text-sm">{errors.ssn}</p>
-                  )}
+              {formData.role !== "admin" && (
+                <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
+                  <div className="w-full">
+                    <h6 className="text-black text-start md:text-md text-sm">
+                      Government Identification
+                    </h6>
+                    <input
+                      type="text"
+                      name="government_identification"
+                      placeholder="Enter your government identification"
+                      value={formData.government_identification}
+                      onChange={handleChange}
+                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                    />
+                    {errors.government_identification && (
+                      <p className="text-start text-danger text-sm">
+                        {errors.government_identification}
+                      </p>
+                    )}
+                  </div>
+                  <div className="w-full">
+                    <h6 className="text-black text-start md:text-md text-sm">
+                      EIN/TAX ID
+                    </h6>
+                    <input
+                      type="text"
+                      name="tax_id"
+                      placeholder="Enter your tax id"
+                      value={formData.tax_id}
+                      onChange={handleChange}
+                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                    />
+                    {errors.tax_id && (
+                      <p className="text-start text-danger text-sm">
+                        {errors.tax_id}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="w-full">
+                    <h6 className="text-black text-start md:text-md text-sm">
+                      SSN
+                    </h6>
+                    <input
+                      type="text"
+                      name="ssn"
+                      placeholder="Enter your SSN"
+                      value={formData.ssn}
+                      onChange={handleChange}
+                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                    />
+                    {errors.ssn && (
+                      <p className="text-start text-danger text-sm">
+                        {errors.ssn}
+                      </p>
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div>
-                  <h6 className="text-black text-start md:text-md text-sm">Password</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Password
+                  </h6>
                   <input
                     type="password"
                     name="password"
@@ -289,12 +354,16 @@ const Signup: React.FC = () => {
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.password && (
-                    <p className="text-start text-danger text-sm">{errors.password}</p>
+                    <p className="text-start text-danger text-sm">
+                      {errors.password}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <h6 className="text-black text-start md:text-md text-sm">Confirm Password</h6>
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Confirm Password
+                  </h6>
                   <input
                     type="password"
                     name="confirmPassword"
@@ -304,10 +373,84 @@ const Signup: React.FC = () => {
                     className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
                   />
                   {errors.confirmPassword && (
-                    <p className="text-danger text-start text-sm">{errors.confirmPassword}</p>
+                    <p className="text-danger text-start text-sm">
+                      {errors.confirmPassword}
+                    </p>
                   )}
                 </div>
+
+                {/* Role Radio Buttons */}
+                <div className="">
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Select Your Role
+                  </h6>
+                  <div className="flex items-center justify-start space-x-4 mt-3">
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="user"
+                        checked={formData.role === "user"}
+                        onChange={handleChange}
+                        className="form-radio text-[#41FDFE] focus:ring-[#41FDFE]"
+                      />
+                      <span className="text-black text-sm">Agent</span>
+                    </label>
+                    <label className="flex items-center space-x-2">
+                      <input
+                        type="radio"
+                        name="role"
+                        value="admin"
+                        checked={formData.role === "admin"}
+                        onChange={handleChange}
+                        className="form-radio text-[#41FDFE] focus:ring-[#41FDFE]"
+                      />
+                      <span className="text-black text-sm">Admin</span>
+                    </label>
+                  </div>
+                </div>
               </div>
+              {/* Conditionally render ATTUID and SPID fields for Admin */}
+              {formData.role === "admin" && (
+                <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
+                  <div>
+                    <h6 className="text-black text-start md:text-md text-sm">
+                      ATTUID
+                    </h6>
+                    <input
+                      type="text"
+                      name="attuid"
+                      placeholder="Enter your ATTUID"
+                      value={formData.attuid}
+                      onChange={handleChange}
+                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                    />
+                    {errors.attuid && (
+                      <p className="text-start text-danger text-sm">
+                        {errors.attuid}
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <h6 className="text-black text-start md:text-md text-sm">
+                      SPID
+                    </h6>
+                    <input
+                      type="text"
+                      name="spid"
+                      placeholder="Enter your SPID"
+                      value={formData.spid}
+                      onChange={handleChange}
+                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                    />
+                    {errors.spid && (
+                      <p className="text-start text-danger text-sm">
+                        {errors.spid}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
 
             <ValidationError
