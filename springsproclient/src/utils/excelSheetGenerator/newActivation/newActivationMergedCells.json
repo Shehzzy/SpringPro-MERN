@@ -1,0 +1,362 @@
+[
+    {
+        "range": "O11:R11",
+        "startAddress": "O11",
+        "endAddress": "R11",
+        "value": null
+    },
+    {
+        "range": "O12:R12",
+        "startAddress": "O12",
+        "endAddress": "R12",
+        "value": null
+    },
+    {
+        "range": "P13:R13",
+        "startAddress": "P13",
+        "endAddress": "R13",
+        "value": null
+    },
+    {
+        "range": "O16:R16",
+        "startAddress": "O16",
+        "endAddress": "R16",
+        "value": null
+    },
+    {
+        "range": "O17:R17",
+        "startAddress": "O17",
+        "endAddress": "R17",
+        "value": null
+    },
+    {
+        "range": "O6:R6",
+        "startAddress": "O6",
+        "endAddress": "R6",
+        "value": null
+    },
+    {
+        "range": "O7:R7",
+        "startAddress": "O7",
+        "endAddress": "R7",
+        "value": null
+    },
+    {
+        "range": "O8:R8",
+        "startAddress": "O8",
+        "endAddress": "R8",
+        "value": null
+    },
+    {
+        "range": "O9:R9",
+        "startAddress": "O9",
+        "endAddress": "R9",
+        "value": null
+    },
+    {
+        "range": "O10:R10",
+        "startAddress": "O10",
+        "endAddress": "R10",
+        "value": null
+    },
+    {
+        "range": "T24:W24",
+        "startAddress": "T24",
+        "endAddress": "W24",
+        "value": "COAM INFORMATION"
+    },
+    {
+        "range": "B5:D5",
+        "startAddress": "B5",
+        "endAddress": "D5",
+        "value": "Company Name:"
+    },
+    {
+        "range": "B6:D6",
+        "startAddress": "B6",
+        "endAddress": "D6",
+        "value": "Foundation Account Number:"
+    },
+    {
+        "range": "I6:J6",
+        "startAddress": "I6",
+        "endAddress": "J6",
+        "value": "AT&T NEXT Order?"
+    },
+    {
+        "range": "B7:D7",
+        "startAddress": "B7",
+        "endAddress": "D7",
+        "value": "Active CTN on Existing BAN:"
+    },
+    {
+        "range": "G14:J18",
+        "startAddress": "G14",
+        "endAddress": "J18",
+        "value": "Please Add Partner email address to all Pay and Ship Carts:  "
+    },
+    {
+        "range": "B15:D15",
+        "startAddress": "B15",
+        "endAddress": "D15",
+        "value": "Purchase Order # (if SEI, if applicable)"
+    },
+    {
+        "range": "B16:D16",
+        "startAddress": "B16",
+        "endAddress": "D16",
+        "value": "Contract Length"
+    },
+    {
+        "range": "B18:D18",
+        "startAddress": "B18",
+        "endAddress": "D18",
+        "value": "Mobile Share? (Y/N)"
+    },
+    {
+        "range": "E17:F17",
+        "startAddress": "E17",
+        "endAddress": "F17",
+        "value": null
+    },
+    {
+        "range": "E18:F18",
+        "startAddress": "E18",
+        "endAddress": "F18",
+        "value": null
+    },
+    {
+        "range": "L24:O24",
+        "startAddress": "L24",
+        "endAddress": "O24",
+        "value": "CUSTOM LABEL FIELDS (Enter the Label Name in Column K - N)"
+    },
+    {
+        "range": "P24:S24",
+        "startAddress": "P24",
+        "endAddress": "S24",
+        "value": "VOICE / DATA RATE PLAN  AND OPTIONS"
+    },
+    {
+        "range": "B21:D21",
+        "startAddress": "B21",
+        "endAddress": "D21",
+        "value": "Dealer Code"
+    },
+    {
+        "range": "B22:K23",
+        "startAddress": "B22",
+        "endAddress": "K23",
+        "value": null
+    },
+    {
+        "range": "C24:F24",
+        "startAddress": "C24",
+        "endAddress": "F24",
+        "value": "SERVICE USER NAME"
+    },
+    {
+        "range": "B1:K4",
+        "startAddress": "B1",
+        "endAddress": "K4",
+        "value": null
+    },
+    {
+        "range": "B8:D8",
+        "startAddress": "B8",
+        "endAddress": "D8",
+        "value": "Create Individual Billing Accounts? (Y/N)"
+    },
+    {
+        "range": "B9:D9",
+        "startAddress": "B9",
+        "endAddress": "D9",
+        "value": "Sales Contact Name:"
+    },
+    {
+        "range": "B10:D10",
+        "startAddress": "B10",
+        "endAddress": "D10",
+        "value": "Sales Contact Phone #:"
+    },
+    {
+        "range": "B11:D11",
+        "startAddress": "B11",
+        "endAddress": "D11",
+        "value": "Number of Lines:"
+    },
+    {
+        "range": "I11:J11",
+        "startAddress": "I11",
+        "endAddress": "J11",
+        "value": "Enterprise Installment Plan Order?"
+    },
+    {
+        "range": "X24:AA24",
+        "startAddress": "X24",
+        "endAddress": "AA24",
+        "value": "EQUIPMENT and ACCESSORIES"
+    },
+    {
+        "range": "AB24:AI24",
+        "startAddress": "AB24",
+        "endAddress": "AI24",
+        "value": "SHIPPING ADDRESS (CAN NOT BE PO BOX)"
+    },
+    {
+        "range": "AJ24:AN24",
+        "startAddress": "AJ24",
+        "endAddress": "AN24",
+        "value": "BILLING ADDRESS"
+    },
+    {
+        "range": "AO24:AZ24",
+        "startAddress": "AO24",
+        "endAddress": "AZ24",
+        "value": "PORT INFORMATION"
+    },
+    {
+        "range": "BA24:BC24",
+        "startAddress": "BA24",
+        "endAddress": "BC24",
+        "value": "BILLING CONTACT"
+    },
+    {
+        "range": "G24:K24",
+        "startAddress": "G24",
+        "endAddress": "K24",
+        "value": "PRIMARY PLACE OF USE ADDRESS"
+    },
+    {
+        "range": "B17:D17",
+        "startAddress": "B17",
+        "endAddress": "D17",
+        "value": "Bulk Shipping? (Y/N)"
+    },
+    {
+        "range": "E5:F5",
+        "startAddress": "E5",
+        "endAddress": "F5",
+        "value": null
+    },
+    {
+        "range": "E6:F6",
+        "startAddress": "E6",
+        "endAddress": "F6",
+        "value": null
+    },
+    {
+        "range": "E7:F7",
+        "startAddress": "E7",
+        "endAddress": "F7",
+        "value": null
+    },
+    {
+        "range": "E8:F8",
+        "startAddress": "E8",
+        "endAddress": "F8",
+        "value": null
+    },
+    {
+        "range": "E9:F9",
+        "startAddress": "E9",
+        "endAddress": "F9",
+        "value": null
+    },
+    {
+        "range": "E10:F10",
+        "startAddress": "E10",
+        "endAddress": "F10",
+        "value": null
+    },
+    {
+        "range": "E11:F11",
+        "startAddress": "E11",
+        "endAddress": "F11",
+        "value": null
+    },
+    {
+        "range": "E12:F12",
+        "startAddress": "E12",
+        "endAddress": "F12",
+        "value": null
+    },
+    {
+        "range": "E13:F13",
+        "startAddress": "E13",
+        "endAddress": "F13",
+        "value": null
+    },
+    {
+        "range": "E14:F14",
+        "startAddress": "E14",
+        "endAddress": "F14",
+        "value": null
+    },
+    {
+        "range": "E15:F15",
+        "startAddress": "E15",
+        "endAddress": "F15",
+        "value": null
+    },
+    {
+        "range": "E16:F16",
+        "startAddress": "E16",
+        "endAddress": "F16",
+        "value": null
+    },
+    {
+        "range": "B12:D12",
+        "startAddress": "B12",
+        "endAddress": "D12",
+        "value": "One Time Payment Options (BTM or SEI):"
+    },
+    {
+        "range": "B13:D13",
+        "startAddress": "B13",
+        "endAddress": "D13",
+        "value": "Tax Exempt? (Y/N)"
+    },
+    {
+        "range": "L19:O21",
+        "startAddress": "L19",
+        "endAddress": "O21",
+        "value": "© 2018 AT&T Intellectual Property. All rights reserved. AT&T, Globe logo, Mobilizing Your World and DIRECTV are registered trademarks and service marks of AT&T Intellectual Property and/or AT&T affiliated companies. All other marks are the property of their respective owners."
+    },
+    {
+        "range": "B20:D20",
+        "startAddress": "B20",
+        "endAddress": "D20",
+        "value": "Waive Activation Fee? (Y/N)"
+    },
+    {
+        "range": "B14:D14",
+        "startAddress": "B14",
+        "endAddress": "D14",
+        "value": "Customer ID (if SEI Or Tax Exempt)"
+    },
+    {
+        "range": "E19:F19",
+        "startAddress": "E19",
+        "endAddress": "F19",
+        "value": null
+    },
+    {
+        "range": "E20:F20",
+        "startAddress": "E20",
+        "endAddress": "F20",
+        "value": null
+    },
+    {
+        "range": "E21:F21",
+        "startAddress": "E21",
+        "endAddress": "F21",
+        "value": null
+    },
+    {
+        "range": "B19:D19",
+        "startAddress": "B19",
+        "endAddress": "D19",
+        "value": "Mobile Share Category"
+    }
+]

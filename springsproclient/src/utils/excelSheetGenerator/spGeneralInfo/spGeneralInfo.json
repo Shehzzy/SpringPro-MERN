@@ -1,0 +1,413 @@
+[
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A1",
+        "value": "Requestor Information",
+        "fontName": "Arial",
+        "fontSize": 20,
+        "bold": true,
+        "backgroundColor": null,
+        "alignment": "center",
+        "columnWidth": 77,
+        "rowHeight": 27,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "B1",
+        "value": "Requestor Information",
+        "fontName": "Calibri",
+        "fontSize": 11,
+        "backgroundColor": null,
+        "alignment": null,
+        "columnWidth": 35.33203125,
+        "rowHeight": 27,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A2",
+        "value": "Solution Provider Submitter's Name *",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A3",
+        "value": "Solution Provider Submitter's ATTUID (as listed in Webphone) *",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "fontColor": "FFFF0000",
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A4",
+        "value": "Solution Provider Number (SPID)*",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A5",
+        "value": "Solution Provider Company Name*",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A6",
+        "value": "Solution Provider Dealer Code*",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A7",
+        "value": "Solution Provider Contact Email* ",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A8",
+        "value": "Solution Provider Contact Number",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A9",
+        "value": "AT&T Channel Manager's Name",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A10",
+        "value": "Customer Information",
+        "fontName": "Arial",
+        "fontSize": 20,
+        "bold": true,
+        "backgroundColor": null,
+        "alignment": "center",
+        "columnWidth": 77,
+        "rowHeight": 29,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "B10",
+        "value": "Customer Information",
+        "fontName": "Calibri",
+        "fontSize": 11,
+        "backgroundColor": null,
+        "alignment": null,
+        "columnWidth": 35.33203125,
+        "rowHeight": 29,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A11",
+        "value": "Customer Business Name",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A12",
+        "value": {
+            "richText": [
+                {
+                    "font": {
+                        "size": 14,
+                        "color": {
+                            "theme": 1
+                        },
+                        "name": "Arial",
+                        "family": 2
+                    },
+                    "text": "Customer Contact Name "
+                },
+                {
+                    "font": {
+                        "italic": true,
+                        "size": 14,
+                        "color": {
+                            "theme": 1
+                        },
+                        "name": "Arial",
+                        "family": 2
+                    },
+                    "text": "(authorized - on behalf of)"
+                }
+            ]
+        },
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A13",
+        "value": "Customer Contact Email",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A14",
+        "value": {
+            "richText": [
+                {
+                    "font": {
+                        "size": 14,
+                        "color": {
+                            "theme": 1
+                        },
+                        "name": "Arial",
+                        "family": 2
+                    },
+                    "text": "Customer Contact Number  "
+                },
+                {
+                    "font": {
+                        "size": 14,
+                        "color": {
+                            "argb": "FF00B050"
+                        },
+                        "name": "Arial",
+                        "family": 2
+                    },
+                    "text": " "
+                }
+            ]
+        },
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A15",
+        "value": "FAN Name",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A16",
+        "value": "FAN (Foundation Account Number)",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A17",
+        "value": "BAN (Billing Account Number)",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A18",
+        "value": "Type of request",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A19",
+        "value": "# of Mobile Numbers impacted",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    },
+    {
+        "sheetName": "SP General Info (VID)",
+        "address": "A20",
+        "value": "Special Instructions",
+        "fontName": "Arial",
+        "fontSize": 14,
+        "backgroundColor": null,
+        "alignment": null,
+        "columnWidth": 77,
+        "rowHeight": 19,
+        "border": {
+            "top": null,
+            "bottom": null,
+            "left": null,
+            "right": null
+        }
+    }
+]
