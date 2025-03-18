@@ -11,6 +11,7 @@ import ExcelJS from "exceljs";
 import { saveAs } from "file-saver";
 import HashLoader from "react-spinners/HashLoader";
 import Swal from "sweetalert2";
+import ExportToExcel from "./ExportToExcel";
 
 function OrderDetails() {
   const { orderId } = useParams(); // Get the order ID from the URL
@@ -77,7 +78,7 @@ function OrderDetails() {
 
     axios
       .get(
-        `https://springprobackend-production.up.railway.app/api/order/get-single-order/${orderId}`,
+        `https://springairnsbackend-production.up.railway.app/api/order/get-single-order/${orderId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -101,7 +102,7 @@ function OrderDetails() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get("https://springprobackend-production.up.railway.app/api/auth/get-admin-data", {
+        const response = await axios.get("https://springairnsbackend-production.up.railway.app/api/auth/get-admin-data", {
           headers: {
             Authorization: `Bearer ${token}`,
             role: userRole,
@@ -476,12 +477,14 @@ function OrderDetails() {
               </div>
 
             </div>
-            <button
+            {/* <button
               onClick={exportToExcel}
               className="mb-4 px-3 py-2 bg-green-500 text-white rounded"
             >
               Export to Excel
-            </button>
+            </button> */}
+
+            <ExportToExcel order={order} adminData={adminData} />
 
 
             <button className="ml-3 mb-4 px-3 py-2 bg-slate-800 text-white rounded" onClick={() => { navigate(`/update-order/${order._id}`) }}>Update Order</button>

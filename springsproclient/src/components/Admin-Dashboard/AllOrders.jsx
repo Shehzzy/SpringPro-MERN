@@ -52,7 +52,7 @@ function AllOrders() {
     }
 
     axios
-      .get("https://springprobackend-production.up.railway.app/api/order/get-orders", {
+      .get("https://springairnsbackend-production.up.railway.app/api/order/get-orders", {
         headers: {
           Authorization: `Bearer ${token}`,
           role: userRole,
@@ -164,7 +164,7 @@ function AllOrders() {
 
     axios
       .put(
-        `https://springprobackend-production.up.railway.app/api/order/update-order-notes/${orderId}`,
+        `https://springairnsbackend-production.up.railway.app/api/order/update-order-notes/${orderId}`,
         { notes },
         {
           headers: {
@@ -191,7 +191,7 @@ function AllOrders() {
 
     axios
       .put(
-        `https://springprobackend-production.up.railway.app/api/order/update-order-status/${orderId}`,
+        `https://springairnsbackend-production.up.railway.app/api/order/update-order-status/${orderId}`,
         { status: newStatus },
         {
           headers: {

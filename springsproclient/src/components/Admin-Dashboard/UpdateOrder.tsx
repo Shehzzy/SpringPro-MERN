@@ -542,7 +542,7 @@ const UpdateOrder: React.FC = () => {
     const fetchOrderDetails = async () => {
       try {
         const response = await axios.get(
-          `https://springprobackend-production.up.railway.app/api/order/get-single-order/${id}`,
+          `https://springairnsbackend-production.up.railway.app/api/order/get-single-order/${id}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -715,7 +715,7 @@ const UpdateOrder: React.FC = () => {
     try {
       console.log("Submitting accountFields:", accountFields);
       const response = await axios.put(
-        `https://springprobackend-production.up.railway.app/api/order/update-order/${id}`,
+        `https://springairnsbackend-production.up.railway.app/api/order/update-order/${id}`,
         payload,
         {
           headers: {

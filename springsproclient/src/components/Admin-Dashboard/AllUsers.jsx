@@ -48,7 +48,7 @@ function AllUsers() {
     try {
       const token = localStorage.getItem("jwt_token");
       const response = await axios.get(
-        "https://springprobackend-production.up.railway.app/api/auth/get-users",
+        "https://springairnsbackend-production.up.railway.app/api/auth/get-users",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -89,7 +89,7 @@ function AllUsers() {
       try {
         // Call the API to update the Partner ID while preserving the current status
         const response = await axios.put(
-          "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+          "https://springairnsbackend-production.up.railway.app/api/auth/enable-disable-user",
           { userId, isEnabled, partnerId: newPartnerId }, // Pass the current isEnabled status
           {
             headers: {
@@ -156,7 +156,7 @@ function AllUsers() {
         if (partnerId) {
           try {
             const response = await axios.put(
-              "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+              "https://springairnsbackend-production.up.railway.app/api/auth/enable-disable-user",
               { userId, isEnabled: true, partnerId },
               {
                 headers: {
@@ -176,7 +176,7 @@ function AllUsers() {
         // If partnerId is already assigned, enable the user without asking for Partner ID
         try {
           const response = await axios.put(
-            "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+            "https://springairnsbackend-production.up.railway.app/api/auth/enable-disable-user",
             { userId, isEnabled: true },
             {
               headers: {
@@ -196,7 +196,7 @@ function AllUsers() {
       // Disable user directly (no partner ID needed)
       try {
         const response = await axios.put(
-          "https://springprobackend-production.up.railway.app/api/auth/enable-disable-user",
+          "https://springairnsbackend-production.up.railway.app/api/auth/enable-disable-user",
           { userId, isEnabled: false },
           {
             headers: {

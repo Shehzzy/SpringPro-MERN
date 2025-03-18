@@ -98,7 +98,7 @@ const Signup: React.FC = () => {
     if (validateForm()) {
       try {
         const response = await axios.post(
-          "https://springprobackend-production.up.railway.app/api/auth/register",
+          "https://springairnsbackend-production.up.railway.app/api/auth/register",
           {
             fname: formData.fname,
             lname: formData.lname,

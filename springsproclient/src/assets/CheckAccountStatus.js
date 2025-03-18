@@ -16,7 +16,7 @@ const CheckAccountStatus = () => {
 
             try {
                 const response = await axios.get(
-                    "https://springprobackend-production.up.railway.app/api/auth/check-status",
+                    "https://springairnsbackend-production.up.railway.app/api/auth/check-status",
                     {
                         headers: {
                             Authorization: `Bearer ${token}`,

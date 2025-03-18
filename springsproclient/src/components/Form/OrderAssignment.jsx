@@ -14,7 +14,7 @@ function OrderAssignment({ token, formData, setFormData }) {
       setError(null);
       try {
         const response = await axios.get(
-          "https://springprobackend-production.up.railway.app/api/order/get-customers",
+          "https://springairnsbackend-production.up.railway.app/api/order/get-customers",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
