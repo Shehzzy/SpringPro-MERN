@@ -1,65 +1,5 @@
 [
     {
-        "range": "O11:R11",
-        "startAddress": "O11",
-        "endAddress": "R11",
-        "value": null
-    },
-    {
-        "range": "O12:R12",
-        "startAddress": "O12",
-        "endAddress": "R12",
-        "value": null
-    },
-    {
-        "range": "P13:R13",
-        "startAddress": "P13",
-        "endAddress": "R13",
-        "value": null
-    },
-    {
-        "range": "O16:R16",
-        "startAddress": "O16",
-        "endAddress": "R16",
-        "value": null
-    },
-    {
-        "range": "O17:R17",
-        "startAddress": "O17",
-        "endAddress": "R17",
-        "value": null
-    },
-    {
-        "range": "O6:R6",
-        "startAddress": "O6",
-        "endAddress": "R6",
-        "value": null
-    },
-    {
-        "range": "O7:R7",
-        "startAddress": "O7",
-        "endAddress": "R7",
-        "value": null
-    },
-    {
-        "range": "O8:R8",
-        "startAddress": "O8",
-        "endAddress": "R8",
-        "value": null
-    },
-    {
-        "range": "O9:R9",
-        "startAddress": "O9",
-        "endAddress": "R9",
-        "value": null
-    },
-    {
-        "range": "O10:R10",
-        "startAddress": "O10",
-        "endAddress": "R10",
-        "value": null
-    },
-    {
         "range": "T24:W24",
         "startAddress": "T24",
         "endAddress": "W24",
@@ -112,18 +52,6 @@
         "startAddress": "B18",
         "endAddress": "D18",
         "value": "Mobile Share? (Y/N)"
-    },
-    {
-        "range": "E17:F17",
-        "startAddress": "E17",
-        "endAddress": "F17",
-        "value": null
-    },
-    {
-        "range": "E18:F18",
-        "startAddress": "E18",
-        "endAddress": "F18",
-        "value": null
     },
     {
         "range": "L24:O24",
@@ -234,78 +162,6 @@
         "value": "Bulk Shipping? (Y/N)"
     },
     {
-        "range": "E5:F5",
-        "startAddress": "E5",
-        "endAddress": "F5",
-        "value": null
-    },
-    {
-        "range": "E6:F6",
-        "startAddress": "E6",
-        "endAddress": "F6",
-        "value": null
-    },
-    {
-        "range": "E7:F7",
-        "startAddress": "E7",
-        "endAddress": "F7",
-        "value": null
-    },
-    {
-        "range": "E8:F8",
-        "startAddress": "E8",
-        "endAddress": "F8",
-        "value": null
-    },
-    {
-        "range": "E9:F9",
-        "startAddress": "E9",
-        "endAddress": "F9",
-        "value": null
-    },
-    {
-        "range": "E10:F10",
-        "startAddress": "E10",
-        "endAddress": "F10",
-        "value": null
-    },
-    {
-        "range": "E11:F11",
-        "startAddress": "E11",
-        "endAddress": "F11",
-        "value": null
-    },
-    {
-        "range": "E12:F12",
-        "startAddress": "E12",
-        "endAddress": "F12",
-        "value": null
-    },
-    {
-        "range": "E13:F13",
-        "startAddress": "E13",
-        "endAddress": "F13",
-        "value": null
-    },
-    {
-        "range": "E14:F14",
-        "startAddress": "E14",
-        "endAddress": "F14",
-        "value": null
-    },
-    {
-        "range": "E15:F15",
-        "startAddress": "E15",
-        "endAddress": "F15",
-        "value": null
-    },
-    {
-        "range": "E16:F16",
-        "startAddress": "E16",
-        "endAddress": "F16",
-        "value": null
-    },
-    {
         "range": "B12:D12",
         "startAddress": "B12",
         "endAddress": "D12",
@@ -334,24 +190,6 @@
         "startAddress": "B14",
         "endAddress": "D14",
         "value": "Customer ID (if SEI Or Tax Exempt)"
-    },
-    {
-        "range": "E19:F19",
-        "startAddress": "E19",
-        "endAddress": "F19",
-        "value": null
-    },
-    {
-        "range": "E20:F20",
-        "startAddress": "E20",
-        "endAddress": "F20",
-        "value": null
-    },
-    {
-        "range": "E21:F21",
-        "startAddress": "E21",
-        "endAddress": "F21",
-        "value": null
     },
     {
         "range": "B19:D19",
