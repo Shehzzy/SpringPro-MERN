@@ -2,15 +2,15 @@ import React, { useState, FormEvent, useEffect } from "react";
 import { useForm } from "@formspree/react";
 import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // Correct import
 import Swal from "sweetalert2";
 import OrderAssignment from "./OrderAssignment";
 import IMEIForm from "./IMEIForm";
 import creditCardType from "credit-card-type";
-import LineConfiguration from "./LineConfiguration";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Devices from "../../assets/National_Retail_Pricing.json";
 import TimezoneSelect from "react-timezone-select";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import {
   faCcVisa,
@@ -496,7 +496,7 @@ const Form: React.FC = () => {
     phoneUniqueCode: phoneUniqueCode || "",
     promoCode: promoCode,
     isTaxExempt: "", // New field for tax exemption
-    issuingState:"",
+    issuingState: "",
     taxExemptNumber: "", // New field for tax exemption number
     bestTimeToCall: "", // New field for best time to call
     timezone: "", // New field for timezone
@@ -603,37 +603,6 @@ const Form: React.FC = () => {
       });
       return;
     }
-
-    // Decode the token to check its expiry
-    // try {
-    //   const decoded = jwtDecode(token); // Decode the JWT
-    //   const currentTime = Date.now() / 1000; // Current time in seconds
-    //   // Check if the token has expired
-    //   if (decoded.exp && decoded.exp < currentTime) {
-    //     Swal.fire({
-    //       title: "Session Expired",
-    //       text: "Your session has expired. Please log in again.",
-    //       icon: "warning",
-    //       confirmButtonText: "Go to Login",
-    //     }).then(() => {
-    //       // Redirect to login if the token is expired
-    //       navigate("/login");
-    //     });
-    //     return;
-    //   }
-    // } catch (error) {
-    //   // If decoding the token fails, handle the error (e.g., invalid token)
-    //   Swal.fire({
-    //     title: "Invalid Token",
-    //     text: "The token is invalid. Please log in again.",
-    //     icon: "error",
-    //     confirmButtonText: "Go to Login",
-    //   }).then(() => {
-    //     navigate("/login");
-    //   });
-    //   return;
-    // }
-
     const fetchIMEINumbers = async () => {
       try {
         const response = await axios.get(
@@ -774,6 +743,7 @@ const Form: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
+    console.log("field changes", value, name)
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
 
@@ -812,6 +782,8 @@ const Form: React.FC = () => {
         return null; // Return null for invalid or unrecognized card types
     }
   };
+
+  console.log("Bill to Mobile Value:", formData.billtomobile);
 
   const newErrors: any = {};
   const validateForm = (): boolean => {
@@ -925,7 +897,52 @@ const Form: React.FC = () => {
       if (!formData.timezone) {
         newErrors.timezone = "Timezone is required.";
       }
+
+      if (!formData.billtomobile) {
+        newErrors.billtomobile = "Bill to Mobile is required.";
+      }
     });
+    // Object.keys(newErrors).forEach((key) => {
+    //   toast.error(newErrors[key], {
+    //     position: "bottom-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //   });
+    // });
+
+    // Aggregate all errors into a single message
+  // const errorMessages = Object.values(newErrors).join('\n');
+  
+  // if (errorMessages) {
+  //   toast.error(errorMessages, {
+  //     position: "bottom-right",
+  //     autoClose: 5000,
+  //     hideProgressBar: false,
+  //     closeOnClick: true,
+  //     pauseOnHover: true,
+  //     draggable: true,
+  //   });
+  // }
+
+  Object.keys(newErrors).forEach((key, index) => {
+    setTimeout(() => {
+      toast.error(newErrors[key], {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
+    }, index * 500); // Delay each toast by 500ms
+  });
+  
+
+  
+  
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
@@ -936,13 +953,25 @@ const Form: React.FC = () => {
     console.log(newErrors);
 
     if (isFormBlocked) {
-      Swal.fire({
-        icon: "error",
-        title: "Security Check Failed",
-        text: "Form submission is blocked due to security check failure.",
-        confirmButtonColor: "#d33",
+
+      toast.error("Form submission is blocked due to security check failure.", {
+        position: "bottom-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
       });
       return;
+
+
+      // Swal.fire({
+      //   icon: "error",
+      //   title: "Security Check Failed",
+      //   text: "Form submission is blocked due to security check failure.",
+      //   confirmButtonColor: "#d33",
+      // });
+      // return;
     }
 
     if (validateForm()) {
@@ -950,11 +979,21 @@ const Form: React.FC = () => {
         const token = localStorage.getItem("jwt_token");
 
         if (!token) {
-          setErrors((prev) => ({
-            ...prev,
-            token: "Authentication token missing",
-          }));
+          // setErrors((prev) => ({
+          //   ...prev,
+          //   token: "Authentication token missing",
+          // }));
+          // return;
+          toast.error("Authentication token missing.", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
           return;
+
         }
 
         const response = await axios.post(
@@ -979,9 +1018,27 @@ const Form: React.FC = () => {
         if (response.status === 201) {
           console.log("Order created successfully!");
           setIsSubmitted(true);
+           // Display success toast
+        toast.success("Order created successfully!", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+
         }
       } catch (error) {
         console.error("There was an error creating the order:", error.message);
+        toast.error("An error occurred while creating the order.", {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
         setErrors((prev) => ({
           ...prev,
           submit: "An error occurred while creating the order.",
@@ -1070,8 +1127,10 @@ const Form: React.FC = () => {
           newErrors.contactemail = "Contact Email is required.";
         if (!formData.billtomobile)
           newErrors.billtomobile = "Bill to Mobile is required.";
+        console.log("Bill to Mobile Error:", newErrors.billtomobile);
         if (!formData.creditcardpayment)
           newErrors.creditcardpayment = "Credit Card Payment is required.";
+        
         if (formData.creditcardpayment === "yes") {
           if (!formData.cardNumber)
             newErrors.cardNumber = "Card number is required.";
@@ -1600,7 +1659,7 @@ const Form: React.FC = () => {
                   onChange={handleChange}
                   className="border-b h-10 border-gray-300 py-2 w-full"
                 >
-                  <option value="select">Select An Option</option>
+                  <option value="">Select An Option</option>
                   <option value="yes">Yes</option>
                   <option value="no">No</option>
                 </select>
@@ -2980,6 +3039,17 @@ const Form: React.FC = () => {
               </button>
             )}
           </div>
+          <ToastContainer
+            position="bottom-right"
+            autoClose={5000} // Auto-close after 5 seconds
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+          />
 
           {/* Success Message */}
           {isSubmitted && (

@@ -585,79 +585,91 @@ function IMEIForm({
                           handleFieldChange(index, "buyPhoneNumber", e.target.value === "true")
                         }
                       >
-                        <option value="true">Buying New Phone Number</option>
+                        <option value="true">Yes, Porting My Phone Number</option>
                         <option value="false">Not Porting</option>
                       </select>
                     </div>
                   </div>
 
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+  {/* Port Out PIN Field */}
+  {account.buyPhoneNumber && (
+    <div>
+      <label className="block inter text-sm font-medium text-gray-700 mb-2">
+        Port Out PIN
+      </label>
+      <input
+        type="text"
+        placeholder="Enter Port Out PIN"
+        value={account.portOutPin}
+        onChange={(e) =>
+          handleFieldChange(index, "portOutPin", e.target.value)
+        }
+        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+      />
+    </div>
+  )}
 
-                  {account.buyPhoneNumber && (<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div>
-                      <label className="block inter text-sm font-medium text-gray-700 mb-2">Port Out PIN</label>
-                      <input
-                        type="text"
-                        placeholder="Enter Port Out PIN"
-                        value={account.portOutPin}
-                        onChange={(e) =>
-                          handleFieldChange(index, "portOutPin", e.target.value)
-                        }
-                        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                      />
-                    </div>
-                    {!account.buyPhoneNumber && (
+  {/* Phone Number Field */}
+  {account.buyPhoneNumber && (
+    <div>
+      <label className="block inter text-sm font-medium text-gray-700 mb-2">
+        Phone Number
+      </label>
+      {account.carrierPhoneNumbers && account.carrierPhoneNumbers.length > 1 ? (
+        <select
+          value={account.phoneNumber}
+          onChange={(e) =>
+            handleFieldChange(index, "phoneNumber", e.target.value)
+          }
+          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+        >
+          <option value="">Select Phone Number</option>
+          {account.carrierPhoneNumbers.map((phoneNumber, idx) => (
+            <option key={idx} value={phoneNumber}>
+              {phoneNumber}
+            </option>
+          ))}
+        </select>
+      ) : (
+        <input
+          type="text"
+          placeholder="Enter Phone Number"
+          value={account.phoneNumber}
+          onChange={(e) =>
+            handleFieldChange(index, "phoneNumber", e.target.value)
+          }
+          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+        />
+      )}
+    </div>
+  )}
 
-                      <div>
-                        <label className="block inter text-sm font-medium text-gray-700 mb-2">Phone Number</label>
-                        {account.carrierPhoneNumbers && account.carrierPhoneNumbers.length > 1 ? (
-                          <select
-                            value={account.phoneNumber}
-                            onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                            className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                          >
-                            <option value="">Select Phone Number</option>
-                            {account.carrierPhoneNumbers.map((phoneNumber, idx) => (
-                              <option key={idx} value={phoneNumber}>
-                                {phoneNumber}
-                              </option>
-                            ))}
-                          </select>
-                        ) : (
-                          <input
-                            type="text"
-                            placeholder="Enter Phone Number"
-                            value={account.phoneNumber}
-                            onChange={(e) => handleFieldChange(index, "phoneNumber", e.target.value)}
-                            className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                          />
-                        )}
-                      </div>
-                    )}
-
-                    {(account.tradeSmartphone && account.purchaseSmartphone) ||
-                      (!account.tradeSmartphone && !account.purchaseSmartphone) ? (
-                      <div>
-                        <label className="block inter text-sm font-medium text-gray-700 mb-2">IMEI Number</label>
-                        <input
-                          type="text"
-                          placeholder="Enter IMEI Number"
-                          value={account.imei}
-                          maxLength={15} // Restricts input length
-                          onChange={(e) => {
-                            const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-                            handleFieldChange(index, "imei", value);
-                          }}
-                          onBlur={(e) => handleIMEIChange(e)}
-                          className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
-                        />
-
-                        <p className={error.isValidError ? "text-green-500" : "text-danger"}>
-                          {error.isValidError || error.isInvalidError}
-                        </p>
-                      </div>
-                    ) : null}
-                  </div>)}
-
+  {/* IMEI Number Field */}
+  {(account.tradeSmartphone && account.purchaseSmartphone) ||
+  (!account.tradeSmartphone && !account.purchaseSmartphone) ? (
+    <div>
+      <label className="block inter text-sm font-medium text-gray-700 mb-2">
+        IMEI Number
+      </label>
+      <input
+        type="text"
+        placeholder="Enter IMEI Number"
+        value={account.imei}
+        maxLength={15} // Restricts input length
+        onChange={(e) => {
+          const value = e.target.value.replace(/\D/g, ""); // Remove non-numeric characters
+          handleFieldChange(index, "imei", value);
+        }}
+        onBlur={(e) => handleIMEIChange(e)}
+        className="w-full inter text-sm p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-400"
+      />
+      <p className={error.isValidError ? "text-green-500" : "text-danger"}>
+        {error.isValidError || error.isInvalidError}
+      </p>
+    </div>
+  ) : null}
+</div>
 
                   {error.isValidError !== "" && error.isInvalidError === "" && (
                     <div className="bg-white shadow-md rounded-lg p-4 mt-4 border border-gray-200">

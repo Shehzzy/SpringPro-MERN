@@ -86,7 +86,7 @@ function AllOrders() {
     },
     {
       name: "Email",
-      selector: (row) => row.userId.email,
+      selector: (row) => row.userId?.email || "N/A",
       sortable: true,
     },
     // {

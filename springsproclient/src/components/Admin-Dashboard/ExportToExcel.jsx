@@ -32,306 +32,575 @@ const ExportToExcel = ({ order, adminData }) => {
 
 
 
-const handleExportToExcel = async () => {
-  try {
-    if (!order || Object.keys(order).length === 0) {
-      alert("No data to export!");
-      return;
-    }
+  const handleExportToExcel = async () => {
+    try {
+      if (!order || Object.keys(order).length === 0) {
+        alert("No data to export!");
+        return;
+      }
 
-    const workbook = new ExcelJS.Workbook();
-    let allSheetsData = [
-      {
-        sheetName: "SP General Info (VID)",
-        tabColor: "FFFF0000",
-        data: handleSpGeneralInfoCellData(order, adminData),
-        mergedCells: require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfoMergedCells.json`),
+      const workbook = new ExcelJS.Workbook();
+      let allSheetsData = [
+        {
+          sheetName: "SP General Info (VID)",
+          tabColor: "FFFF0000",
+          data: handleSpGeneralInfoCellData(order, adminData),
+          mergedCells: require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfoMergedCells.json`),
+        },
+        {
+          sheetName: "New Activation",
+          tabColor: null,
+          data: handleNewActivationData(order),
+          mergedCells: handleNewActivationMergedCellData(order),
+        },
+      ];
+
+      allSheetsData.forEach((sheet) => {
+        const newWorksheet = workbook.addWorksheet(sheet.sheetName);
+
+        if (sheet.tabColor) {
+          newWorksheet.properties.tabColor = { argb: sheet.tabColor };
+        }
+
+        sheet.data.forEach((cellInfo) => {
+          const {
+            address,
+            value,
+            fontName,
+            fontSize,
+            bold,
+            italic,
+            fontColor,
+            backgroundColor,
+            alignment,
+            columnWidth,
+            rowHeight,
+            border,
+          } = cellInfo;
+
+          let cell = newWorksheet.getCell(address);
+          cell.value = value;
+
+          if (fontName || fontSize || bold !== undefined || italic !== undefined || fontColor) {
+            cell.font = {
+              name: fontName || "Arial",
+              size: fontSize || 12,
+              bold: bold || false,
+              italic: italic || false,
+              color: fontColor ? { argb: fontColor } : undefined,
+            };
+          }
+
+          if (backgroundColor) {
+            cell.fill = {
+              type: "pattern",
+              pattern: "solid",
+              fgColor: { argb: backgroundColor },
+            };
+          }
+
+          if (alignment) {
+            cell.alignment = { horizontal: alignment };
+          }
+
+          if (columnWidth) {
+            newWorksheet.getColumn(address.replace(/[0-9]/g, "")).width = columnWidth;
+          }
+
+          if (rowHeight) {
+            newWorksheet.getRow(parseInt(address.replace(/[A-Z]/g, ""), 10)).height = rowHeight;
+          }
+
+          if (border) {
+            cell.border = {
+              top: border.top
+                ? { style: border.top.style, color: border.top.color ? { argb: border.top.color } : undefined }
+                : undefined,
+              bottom: border.bottom
+                ? { style: border.bottom.style, color: border.bottom.color ? { argb: border.bottom.color } : undefined }
+                : undefined,
+              left: border.left
+                ? { style: border.left.style, color: border.left.color ? { argb: border.left.color } : undefined }
+                : undefined,
+              right: border.right
+                ? { style: border.right.style, color: border.right.color ? { argb: border.right.color } : undefined }
+                : undefined,
+            };
+          }
+        });
+
+        const mergedRanges = new Set();
+        sheet.mergedCells.forEach((mergeInfo) => {
+          if (!mergedRanges.has(mergeInfo.range)) {
+            newWorksheet.mergeCells(mergeInfo.range);
+            newWorksheet.getCell(mergeInfo.startAddress).value = mergeInfo.value;
+            mergedRanges.add(mergeInfo.range);
+          }
+        });
+
+
+
+        if (sheet.sheetName === "New Activation") {
+          // Add image to the worksheet
+          const imageId = workbook.addImage({
+            base64: base64Image, // Use base64 image
+            extension: "png",
+          });
+
+          newWorksheet.addImage(imageId, {
+            tl: { col: 1, row: 0 },
+            br: { col: 4, row: 4 },
+          });
+        }
+      });
+
+      // Convert workbook to binary
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      saveAs(blob, `Order_${order._id}_Details.xlsx`);
+    } catch (error) {
+      console.error("Error exporting to Excel:", error);
+      alert(`Error exporting to Excel: ${error.message}`);
+    }
+  };
+
+
+  const cellInfo = (sheetName, cell, content) => {
+    return {
+      sheetName: sheetName,
+      address: cell,
+      value: content,
+      fontName: "Calibri",
+      fontSize: 11,
+      backgroundColor: null,
+      alignment: null,
+      columnWidth: 35.33203125,
+      rowHeight: 27,
+      border: {
+        top: null,
+        bottom: null,
+        left: null,
+        right: null,
       },
-      {
-        sheetName: "New Activation",
-        tabColor: null,
-        data: handleNewActivationData(order),
-        mergedCells: handleNewActivationMergedCellData(order),
-      },
+    };
+  };
+
+
+  const mergedCellInfo = (cellStart, cellEnd, content) => {
+    return {
+      range: `${cellStart}:${cellEnd}`,
+      startAddress: cellStart,
+      endAddress: cellEnd,
+      value: content
+    }
+  }
+
+
+  const handleSpGeneralInfoCellData = (order, adminData) => {
+    const sheetName = 'SP General Info (VID)';
+    let data = [
+      // Solution Provider Submitter's Name *Agent name
+      cellInfo(sheetName, "B2", (`${order.userId?.fname} ${order.userId?.lname}`) || "N/A"),
+      // Solution Provider Submitter's ATTUID (as listed in Webphone) *admin attuid
+      cellInfo(sheetName, "B3", adminData.attuid || "N/A"),
+      // Solution Provider Number (SPID) *admin spid
+      cellInfo(sheetName, "B4", 14949),
+      // Solution Provider Company Name *Agent companyname
+      cellInfo(sheetName, "B5", order.userId?.companyname || "N/A"),
+      // Solution Provider Dealer Code 
+      cellInfo(sheetName, "B6", order.userId?.partnerId || "N/A"),
+      // Solution Provider Contact Email
+      cellInfo(sheetName, "B7", order.userId?.email || "N/A"),
+      // Solution Provider Contact Number
+      cellInfo(sheetName, "B8", order.userId?.phone || "N/A"),
+      // AT&T Channel Manager's Name
+      cellInfo(sheetName, "B9", order.attChannelManager?.name || "N/A"),
+
+      // Customer Business Name
+      cellInfo(sheetName, "B11", order.customerId?.businesslegalname || "N/A"),
+      // Customer Contact Name (authorized - on behalf of)
+      cellInfo(sheetName, "B12", order.customerId?.contactname || "N/A"),
+      // Customer Contact Email
+      cellInfo(sheetName, "B13", order.customerId?.contactemail || "N/A"),
+      // Customer Contact Number
+      cellInfo(sheetName, "B14", order.customerId?.contactphone || "N/A"),
+
+      // FAN Name **not needed
+      cellInfo(sheetName, "B15", order.fan?.name || "N/A"),
+      // FAN (Foundation Account Number) **not needed
+      cellInfo(sheetName, "B16", order.fan?.number || "N/A"),
+      // BAN (Billing Account Number)
+      cellInfo(sheetName, "B17", order.existingBAN || "N/A"),
+      // Type of request
+      cellInfo(sheetName, "B18", "New Request"),
+      // # of Mobile Numbers impacted
+      cellInfo(sheetName, "B19", order.accounts?.length || 0),
+      // Special Instructions
+      cellInfo(sheetName, "B20", order.specialinstruction || "N/A"),
     ];
 
-    allSheetsData.forEach((sheet) => {
-      const newWorksheet = workbook.addWorksheet(sheet.sheetName);
+    const excelSheetTemplate = require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfo.json`);
 
-      if (sheet.tabColor) {
-        newWorksheet.properties.tabColor = { argb: sheet.tabColor };
-      }
-
-      sheet.data.forEach((cellInfo) => {
-        const {
-          address,
-          value,
-          fontName,
-          fontSize,
-          bold,
-          italic,
-          fontColor,
-          backgroundColor,
-          alignment,
-          columnWidth,
-          rowHeight,
-          border,
-        } = cellInfo;
-
-        let cell = newWorksheet.getCell(address);
-        cell.value = value;
-
-        if (fontName || fontSize || bold !== undefined || italic !== undefined || fontColor) {
-          cell.font = {
-            name: fontName || "Arial",
-            size: fontSize || 12,
-            bold: bold || false,
-            italic: italic || false,
-            color: fontColor ? { argb: fontColor } : undefined,
-          };
-        }
-
-        if (backgroundColor) {
-          cell.fill = {
-            type: "pattern",
-            pattern: "solid",
-            fgColor: { argb: backgroundColor },
-          };
-        }
-
-        if (alignment) {
-          cell.alignment = { horizontal: alignment };
-        }
-
-        if (columnWidth) {
-          newWorksheet.getColumn(address.replace(/[0-9]/g, "")).width = columnWidth;
-        }
-
-        if (rowHeight) {
-          newWorksheet.getRow(parseInt(address.replace(/[A-Z]/g, ""), 10)).height = rowHeight;
-        }
-
-        if (border) {
-          cell.border = {
-            top: border.top
-              ? { style: border.top.style, color: border.top.color ? { argb: border.top.color } : undefined }
-              : undefined,
-            bottom: border.bottom
-              ? { style: border.bottom.style, color: border.bottom.color ? { argb: border.bottom.color } : undefined }
-              : undefined,
-            left: border.left
-              ? { style: border.left.style, color: border.left.color ? { argb: border.left.color } : undefined }
-              : undefined,
-            right: border.right
-              ? { style: border.right.style, color: border.right.color ? { argb: border.right.color } : undefined }
-              : undefined,
-          };
-        }
-      });
-
-      const mergedRanges = new Set();
-      sheet.mergedCells.forEach((mergeInfo) => {
-        if (!mergedRanges.has(mergeInfo.range)) {
-          newWorksheet.mergeCells(mergeInfo.range);
-          newWorksheet.getCell(mergeInfo.startAddress).value = mergeInfo.value;
-          mergedRanges.add(mergeInfo.range);
-        }
-      });
-
-
-
-      if (sheet.sheetName === "New Activation") {
-        // Add image to the worksheet
-        const imageId = workbook.addImage({
-          base64: base64Image, // Use base64 image
-          extension: "png",
-        });
-
-        newWorksheet.addImage(imageId, {
-          tl: { col: 1, row: 0 },
-          br: { col: 4, row: 4 },
-        });
-      }
-    });
-
-    // Convert workbook to binary
-    const buffer = await workbook.xlsx.writeBuffer();
-    const blob = new Blob([buffer], {
-      type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-    });
-
-    saveAs(blob, `Order_${order._id}_Details.xlsx`);
-  } catch (error) {
-    console.error("Error exporting to Excel:", error);
-    alert(`Error exporting to Excel: ${error.message}`);
+    return [...data, ...excelSheetTemplate];
   }
-};
 
 
-const cellInfo = (sheetName, cell, content) => {
-  return {
-    sheetName: sheetName,
-    address: cell,
-    value: content,
-    fontName: "Calibri",
-    fontSize: 11,
-    backgroundColor: null,
-    alignment: null,
-    columnWidth: 35.33203125,
-    rowHeight: 27,
-    border: {
-      top: null,
-      bottom: null,
-      left: null,
-      right: null,
-    },
+  const handleNewActivationData = (order) => {
+    console.log("Activation order data", order);
+    const sheetName = "New Activation";
+  
+    let data = [];
+  
+    // Loop through each account and create a row for each IMEI
+    order.accounts?.forEach((account, index) => {
+      const shippingInfo = account.shippingAddress || {};
+      const carrierInfo = order.carrierInfos?.[index] || {}; // Get carrier info for the current account
+  
+      data.push(
+        // Row Number
+        cellInfo(sheetName, `B${27 + index}`, index + 1),
+        // Service User Name Section
+        cellInfo(sheetName, `C${27 + index}`, order.customerId?.contactname || "N/A"),
+        cellInfo(sheetName, `D${27 + index}`, order.customerId?.businesslegalname || "N/A"),
+        cellInfo(sheetName, `E${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `F${27 + index}`, order.customerId?.contactemail || "N/A"),
+        cellInfo(sheetName, `G${27 + index}`, order.customerId?.businessaddress || "N/A"),
+        cellInfo(sheetName, `H${27 + index}`, "N/A"),
+        cellInfo(sheetName, `I${27 + index}`, order.customerId?.businesscity || "N/A"),
+        cellInfo(sheetName, `J${27 + index}`, order.customerId?.businessstate || "N/A"),
+        cellInfo(sheetName, `K${27 + index}`, order.customerId?.businesszip || "N/A"),
+        cellInfo(sheetName, `L${27 + index}`, "N/A"),
+        cellInfo(sheetName, `M${27 + index}`, order.customerId?.businesslegalname || "N/A"),
+        cellInfo(sheetName, `N${27 + index}`, "N/A"),
+        cellInfo(sheetName, `O${27 + index}`, "N/A"),
+        cellInfo(sheetName, `P${27 + index}`, order.ratePlan || "N/A"),
+        cellInfo(sheetName, `Q${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `R${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `S${27 + index}`, "N/A"),
+        cellInfo(sheetName, `T${27 + index}`, order.smartphoneDetails?.brand || "N/A"),
+        cellInfo(sheetName, `U${27 + index}`, order.smartphoneDetails?.model || "N/A"),
+        cellInfo(sheetName, `V${27 + index}`, account.imei || "N/A"), // IMEI Number
+        cellInfo(sheetName, `W${27 + index}`, "eSIM or EID Number"),
+        cellInfo(sheetName, `X${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `Y${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `Z${27 + index}`, "Back Office Filled"),
+        cellInfo(sheetName, `AA${27 + index}`, "Back Office Filled"),
+        // Shipping Address Section
+        cellInfo(sheetName, `AB${27 + index}`, shippingInfo.attentionname || "N/A"),
+        cellInfo(sheetName, `AC${27 + index}`, shippingInfo.shippingaddress || "N/A"),
+        cellInfo(sheetName, `AD${27 + index}`, "N/A"),
+        cellInfo(sheetName, `AE${27 + index}`, shippingInfo.shippingcity || "N/A"),
+        cellInfo(sheetName, `AF${27 + index}`, shippingInfo.shippingstate || "N/A"),
+        cellInfo(sheetName, `AG${27 + index}`, shippingInfo.shippingzip || "N/A"),
+        cellInfo(sheetName, `AH${27 + index}`, "N/A"),
+        cellInfo(sheetName, `AI${27 + index}`, "N/A"),
+        // Billing Address Section
+        cellInfo(sheetName, `AJ${27 + index}`, order.customerId?.contactname || "N/A"),
+        cellInfo(sheetName, `AK${27 + index}`, order.customerId?.businessaddress || "N/A"),
+        cellInfo(sheetName, `AL${27 + index}`, order.customerId?.businesscity || "N/A"),
+        cellInfo(sheetName, `AM${27 + index}`, order.customerId?.businessstate || "N/A"),
+        cellInfo(sheetName, `AN${27 + index}`, order.customerId?.businesszip || "N/A"),
+        // Carrier Info Section
+        cellInfo(
+          sheetName,
+          `AO${27 + index}`,
+          carrierInfo.phonenumbers?.length
+            ? carrierInfo.phonenumbers.join(", ")
+            : "N/A"
+        ),
+        cellInfo(sheetName, `AP${27 + index}`, carrierInfo.currentwirelesscarrier || "N/A"),
+        cellInfo(sheetName, `AQ${27 + index}`, carrierInfo.authorizedname || "N/A"),
+        cellInfo(sheetName, `AR${27 + index}`, carrierInfo.ssnortaxid || "N/A"),
+        cellInfo(sheetName, `AS${27 + index}`, carrierInfo.accountnumber || "N/A"),
+        cellInfo(sheetName, `AT${27 + index}`, order.customerId?.contactphone || "N/A"),
+        cellInfo(sheetName, `AU${27 + index}`, carrierInfo.pinorpassword || "N/A"),
+        cellInfo(sheetName, `AV${27 + index}`, carrierInfo.billingaddress || "N/A"),
+        cellInfo(sheetName, `AW${27 + index}`, "N/A"),
+        cellInfo(sheetName, `AX${27 + index}`, carrierInfo.billingcity || "N/A"),
+        cellInfo(sheetName, `AY${27 + index}`, carrierInfo.billingstate || "N/A"),
+        cellInfo(sheetName, `AZ${27 + index}`, carrierInfo.billingzip || "N/A"),
+        cellInfo(sheetName, `BA${27 + index}`, order.customerId?.contactname || "N/A"),
+        cellInfo(sheetName, `BB${27 + index}`, order.customerId?.contactname || "N/A"),
+        cellInfo(sheetName, `BC${27 + index}`, order.customerId?.contactphone || "N/A")
+      );
+    });
+  
+    const excelSheetTemplate = require(`../../utils/excelSheetGenerator/newActivation/newActivation.json`);
+    return [...data, ...excelSheetTemplate];
   };
-};
+
+  
+  // const handleNewActivationData = (order) => {
+  //   console.log("Activation order data", order);
+  //   const sheetName = "New Activation";
+
+  //   let data = [];
+
+  //   // Loop through each account and create a row for each IMEI
+  //   order.accounts?.forEach((account, index) => {
+  //     const shippingInfo = account.shippingAddress || {};
+
+  //     data.push(
+  //       cellInfo(sheetName, `B${27 + index}`, index + 1),
+  //       cellInfo(sheetName, `C${27 + index}`, order.customerId?.contactname || "N/A"),
+  //       cellInfo(sheetName, `D${27 + index}`, order.customerId?.businesslegalname || "N/A"),
+  //       cellInfo(sheetName, `E${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `F${27 + index}`, order.customerId?.contactemail || "N/A"),
+  //       cellInfo(sheetName, `G${27 + index}`, order.customerId?.businessaddress || "N/A"),
+  //       cellInfo(sheetName, `H${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `I${27 + index}`, order.customerId?.businesscity || "N/A"),
+  //       cellInfo(sheetName, `J${27 + index}`, order.customerId?.businessstate || "N/A"),
+  //       cellInfo(sheetName, `K${27 + index}`, order.customerId?.businesszip || "N/A"),
+  //       cellInfo(sheetName, `L${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `M${27 + index}`, order.customerId?.businesslegalname || "N/A"),
+  //       cellInfo(sheetName, `N${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `O${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `P${27 + index}`, order.ratePlan || "N/A"),
+  //       cellInfo(sheetName, `Q${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `R${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `S${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `T${27 + index}`, order.smartphoneDetails?.brand || "N/A"),
+  //       cellInfo(sheetName, `U${27 + index}`, order.smartphoneDetails?.model || "N/A"),
+  //       cellInfo(sheetName, `V${27 + index}`, account.imei || "N/A"), // Add IMEI in column V
+  //       cellInfo(sheetName, `W${27 + index}`, "eSIM or EID Number"),
+  //       cellInfo(sheetName, `X${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `Y${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `Z${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `AA${27 + index}`, "Back Office Filled"),
+  //       cellInfo(sheetName, `AB${27 + index}`, shippingInfo.attentionname || "N/A"),
+  //       cellInfo(sheetName, `AC${27 + index}`, shippingInfo.shippingaddress || "N/A"),
+  //       cellInfo(sheetName, `AD${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `AE${27 + index}`, shippingInfo.shippingcity || "N/A"),
+  //       cellInfo(sheetName, `AF${27 + index}`, shippingInfo.shippingstate || "N/A"),
+  //       cellInfo(sheetName, `AG${27 + index}`, shippingInfo.shippingzip || "N/A"),
+  //       cellInfo(sheetName, `AH${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `AI${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `AJ${27 + index}`, order.customerId?.contactname || "N/A"),
+  //       cellInfo(sheetName, `AK${27 + index}`, order.customerId?.businessaddress || "N/A"),
+  //       cellInfo(sheetName, `AL${27 + index}`, order.customerId?.businesscity || "N/A"),
+  //       cellInfo(sheetName, `AM${27 + index}`, order.customerId?.businessstate || "N/A"),
+  //       cellInfo(sheetName, `AN${27 + index}`, order.customerId?.businesszip || "N/A"),
+  //       // Carrier Infos - For Now showing one
+  //       cellInfo(
+  //         sheetName,
+  //         `AO${27 + index}`,
+  //         order.carrierInfos?.[0]?.phonenumbers?.length
+  //           ? order.carrierInfos[0].phonenumbers.join(", ")
+  //           : "N/A"
+  //       ),
+  //       cellInfo(sheetName, `AP${27 + index}`, order.carrierInfos[0].currentwirelesscarrier|| "N/A"),
+  //       cellInfo(sheetName, `AQ${27 + index}`, order.carrierInfos[0].authorizedname|| "N/A"),
+  //       cellInfo(sheetName, `AR${27 + index}`, order.carrierInfos[0].ssnortaxid|| "N/A"),
+  //       cellInfo(sheetName, `AS${27 + index}`, order.carrierInfos[0].accountnumber|| "N/A"),
+  //       cellInfo(sheetName, `AT${27 + index}`, order.customerId?.contactphone || "N/A"),
+  //       cellInfo(sheetName, `AU${27 + index}`, order.carrierInfos[0].pinorpassword|| "N/A"),
+  //       cellInfo(sheetName, `AV${27 + index}`, order.carrierInfos[0].billingaddress|| "N/A"),
+  //       cellInfo(sheetName, `AW${27 + index}`, "N/A"),
+  //       cellInfo(sheetName, `AX${27 + index}`, order.carrierInfos[0].billingcity|| "N/A"),
+  //       cellInfo(sheetName, `AY${27 + index}`, order.carrierInfos[0].billingstate|| "N/A"),
+  //       cellInfo(sheetName, `AZ${27 + index}`, order.carrierInfos[0].billingzip|| "N/A"),
+  //       cellInfo(sheetName, `BA${27 + index}`, order.customerId?.contactname || "N/A"),
+  //       cellInfo(sheetName, `BB${27 + index}`, order.customerId?.contactname || "N/A"),
+  //       cellInfo(sheetName, `BC${27 + index}`, order.customerId?.contactphone || "N/A"),
+
+        
 
 
-const mergedCellInfo = (cellStart, cellEnd, content) => {
-  return {
-    range: `${cellStart}:${cellEnd}`,
-    startAddress: cellStart,
-    endAddress: cellEnd,
-    value: content
-  }
-}
 
 
-const handleSpGeneralInfoCellData = (order, adminData) => {
-  const sheetName = 'SP General Info (VID)';
-  let data = [
-    // Solution Provider Submitter's Name *Agent name
-    cellInfo(sheetName, "B2", (`${order.userId?.fname} ${order.userId?.lname}`) || "N/A"),
-    // Solution Provider Submitter's ATTUID (as listed in Webphone) *admin attuid
-    cellInfo(sheetName, "B3", adminData.attuid || "N/A"),
-    // Solution Provider Number (SPID) *admin spid
-    cellInfo(sheetName, "B4", 14949),
-    // Solution Provider Company Name *Agent companyname
-    cellInfo(sheetName, "B5", order.userId?.companyname || "N/A"),
-    // Solution Provider Dealer Code 
-    cellInfo(sheetName, "B6", order.userId?.partnerId || "N/A"),
-    // Solution Provider Contact Email
-    cellInfo(sheetName, "B7", order.userId?.email || "N/A"),
-    // Solution Provider Contact Number
-    cellInfo(sheetName, "B8", order.userId?.phone || "N/A"),
-    // AT&T Channel Manager's Name
-    cellInfo(sheetName, "B9", order.attChannelManager?.name || "N/A"),
+  //     );
+  //   });
 
-    // Customer Business Name
-    cellInfo(sheetName, "B11", order.customerId?.businesslegalname || "N/A"),
-    // Customer Contact Name (authorized - on behalf of)
-    cellInfo(sheetName, "B12", order.customerId?.contactname || "N/A"),
-    // Customer Contact Email
-    cellInfo(sheetName, "B13", order.customerId?.contactemail || "N/A"),
-    // Customer Contact Number
-    cellInfo(sheetName, "B14", order.customerId?.contactphone || "N/A"),
-
-    // FAN Name **not needed
-    cellInfo(sheetName, "B15", order.fan?.name || "N/A"),
-    // FAN (Foundation Account Number) **not needed
-    cellInfo(sheetName, "B16", order.fan?.number || "N/A"),
-    // BAN (Billing Account Number)
-    cellInfo(sheetName, "B17", order.existingBAN || "N/A"),
-    // Type of request
-    cellInfo(sheetName, "B18", "New Request"),
-    // # of Mobile Numbers impacted
-    cellInfo(sheetName, "B19", order.accounts?.length || 0),
-    // Special Instructions
-    cellInfo(sheetName, "B20", order.specialinstruction || "N/A"),
-  ];
-
-  const excelSheetTemplate = require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfo.json`);
-
-  return [...data, ...excelSheetTemplate];
-}
-
-const handleNewActivationData = (order) => {
-  console.log("Activation order data", order);
-  const sheetName = 'New Activation';
-
-  //////////////////// Any other values add here! //////////////////
-  let data = [
-
-    // Installment Length
-    cellInfo(sheetName, "J7", order.installmentLength || "N/A"),
-
-    // Line # (M24)
-    cellInfo(sheetName, "M24", order.lineNumber || "N/A"),
-  ];
-
-  const excelSheetTemplate = require(`../../utils/excelSheetGenerator/newActivation/newActivation.json`);
-
-  return [...data, ...excelSheetTemplate];
-}
+  //   const excelSheetTemplate = require(`../../utils/excelSheetGenerator/newActivation/newActivation.json`);
+  //   return [...data, ...excelSheetTemplate];
+  // };
 
 
-const handleNewActivationMergedCellData = (order) => {
-  /////// Apply to mergedCellData if cell on the template needs to be merged with given content //////
-  const mergedCellData = [
-    // Company Name
-    mergedCellInfo("E5", "F5", order.customerId?.businesslegalname || "N/A"),
-    // Foundation Account Number
-    mergedCellInfo("E6", "F6",  order.existingFAN || "N/A"),
-    // Active CTN on Existing BAN
-    mergedCellInfo("E7", "F7",  order.existingBAN || "N/A"),
-    // Create Individual Billing Accounts? (Y/N)
-    mergedCellInfo("E8", "F8",  "N/A"),
-    // Sales Contact Name
-    mergedCellInfo("E9", "F9",  "Back Office Information"),
-    // Sales Contact Phone #
-    mergedCellInfo("E10", "F10" , "Back Office Information"),
-    // Number of Lines
-    mergedCellInfo("E11", "F11" , order.accounts?.length || 0),
-    // One Time Payment Options (BTM or SEI)
-    mergedCellInfo("E12", "F12" , "BTM"),
-    // Tax Exempt? (Y/N)
-    mergedCellInfo("E13", "F13" , order.taxExempt ? "Y" : "N"),
-    // Customer ID (if SEI Or Tax Exempt)
-    mergedCellInfo("E14", "F14" , order.taxExemptNumber || "N/A"),
-    // Purchase Order # (if SEI, if applicable)
-    mergedCellInfo("E15", "F15" , "N/A"),
-    // Contract Length
-    mergedCellInfo("E16", "F16" , `BYOD - 0 months or installment plan - 36 months
+
+  const handleNewActivationMergedCellData = (order) => {
+    /////// Apply to mergedCellData if cell on the template needs to be merged with given content //////
+    const mergedCellData = [
+      // Company Name
+      mergedCellInfo("E5", "F5", order.customerId?.businesslegalname || "N/A"),
+      // Foundation Account Number
+      mergedCellInfo("E6", "F6", order.existingFAN || "N/A"),
+      // Active CTN on Existing BAN
+      mergedCellInfo("E7", "F7", order.existingBAN || "N/A"),
+      // Create Individual Billing Accounts? (Y/N)
+      mergedCellInfo("E8", "F8", "N/A"),
+      // Sales Contact Name
+      mergedCellInfo("E9", "F9", "Back Office Information"),
+      // Sales Contact Phone #
+      mergedCellInfo("E10", "F10", "Back Office Information"),
+      // Number of Lines
+      mergedCellInfo("E11", "F11", order.accounts?.length || 0),
+      // One Time Payment Options (BTM or SEI)
+      mergedCellInfo("E12", "F12", "BTM"),
+      // Tax Exempt? (Y/N)
+      mergedCellInfo("E13", "F13", order.taxExempt ? "Y" : "N"),
+      // Customer ID (if SEI Or Tax Exempt)
+      mergedCellInfo("E14", "F14", order.taxExemptNumber || "N/A"),
+      // Purchase Order # (if SEI, if applicable)
+      mergedCellInfo("E15", "F15", "N/A"),
+      // Contract Length
+      mergedCellInfo("E16", "F16", `BYOD - 0 months or installment plan - 36 months
 If any of the lines indicate non-BYOD, then 36 months`),
-    // Bulk Shipping? (Y/N)
-    mergedCellInfo("E17", "F17" , `All lines go to the same shipping address: ${allSameShippingAddress}`),
-    // Mobile Share? (Y/N)
-    mergedCellInfo("E18", "F18" , "N/A"),
-    // Mobile Share Category
-    mergedCellInfo("E19", "F19" , "N/A"),
-    // Waive Activation Fee? (Y/N)
-    mergedCellInfo("E20", "F20" , "Y"),
-    // Dealer Code
-    mergedCellInfo("E21", "F21" , 14949),
+      // Bulk Shipping? (Y/N)
+      mergedCellInfo("E17", "F17", `All lines go to the same shipping address: ${allSameShippingAddress}`),
+      // Mobile Share? (Y/N)
+      mergedCellInfo("E18", "F18", "N/A"),
+      // Mobile Share Category
+      mergedCellInfo("E19", "F19", "N/A"),
+      // Waive Activation Fee? (Y/N)
+      mergedCellInfo("E20", "F20", "Y"),
+      // Dealer Code
+      mergedCellInfo("E21", "F21", 14949),
 
 
-    // Credit card Information (M6:M17)
-    mergedCellInfo("O6", "R6",order.customerId?.businesslegalname || "N/A"),
-    mergedCellInfo("O7", "R7",order.customerId?.contactname || "N/A"),
-    mergedCellInfo("O8", "R8",order.carrierInfos?.[0]?.billingaddress || "N/A"),
-    mergedCellInfo("O9", "R9",order.carrierInfos?.[1]?.billingaddress || "N/A"),
-    mergedCellInfo("O10","R10", order.carrierInfos?.[0]?.billingcity || "N/A"),
-    mergedCellInfo("O11","R11", order.carrierInfos?.[0]?.billingstate + order.carrierInfos?.[0]?.billingzip || "N/A"),
-    mergedCellInfo("O12","R12", order.creditCardInfo?.customerId.contactphone || "N/A"),
-    mergedCellInfo("P13","R13", (`Best Time To Call ${order.bestTimeToCall}, TimeZone: ${order.timezone}`) || "N/A"),
+      // Credit card Information (M6:M17)
+      mergedCellInfo("O6", "R6", order.customerId?.businesslegalname || "N/A"),
+      mergedCellInfo("O7", "R7", order.customerId?.contactname || "N/A"),
+      mergedCellInfo("O8", "R8", order.carrierInfos?.[0]?.billingaddress || "N/A"),
+      mergedCellInfo("O9", "R9", order.carrierInfos?.[1]?.billingaddress || "N/A"),
+      mergedCellInfo("O10", "R10", order.carrierInfos?.[0]?.billingcity || "N/A"),
+      mergedCellInfo("O11", "R11", order.carrierInfos?.[0]?.billingstate + order.carrierInfos?.[0]?.billingzip || "N/A"),
+      mergedCellInfo("O12", "R12", order.creditCardInfo?.customerId.contactphone || "N/A"),
+      mergedCellInfo("P13", "R13", (`Best Time To Call ${order.bestTimeToCall}, TimeZone: ${order.timezone}`) || "N/A"),
 
-    mergedCellInfo("O16","R16", order.customerId?.contactemail || "N/A"),
-    mergedCellInfo("O17","R17", order.customerId?.businesslegalname || "N/A"),
-  ]
+      mergedCellInfo("O16", "R16", order.customerId?.contactemail || "N/A"),
+      mergedCellInfo("O17", "R17", order.customerId?.businesslegalname || "N/A"),
+      mergedCellInfo("O17", "R17", order.customerId?.businesslegalname || "N/A"),
 
-  const newActivationMergedCellsData =
+    ]
+
+    const newActivationMergedCellsData =
       require(`../../utils/excelSheetGenerator/newActivation/newActivationMergedCells.json`);
 
-  return [...newActivationMergedCellsData, ...mergedCellData]
-}
+    return [...newActivationMergedCellsData, ...mergedCellData]
+  }
 
-return (
-  <button onClick={handleExportToExcel} className="mb-4 px-3 py-2 bg-green-500 text-white rounded">
-    Export to Excel
-  </button>
-);
+  return (
+    <button onClick={handleExportToExcel} className="mb-4 px-3 py-2 bg-green-500 text-white rounded">
+      Export to Excel
+    </button>
+  );
 };
 
 export default ExportToExcel;
+
+
+// Test Data
+// const order = {
+//   _id: "123456789",
+//   userId: {
+//     fname: "John",
+//     lname: "Doe",
+//     companyname: "Tech Solutions Inc.",
+//     email: "john.doe@techsolutions.com",
+//     phone: "123-456-7890",
+//     partnerId: "PART123",
+//   },
+//   customerId: {
+//     businesslegalname: "Global Enterprises",
+//     contactname: "Jane Smith",
+//     contactemail: "jane.smith@global.com",
+//     contactphone: "987-654-3210",
+//     businessaddress: "456 Business Rd",
+//     businesscity: "Metropolis",
+//     businessstate: "NY",
+//     businesszip: "10001",
+//   },
+//   smartphoneDetails: {
+//     brand: "Apple",
+//     model: "iPhone 15 Pro",
+//     color: "Space Gray",
+//     size: "128GB",
+//   },
+//   ratePlan: "UYW 2.0 Advanced",
+//   specialinstruction: "Handle with care",
+//   accounts: [
+//     {
+//       portOutPin: "1234",
+//       phoneNumber: "555-123-4567",
+//       carrier: "AT&T",
+//       imei: "123456789012345",
+//       buyPhoneNumber: false,
+//       tradeSmartphone: true,
+//       purchaseSmartphone: false,
+//       shippingAddress: {
+//         attentionname: "John Doe",
+//         shippingaddress: "123 Main St",
+//         shippingcity: "Springfield",
+//         shippingstate: "IL",
+//         shippingzip: "62701",
+//       },
+//     },
+//     {
+//       portOutPin: "5678",
+//       phoneNumber: "555-987-6543",
+//       carrier: "Verizon",
+//       imei: "987654321098765",
+//       buyPhoneNumber: true,
+//       tradeSmartphone: false,
+//       purchaseSmartphone: true,
+//       shippingAddress: {
+//         attentionname: "Jane Smith",
+//         shippingaddress: "456 Elm St",
+//         shippingcity: "Shelbyville",
+//         shippingstate: "IL",
+//         shippingzip: "62702",
+//       },
+//     },
+//   ],
+//   carrierInfos: [
+//     {
+//       currentwirelesscarrier: "AT&T",
+//       accountnumber: "ACC123456",
+//       pinorpassword: "PIN123",
+//       ssnortaxid: "123-45-6789",
+//       billingname: "John Doe",
+//       billingaddress: "123 Main St",
+//       billingcity: "Springfield",
+//       billingstate: "IL",
+//       billingzip: "62701",
+//       authorizedname: "John Doe",
+//       phonenumbers: ["555-123-4567"],
+//     },
+//     {
+//       currentwirelesscarrier: "Verizon",
+//       accountnumber: "ACC987654",
+//       pinorpassword: "PIN456",
+//       ssnortaxid: "987-65-4321",
+//       billingname: "Jane Smith",
+//       billingaddress: "456 Elm St",
+//       billingcity: "Shelbyville",
+//       billingstate: "IL",
+//       billingzip: "62702",
+//       authorizedname: "Jane Smith",
+//       phonenumbers: ["555-987-6543"],
+//     },
+//   ],
+//   shippingAddresses: [
+//     {
+//       attentionname: "John Doe",
+//       shippingaddress: "123 Main St",
+//       shippingcity: "Springfield",
+//       shippingstate: "IL",
+//       shippingzip: "62701",
+//     },
+//     {
+//       attentionname: "Jane Smith",
+//       shippingaddress: "456 Elm St",
+//       shippingcity: "Shelbyville",
+//       shippingstate: "IL",
+//       shippingzip: "62702",
+//     },
+//   ],
+//   taxExempt: true,
+//   taxExemptNumber: "TAX123456",
+//   bestTimeToCall: "10:00 AM - 4:00 PM",
+//   timezone: "EST",
+// };
