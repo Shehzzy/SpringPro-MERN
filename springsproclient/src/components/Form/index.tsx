@@ -2362,7 +2362,7 @@ const Form: React.FC = () => {
                     <select
                       name="buyNewPhone"
                       value={buyNewPhone}
-                      onChange={(e) => setBuyNewPhone(e.target.value)}
+                      onChange={handleBuyNewPhoneChange}
                       className="border-b h-10 border-gray-300 w-full"
                     >
                       <option value="">Select</option>
