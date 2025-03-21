@@ -239,6 +239,7 @@ const handleSpGeneralInfoCellData = (order, adminData) => {
 }
 
 const handleNewActivationData = (order) => {
+  console.log("Activation order data", order);
   const sheetName = 'New Activation';
   let data = [
     // Company Name
