@@ -41,8 +41,6 @@ const Form: React.FC = () => {
 
   const [linesData, setLinesData] = useState([]);
 
-
-
   // Callback function to receive updated accountFields data
   const handleAccountFieldsChange = (updatedAccountFields) => {
     setAccountFields(updatedAccountFields); // Update state in the parent
@@ -103,6 +101,7 @@ const Form: React.FC = () => {
 
   const handleBuyNewPhoneChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
+    console.log("Buy new phone change", value);
     setBuyNewPhone(value);
     setFormData((prev) => ({
       ...prev,
@@ -497,6 +496,7 @@ const Form: React.FC = () => {
     phoneUniqueCode: phoneUniqueCode || "",
     promoCode: promoCode,
     isTaxExempt: "", // New field for tax exemption
+    issuingState:"",
     taxExemptNumber: "", // New field for tax exemption number
     bestTimeToCall: "", // New field for best time to call
     timezone: "", // New field for timezone
@@ -908,6 +908,7 @@ const Form: React.FC = () => {
       // Validate Tax Exempt fields
       if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
         newErrors.taxExemptNumber = "Tax Exempt Number is required.";
+        newErrors.issuingState = "Issuing State is required.";
       } else if (
         formData.isTaxExempt === "yes" &&
         (formData.taxExemptNumber.length < 6 ||
@@ -1282,6 +1283,7 @@ const Form: React.FC = () => {
 
               {/* Tax Exempt Field */}
               <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-6">
+                {/* Tax Exempt Field */}
                 <div className="w-full">
                   <h6 className="text-sm font-medium text-gray-700">
                     Is Tax Exempt?
@@ -1303,45 +1305,74 @@ const Form: React.FC = () => {
 
                 {/* Conditionally render Tax Exempt Number field */}
                 {formData.isTaxExempt === "yes" && (
-                  <div className="w-full">
-                    <h6 className="text-sm font-medium text-gray-700">
-                      Tax Exempt Number
-                    </h6>
-                    <input
-                      type="text"
-                      name="taxExemptNumber"
-                      placeholder="Enter 6-9 digit number"
-                      value={formData.taxExemptNumber}
-                      onChange={handleChange}
-                      className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                      maxLength={9} // Limit input to 9 digits
-                    />
-                    {errors.taxExemptNumber && (
-                      <p className="text-red-500 text-sm">
-                        {errors.taxExemptNumber}
-                      </p>
-                    )}
-                  </div>
-                )}
+                  <>
+                    <div className="w-full">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        Tax Exempt Number
+                      </h6>
+                      <input
+                        type="text"
+                        name="taxExemptNumber"
+                        placeholder="Enter 6-9 digit number"
+                        value={formData.taxExemptNumber}
+                        onChange={handleChange}
+                        className="border-b focus:outline-none border-gray-300 py-2 w-full"
+                        maxLength={9} // Limit input to 9 digits
+                      />
+                      {errors.taxExemptNumber && (
+                        <p className="text-red-500 text-sm">
+                          {errors.taxExemptNumber}
+                        </p>
+                      )}
+                    </div>
 
-                <div className="w-full mb-5">
-                  <h6 className="text-sm font-medium text-gray-700">
-                    Special Instruction
-                  </h6>
-                  <textarea
-                    name="specialinstruction"
-                    value={formData.specialinstruction}
-                    className="w-full border border-gray-300 rounded-lg p-2"
-                    onChange={handleChange}
-                    placeholder="Type here..."
-                    style={{ resize: "none" }}
-                  ></textarea>
-                  {errors.specialinstruction && (
-                    <p className="text-red-500 text-sm">
-                      {errors.specialinstruction}
-                    </p>
-                  )}
-                </div>
+                    {/* Shipping State Dropdown */}
+                    <div className="w-full">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        Issuing State
+                      </h6>
+                      <select
+                        name="issuingState"
+                        value={formData.issuingState}
+                        onChange={handleChange}
+                        className="border-b h-10 border-gray-300 py-2 w-full bg-white"
+                      >
+                        <option value="" className="py-2">
+                          Select a state
+                        </option>
+                        {states.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {state.name}
+                          </option>
+                        ))}
+                      </select>
+                      {errors.shippingState && (
+                        <p className="text-red-500 text-sm">
+                          {errors.shippingState}
+                        </p>
+                      )}
+                    </div>
+                  </>
+                )}
+              </div>
+
+              <div className="w-full mb-5">
+                <h6 className="text-sm font-medium text-gray-700">
+                  Special Instruction
+                </h6>
+                <textarea
+                  name="specialinstruction"
+                  value={formData.specialinstruction}
+                  className="w-full border border-gray-300 rounded-lg p-2"
+                  onChange={handleChange}
+                  placeholder="Type here..."
+                  style={{ resize: "none" }}
+                ></textarea>
+                {errors.specialinstruction && (
+                  <p className="text-red-500 text-sm">
+                    {errors.specialinstruction}
+                  </p>
+                )}
               </div>
             </form>
 
@@ -1860,14 +1891,14 @@ const Form: React.FC = () => {
                       timezone: selectedTimezone.value,
                     }))
                   }
-                  className="custom-timezone-select" 
+                  className="custom-timezone-select"
                   style={{
                     border: "1px solid #ccc",
                     borderRadius: "8px",
                     padding: "8px",
                     backgroundColor: "#f9fafb",
                   }}
-                  menuClassName="custom-timezone-menu" 
+                  menuClassName="custom-timezone-menu"
                   menuStyle={{
                     backgroundColor: "#fff",
                     border: "1px solid #ccc",
