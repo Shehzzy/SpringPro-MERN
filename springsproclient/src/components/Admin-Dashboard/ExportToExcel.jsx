@@ -45,13 +45,13 @@ const handleExportToExcel = async () => {
         sheetName: "SP General Info (VID)",
         tabColor: "FFFF0000",
         data: handleSpGeneralInfoCellData(order, adminData),
-        mergedCells: require("../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfoMergedCells.json"),
+        mergedCells: require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfoMergedCells.json`),
       },
       {
         sheetName: "New Activation",
         tabColor: null,
         data: handleNewActivationData(order),
-        mergedCells: require("../../utils/excelSheetGenerator/newActivation/newActivationMergedCells.json"),
+        mergedCells: handleNewActivationMergedCellData(order),
       },
     ];
 
@@ -189,6 +189,15 @@ const cellInfo = (sheetName, cell, content) => {
 };
 
 
+const mergedCellInfo = (cellStart, cellEnd, content) => {
+  return {
+    range: `${cellStart}:${cellEnd}`,
+    startAddress: cellStart,
+    endAddress: cellEnd,
+    value: content
+  }
+}
+
 
 const handleSpGeneralInfoCellData = (order, adminData) => {
   const sheetName = 'SP General Info (VID)';
@@ -233,7 +242,7 @@ const handleSpGeneralInfoCellData = (order, adminData) => {
     cellInfo(sheetName, "B20", order.specialinstruction || "N/A"),
   ];
 
-  const excelSheetTemplate = require('../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfo.json');
+  const excelSheetTemplate = require(`../../utils/excelSheetGenerator/spGeneralInfo/spGeneralInfo.json`);
 
   return [...data, ...excelSheetTemplate];
 }
@@ -241,67 +250,82 @@ const handleSpGeneralInfoCellData = (order, adminData) => {
 const handleNewActivationData = (order) => {
   console.log("Activation order data", order);
   const sheetName = 'New Activation';
+
+  //////////////////// Any other values add here! //////////////////
   let data = [
-    // Company Name
-    cellInfo(sheetName, "E5", order.customerId?.businesslegalname || "N/A"),
-    // Foundation Account Number
-    cellInfo(sheetName, "E6", order.existingFAN || "N/A"),
-    // Active CTN on Existing BAN
-    cellInfo(sheetName, "E7", order.existingBAN || "N/A"),
-    // Create Individual Billing Accounts? (Y/N)
-    cellInfo(sheetName, "E8", "N/A"),
-    // Sales Contact Name
-    cellInfo(sheetName, "E9", "Back Office Information"),
-    // Sales Contact Phone #
-    cellInfo(sheetName, "E10", "Back Office Information"),
-    // Number of Lines
-    cellInfo(sheetName, "E11", order.accounts?.length || 0),
-    // One Time Payment Options (BTM or SEI)
-    cellInfo(sheetName, "E12", "BTM"),
-    // Tax Exempt? (Y/N)
-    cellInfo(sheetName, "E13", order.taxExempt ? "Y" : "N"),
-    // Customer ID (if SEI Or Tax Exempt)
-    cellInfo(sheetName, "E14", order.taxExemptNumber || "N/A"),
-    // Purchase Order # (if SEI, if applicable)
-    cellInfo(sheetName, "E15", "N/A"),
-    // Contract Length
-    cellInfo(sheetName, "E16", `BYOD - 0 months or installment plan - 36 months
-If any of the lines indicate non-BYOD, then 36 months`),
-    // Bulk Shipping? (Y/N)
-    cellInfo(sheetName, "E17", `All lines go to the same shipping address: ${allSameShippingAddress}`),
-    // Mobile Share? (Y/N)
-    cellInfo(sheetName, "E18", "N/A"),
-    // Mobile Share Category
-    cellInfo(sheetName, "E19", "N/A"),
-    // Waive Activation Fee? (Y/N)
-    cellInfo(sheetName, "E20", "Y"),
-    // Dealer Code
-    cellInfo(sheetName, "E21", 14949),
 
     // Installment Length
     cellInfo(sheetName, "J7", order.installmentLength || "N/A"),
-    // Credit card Information (M6:M17)
-    cellInfo(sheetName, "M6", order.customerId?.businesslegalname || "N/A"),
-    cellInfo(sheetName, "M7", order.customerId?.contactname || "N/A"),
-    cellInfo(sheetName, "M8", order.carrierInfos?.[0]?.billingaddress || "N/A"),
-    cellInfo(sheetName, "M9", order.carrierInfos?.[1]?.billingaddress || "N/A"),
-    cellInfo(sheetName, "M10", order.carrierInfos?.[0]?.billingcity || "N/A"),
-    cellInfo(sheetName, "M11", order.carrierInfos?.[0]?.billingstate + order.carrierInfos?.[0]?.billingzip || "N/A"),
-    cellInfo(sheetName, "M12", order.creditCardInfo?.customerId.contactphone || "N/A"),
-    cellInfo(sheetName, "M13", (`Best Time To Call ${order.bestTimeToCall}, TimeZone: ${order.timezone}`) || "N/A"),
-    cellInfo(sheetName, "M14", order.customerId?.contactemail || "N/A"),
-    cellInfo(sheetName, "M15", order.customerId?.businesslegalname || "N/A"),
 
     // Line # (M24)
     cellInfo(sheetName, "M24", order.lineNumber || "N/A"),
   ];
 
-  const excelSheetTemplate = require('../../utils/excelSheetGenerator/newActivation/newActivation.json');
+  const excelSheetTemplate = require(`../../utils/excelSheetGenerator/newActivation/newActivation.json`);
 
   return [...data, ...excelSheetTemplate];
 }
 
-console.log("New Activation Data:", handleNewActivationData(order));
+
+const handleNewActivationMergedCellData = (order) => {
+  /////// Apply to mergedCellData if cell on the template needs to be merged with given content //////
+  const mergedCellData = [
+    // Company Name
+    mergedCellInfo("E5", "F5", order.customerId?.businesslegalname || "N/A"),
+    // Foundation Account Number
+    mergedCellInfo("E6", "F6",  order.existingFAN || "N/A"),
+    // Active CTN on Existing BAN
+    mergedCellInfo("E7", "F7",  order.existingBAN || "N/A"),
+    // Create Individual Billing Accounts? (Y/N)
+    mergedCellInfo("E8", "F8",  "N/A"),
+    // Sales Contact Name
+    mergedCellInfo("E9", "F9",  "Back Office Information"),
+    // Sales Contact Phone #
+    mergedCellInfo("E10", "F10" , "Back Office Information"),
+    // Number of Lines
+    mergedCellInfo("E11", "F11" , order.accounts?.length || 0),
+    // One Time Payment Options (BTM or SEI)
+    mergedCellInfo("E12", "F12" , "BTM"),
+    // Tax Exempt? (Y/N)
+    mergedCellInfo("E13", "F13" , order.taxExempt ? "Y" : "N"),
+    // Customer ID (if SEI Or Tax Exempt)
+    mergedCellInfo("E14", "F14" , order.taxExemptNumber || "N/A"),
+    // Purchase Order # (if SEI, if applicable)
+    mergedCellInfo("E15", "F15" , "N/A"),
+    // Contract Length
+    mergedCellInfo("E16", "F16" , `BYOD - 0 months or installment plan - 36 months
+If any of the lines indicate non-BYOD, then 36 months`),
+    // Bulk Shipping? (Y/N)
+    mergedCellInfo("E17", "F17" , `All lines go to the same shipping address: ${allSameShippingAddress}`),
+    // Mobile Share? (Y/N)
+    mergedCellInfo("E18", "F18" , "N/A"),
+    // Mobile Share Category
+    mergedCellInfo("E19", "F19" , "N/A"),
+    // Waive Activation Fee? (Y/N)
+    mergedCellInfo("E20", "F20" , "Y"),
+    // Dealer Code
+    mergedCellInfo("E21", "F21" , 14949),
+
+
+    // Credit card Information (M6:M17)
+    mergedCellInfo("O6", "R6",order.customerId?.businesslegalname || "N/A"),
+    mergedCellInfo("O7", "R7",order.customerId?.contactname || "N/A"),
+    mergedCellInfo("O8", "R8",order.carrierInfos?.[0]?.billingaddress || "N/A"),
+    mergedCellInfo("O9", "R9",order.carrierInfos?.[1]?.billingaddress || "N/A"),
+    mergedCellInfo("O10","R10", order.carrierInfos?.[0]?.billingcity || "N/A"),
+    mergedCellInfo("O11","R11", order.carrierInfos?.[0]?.billingstate + order.carrierInfos?.[0]?.billingzip || "N/A"),
+    mergedCellInfo("O12","R12", order.creditCardInfo?.customerId.contactphone || "N/A"),
+    mergedCellInfo("P13","R13", (`Best Time To Call ${order.bestTimeToCall}, TimeZone: ${order.timezone}`) || "N/A"),
+
+    mergedCellInfo("O16","R16", order.customerId?.contactemail || "N/A"),
+    mergedCellInfo("O17","R17", order.customerId?.businesslegalname || "N/A"),
+  ]
+
+  const newActivationMergedCellsData =
+      require(`../../utils/excelSheetGenerator/newActivation/newActivationMergedCells.json`);
+
+  return [...newActivationMergedCellsData, ...mergedCellData]
+}
 
 return (
   <button onClick={handleExportToExcel} className="mb-4 px-3 py-2 bg-green-500 text-white rounded">
