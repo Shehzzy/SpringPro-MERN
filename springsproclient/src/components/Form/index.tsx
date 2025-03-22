@@ -783,35 +783,169 @@ const Form: React.FC = () => {
     }
   };
 
-  console.log("Bill to Mobile Value:", formData.billtomobile);
-
   const newErrors: any = {};
   const validateForm = (): boolean => {
+    if (!formData.sansPartnerID)
+      newErrors.agentCode = "Agent Code is required.";
+
     if (!formData.agreementtype)
       newErrors.agreementtype = "Agreement Type is required.";
     if (formData.agreementtype === "acda" && !formData.eip)
       newErrors.eip = "EIP Limit is required.";
     if (!formData.atntaccount)
-      newErrors.atntaccount = "Select from add AT&T Account.";
+      newErrors.atntaccount = "Mobility Account (BAN) is required.";
+      // Validate Tax Exempt fields
+      if(!formData.isTaxExempt)
+        newErrors.isTaxExempt = "Tax Exempt is required.";
+      if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
+        newErrors.taxExemptNumber = "Tax Exempt Number is required.";
+        newErrors.issuingState = "Issuing State is required.";
+      } else if (
+        formData.isTaxExempt === "yes" &&
+        (formData.taxExemptNumber.length < 6 ||
+          formData.taxExemptNumber.length > 9)
+      ) {
+        newErrors.taxExemptNumber =
+          "Tax Exempt Number must be 6-9 digits long.";
+      }
+
+      if(!formData.specialinstruction)
+        newErrors.specialinstruction = "Special Instruction is required";
+
+      if(formData.atntaccount === "declined"){
+        newErrors.existingBAN = "Existing BAN is required";
+      }
+
+      // Business details -- i think this is not needed
+      if (!formData.businesslegalname)
+        newErrors.businesslegalname = "Business Legal Name is required.";
+      if (!formData.businessaddress)
+        newErrors.businessaddress = "Business Address is required.";
+      if (!formData.businesscity)
+        newErrors.businesscity = "Business City is required.";
+      if (!formData.businessstate)
+        newErrors.businessstate = "Business State is required.";
+      if (!formData.businesszip)
+        newErrors.businesszip = "Business Zip is required.";
+      if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
+      if (!formData.contactname)
+        newErrors.contactname = "Contact Name is required.";
+      if (!formData.contactphone)
+        newErrors.contactphone = "Contact Phone is required.";
+      if (!formData.contactemail)
+        newErrors.contactemail = "Contact Email is required.";
+
+      // Shipping Info
+
+      shippingInfos.forEach((info, index) => {
+        if (!info.attentionname) {
+          newErrors[`attentionname_${index}`] = "Attention Name is required.";
+        }
+        if (!info.shippingaddress) {
+          newErrors[`shippingaddress_${index}`] = "Shipping Address is required.";
+        }
+        if (!info.shippingcity) {
+          newErrors[`shippingcity_${index}`] = "Shipping City is required.";
+        }
+        if (!info.shippingstate) {
+          newErrors[`shippingstate_${index}`] = "Shipping State is required.";
+        }
+        if (!info.shippingzip) {
+          newErrors[`shippingzip_${index}`] = "Shipping Zip is required.";
+        }
+      });
+
+
+      //  Carrier Info 
+      carrierInfos.forEach((info, index) => {
+        if (!info.currentwirelesscarrier) {
+          newErrors[`currentwirelesscarrier_${index}`] =
+            "Current Wireless Carrier is required.";
+        }
+        if (!info.accountnumber) {
+          newErrors[`accountnumber_${index}`] = "Account Number is required.";
+        }
+        if (!info.pinorpassword) {
+          newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
+        }
+        if (!info.ssnortaxid) {
+          newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
+        }
+        if (!info.billingname) {
+          newErrors[`billingname_${index}`] = "Billing Name is required.";
+        }
+        if (!info.billingaddress) {
+          newErrors[`billingaddress_${index}`] = "Billing Address is required.";
+        }
+        if (!info.billingcity) {
+          newErrors[`billingcity_${index}`] = "Billing City is required.";
+        }
+        if (!info.billingstate) {
+          newErrors[`billingstate_${index}`] = "Billing State is required.";
+        }
+        if (!info.billingzip) {
+          newErrors[`billingzip_${index}`] = "Billing Zip is required.";
+        }
+        if (!info.authorizedname) {
+          newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
+        }
+  
+         // Validate Phone Numbers
+      if (!info.phonenumbers || info.phonenumbers.length === 0) {
+        newErrors[`phonenumbers_${index}`] = "At least one phone number is required.";
+      } else {
+        info.phonenumbers.forEach((phoneNumber, phoneIndex) => {
+          if (!phoneNumber || phoneNumber.trim() === "") {
+            newErrors[`phonenumber_${index}_${phoneIndex}`] =
+              "Phone number is required.";
+          } else if (!/^\d{3}-\d{3}-\d{4}$/.test(phoneNumber)) {
+            newErrors[`phonenumber_${index}_${phoneIndex}`] =
+              "Phone number must be in the format XXX-XXX-XXXX.";
+          }
+        });
+      }
+  
+      
+      });
+
+
+      if(!formData.ratePlan)
+        newErrors.ratePlan = "Rate Plan Selection is required.";
+  
+       // Validate Smartphone Purchase/Trade Options
+    if (!buyNewPhone) {
+      newErrors.buyNewPhone = "Please select an option for smartphone purchase/trade.";
+    }
+  
+    // Validate Phone Model (if buyNewPhone is "yes" or "accepted")
+    if (buyNewPhone === "yes" || buyNewPhone === "accepted") {
+      if (!formData.phonemodel) {
+        newErrors.phonemodel = "Phone Model is required.";
+      }
+      if (!formData.imeistatus) {
+        newErrors.imeistatus = "Device Status is required.";
+      }
+      if (!formData.noCracks) {
+        newErrors.noCracks = "Please specify if the phone has no cracks.";
+      }
+      if (!formData.screenDefects) {
+        newErrors.screenDefects = "Please specify if the screen has defects.";
+      }
+      if (!formData.factoryReset) {
+        newErrors.factoryReset = "Please specify if the phone has been factory reset.";
+      }
+    }
+
+
+
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
-    if (!formData.businesslegalname)
-      newErrors.businesslegalname = "Business Legal Name is required.";
-    if (!formData.businessaddress)
-      newErrors.businessaddress = "Business Address is required.";
-    if (!formData.businesscity)
-      newErrors.businesscity = "Business City is required.";
-    if (!formData.businessstate)
-      newErrors.businessstate = "Business State is required.";
-    if (!formData.businesszip)
-      newErrors.businesszip = "Business Zip is required.";
-    if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-    if (!formData.contactname)
-      newErrors.contactname = "Contact Name is required.";
-    if (!formData.contactphone)
-      newErrors.contactphone = "Contact Phone is required.";
-    if (!formData.contactemail)
-      newErrors.contactemail = "Contact Email is required.";
+
+    if (!formData.billtomobile) {
+      newErrors.billtomobile = "Bill to Mobile is required.";
+    }
+
+    
     if (!formData.creditcardpayment)
       newErrors.creditcardpayment = "Please select an autopay option";
 
@@ -842,53 +976,11 @@ const Form: React.FC = () => {
           newErrors.cardBillingAddress = "Billing Address is required.";
       }
     }
-    if (!formData.sansPartnerID)
-      newErrors.agentCode = "Agent Code is required.";
-    carrierInfos.forEach((info, index) => {
-      if (!info.currentwirelesscarrier) {
-        newErrors[`currentwirelesscarrier_${index}`] =
-          "Current Wireless Carrier is required.";
-      }
-      if (!info.accountnumber) {
-        newErrors[`accountnumber_${index}`] = "Account Number is required.";
-      }
-      if (!info.pinorpassword) {
-        newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
-      }
-      if (!info.ssnortaxid) {
-        newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
-      }
-      if (!info.billingname) {
-        newErrors[`billingname_${index}`] = "Billing Name is required.";
-      }
-      if (!info.billingaddress) {
-        newErrors[`billingaddress_${index}`] = "Billing Address is required.";
-      }
-      if (!info.billingcity) {
-        newErrors[`billingcity_${index}`] = "Billing City is required.";
-      }
-      if (!info.billingstate) {
-        newErrors[`billingstate_${index}`] = "Billing State is required.";
-      }
-      if (!info.billingzip) {
-        newErrors[`billingzip_${index}`] = "Billing Zip is required.";
-      }
-      if (!info.authorizedname) {
-        newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
-      }
+ 
+   
 
-      // Validate Tax Exempt fields
-      if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
-        newErrors.taxExemptNumber = "Tax Exempt Number is required.";
-        newErrors.issuingState = "Issuing State is required.";
-      } else if (
-        formData.isTaxExempt === "yes" &&
-        (formData.taxExemptNumber.length < 6 ||
-          formData.taxExemptNumber.length > 9)
-      ) {
-        newErrors.taxExemptNumber =
-          "Tax Exempt Number must be 6-9 digits long.";
-      }
+   
+
 
       // Validate Best Time to Call and Timezone
       if (!formData.bestTimeToCall) {
@@ -898,10 +990,7 @@ const Form: React.FC = () => {
         newErrors.timezone = "Timezone is required.";
       }
 
-      if (!formData.billtomobile) {
-        newErrors.billtomobile = "Bill to Mobile is required.";
-      }
-    });
+     
     // Object.keys(newErrors).forEach((key) => {
     //   toast.error(newErrors[key], {
     //     position: "bottom-right",
@@ -950,7 +1039,7 @@ const Form: React.FC = () => {
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     console.log("Form Data before submission:", formData);
-    console.log(newErrors);
+    console.log("Errors", newErrors);
 
     if (isFormBlocked) {
 
@@ -1071,165 +1160,6 @@ const Form: React.FC = () => {
 
   // console.log(formData);
 
-  const validateTab = (tab: string): boolean => {
-    const newErrors: any = {};
-
-    // Validate fields based on the active tab
-    switch (tab) {
-      case "accountInfo":
-        if (!formData.name) newErrors.name = "Name is required.";
-        if (!formData.email) newErrors.email = "Email is required.";
-        // if (!formData.phonenumber)
-        //   newErrors.phonenumber = "Phone Number is required.";
-        if (!formData.agreementtype)
-          newErrors.agreementtype = "Agreement Type is required.";
-        if (formData.agreementtype === "acda" && !formData.eip)
-          newErrors.eip = "EIP Limit is required.";
-        if (!formData.promotion) newErrors.promotion = "Promotion is required.";
-        if (formData.promotion === "accepted" && !formData.phonemodel)
-          newErrors.phonemodel = "Phone Model is required.";
-        if (formData.promotion === "accepted" && !formData.imeistatus)
-          newErrors.imeistatus = "Device Status is required.";
-
-        // Phone Has No Cracks?
-        if (formData.promotion === "accepted" && !formData.noCracks)
-          newErrors.noCracks = "Phone Cracks status is required.";
-
-        // Screen Blur or Display Defects?
-        if (formData.promotion === "accepted" && !formData.screenDefects)
-          newErrors.screenDefects =
-            "Screen Blur or Display Defects status is required.";
-
-        // Factory Reset & Log out of All Accounts?
-        if (formData.promotion === "accepted" && !formData.factoryReset)
-          newErrors.factoryReset =
-            "Factory Reset & Log out of all Accounts status is required.";
-        if (!formData.paperless)
-          newErrors.paperless = "Paperless Billing is required.";
-        if (!formData.businesslegalname)
-          newErrors.businesslegalname = "Business Legal Name is required.";
-        if (!formData.businessaddress)
-          newErrors.businessaddress = "Business Address is required.";
-        if (!formData.businesscity)
-          newErrors.businesscity = "Business City is required.";
-        if (!formData.businessstate)
-          newErrors.businessstate = "Business State is required.";
-        if (!formData.businesszip)
-          newErrors.businesszip = "Business Zip is required.";
-        if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-        // if (!formData.locationid)
-        //   newErrors.locationid = "Location ID is required.";
-        if (!formData.contactname)
-          newErrors.contactname = "Contact Name is required.";
-        if (!formData.contactphone)
-          newErrors.contactphone = "Contact Phone is required.";
-        if (!formData.contactemail)
-          newErrors.contactemail = "Contact Email is required.";
-        if (!formData.billtomobile)
-          newErrors.billtomobile = "Bill to Mobile is required.";
-        console.log("Bill to Mobile Error:", newErrors.billtomobile);
-        if (!formData.creditcardpayment)
-          newErrors.creditcardpayment = "Credit Card Payment is required.";
-        
-        if (formData.creditcardpayment === "yes") {
-          if (!formData.cardNumber)
-            newErrors.cardNumber = "Card number is required.";
-          if (!formData.cardExpiry)
-            newErrors.cardExpiry = "Expiry date is required.";
-          if (!formData.cardCVC) newErrors.cardCVC = "CVC is required.";
-        }
-        if (!formData.singleormultiaddresshipment)
-          newErrors.singleormultiaddresshipment =
-            "Single or Multi Address Shipment is required.";
-        if (!formData.attentionname)
-          newErrors.attentionname = "Attention Name is required.";
-        if (!formData.shippingaddress)
-          newErrors.shippingaddress = "Shipping Address is required.";
-        if (!formData.shippingcity)
-          newErrors.shippingcity = "Shipping City is required.";
-        if (!formData.shippingstate)
-          newErrors.shippingstate = "Shipping State is required.";
-        if (!formData.shippingzip)
-          newErrors.shippingzip = "Shipping Zip is required.";
-        // if (!formData.companyname)
-        //   newErrors.companyname = "Company Name is required.";
-        if (!formData.sansPartnerID)
-          newErrors.sansPartnerID = "SANS Partner ID is required.";
-        if (!formData.existingBAN)
-          newErrors.existingBAN = "Existing BAN is required.";
-        if (!formData.existingFAN)
-          newErrors.existingFAN = "Existing FAN is required.";
-        break;
-
-      case "shippingInfo":
-        if (!formData.singleormultiaddresshipment)
-          newErrors.singleormultiaddresshipment =
-            "Single or Multi Address Shipment is required.";
-        if (!formData.shippingaddress)
-          newErrors.shippingaddress = "Shipping Address is required.";
-        if (!formData.shippingcity)
-          newErrors.shippingcity = "Shipping City is required.";
-        if (!formData.shippingstate)
-          newErrors.shippingstate = "Shipping State is required.";
-        if (!formData.shippingzip)
-          newErrors.shippingzip = "Shipping Zip is required.";
-        break;
-
-      case "carrierInfo":
-        carrierInfos.forEach((info, index) => {
-          if (!info.currentwirelesscarrier) {
-            newErrors[`currentwirelesscarrier_${index}`] =
-              "Current Wireless Carrier is required.";
-          }
-          if (!info.accountnumber) {
-            newErrors[`accountnumber_${index}`] = "Account Number is required.";
-          }
-          if (!info.pinorpassword) {
-            newErrors[`pinorpassword_${index}`] =
-              "Pin or Password is required.";
-          }
-          if (!info.ssnortaxid) {
-            newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
-          }
-          if (!info.billingname) {
-            newErrors[`billingname_${index}`] = "Billing Name is required.";
-          }
-          if (!info.billingaddress) {
-            newErrors[`billingaddress_${index}`] =
-              "Billing Address is required.";
-          }
-          if (!info.billingcity) {
-            newErrors[`billingcity_${index}`] = "Billing City is required.";
-          }
-          if (!info.billingstate) {
-            newErrors[`billingstate_${index}`] = "Billing State is required.";
-          }
-          if (!info.billingzip) {
-            newErrors[`billingzip_${index}`] = "Billing Zip is required.";
-          }
-          if (!info.authorizedname) {
-            newErrors[`authorizedname_${index}`] =
-              "Authorized Name is required.";
-          }
-        });
-        break;
-
-      case "additionalInfo":
-      case "lineConfig":
-        // if (!formData.companyname)
-        //   newErrors.companyname = "Company Name is required.";
-        if (!formData.sansPartnerID)
-          newErrors.sansPartnerID = "SANS Partner ID is required.";
-        break;
-
-      default:
-        break;
-    }
-
-    setErrors((prev) => ({ ...prev, ...newErrors }));
-    return Object.keys(newErrors).length === 0; // Return true if no errors
-  };
-
   const handleNext = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault(); // Prevent default behavior
     const tabOrder = [
@@ -1292,7 +1222,7 @@ const Form: React.FC = () => {
                     readOnly // Disable if not the first order
                   />
                   {errors.sansPartnerID && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-danger text-sm">
                       {errors.sansPartnerID}
                     </p>
                   )}
@@ -1314,7 +1244,7 @@ const Form: React.FC = () => {
                     <option value="acda">ACDA Attainment/MAC</option>
                   </select>
                   {errors.agreementtype && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-danger text-sm">
                       {errors.agreementtype}
                     </p>
                   )}
@@ -1334,9 +1264,9 @@ const Form: React.FC = () => {
                     <option value="accepted">Yes</option>
                     <option value="declined">No</option>
                   </select>
-                  {/* {errors.atntaccount && (
-                    <p className="text-red-500 text-sm">{errors.atntaccount}</p>
-                  )} */}
+                  {errors.atntaccount && (
+                    <p className="text-danger text-sm">{errors.atntaccount}</p>
+                  )} 
                 </div>
               </div>
 
@@ -1358,7 +1288,7 @@ const Form: React.FC = () => {
                     <option value="no">No</option>
                   </select>
                   {errors.isTaxExempt && (
-                    <p className="text-red-500 text-sm">{errors.isTaxExempt}</p>
+                    <p className="text-danger text-sm">{errors.isTaxExempt}</p>
                   )}
                 </div>
 
@@ -1379,7 +1309,7 @@ const Form: React.FC = () => {
                         maxLength={9} // Limit input to 9 digits
                       />
                       {errors.taxExemptNumber && (
-                        <p className="text-red-500 text-sm">
+                        <p className="text-danger text-sm">
                           {errors.taxExemptNumber}
                         </p>
                       )}
@@ -1405,9 +1335,9 @@ const Form: React.FC = () => {
                           </option>
                         ))}
                       </select>
-                      {errors.shippingState && (
-                        <p className="text-red-500 text-sm">
-                          {errors.shippingState}
+                      {errors.issuingState && (
+                        <p className="text-danger text-sm">
+                          {errors.issuingState}
                         </p>
                       )}
                     </div>
@@ -1428,7 +1358,7 @@ const Form: React.FC = () => {
                   style={{ resize: "none" }}
                 ></textarea>
                 {errors.specialinstruction && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-danger text-sm">
                     {errors.specialinstruction}
                   </p>
                 )}
@@ -1450,36 +1380,40 @@ const Form: React.FC = () => {
                     className="w-full border-b border-gray-300 py-2"
                   />
                   {errors.eip && (
-                    <p className="text-red-500 text-sm">{errors.eip}</p>
+                    <p className="text-danger text-sm">{errors.eip}</p>
                   )}
                 </div>
               )}
-              {formData.atntaccount === "declined" && (
-                <div>
-                  {[
-                    {
-                      name: "existingBAN",
-                      label: "Existing BAN",
-                      placeholder: "Enter Existing BAN",
-                    },
-                  ].map((field, index) => (
-                    <div key={index} className="mb-4">
-                      <h6 className="text-sm font-medium text-gray-700">
-                        {field.label}
-                      </h6>
-                      <input
-                        type="text"
-                        name={field.name}
-                        placeholder={field.placeholder}
-                        value={formData[field.name]}
-                        onChange={handleChange}
-                        className="w-full border-b border-gray-300 py-2"
-                      />
-                    </div>
-                  ))}
-                </div>
-              )}
-              {/* Special Instructions */}
+{formData.atntaccount === "declined" && (
+  <div>
+    {[
+      {
+        name: "existingBAN",
+        label: "Existing BAN",
+        placeholder: "Enter Existing BAN",
+      },
+    ].map((field, index) => (
+      <div key={index} className="mb-4">
+        <h6 className="text-sm font-medium text-gray-700">
+          {field.label}
+        </h6>
+        <input
+          type="text"
+          name={field.name}
+          placeholder={field.placeholder}
+          value={formData[field.name]}
+          onChange={handleChange}
+          className="w-full border-b border-gray-300 py-2"
+        />
+        {/* Display error message for the field */}
+        {errors[field.name] && (
+          <p className="text-danger text-sm">{errors[field.name]}</p>
+        )}
+      </div>
+    ))}
+  </div>
+)}
+
             </div>
 
             {/* Order Assignment */}
@@ -1589,7 +1523,7 @@ const Form: React.FC = () => {
                       )}
 
                       {errors[field.name] && (
-                        <p className="text-red-500 text-sm">
+                        <p className="text-danger text-sm">
                           {errors[field.name]}
                         </p>
                       )}
@@ -1934,7 +1868,7 @@ const Form: React.FC = () => {
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
                 {errors.bestTimeToCall && (
-                  <p className="text-red-500 text-sm">
+                  <p className="text-danger text-sm">
                     {errors.bestTimeToCall}
                   </p>
                 )}
@@ -1966,7 +1900,7 @@ const Form: React.FC = () => {
                   }}
                 />
                 {errors.timezone && (
-                  <p className="text-red-500 text-sm">{errors.timezone}</p>
+                  <p className="text-danger text-sm">{errors.timezone}</p>
                 )}
               </div>
             </div>
@@ -2116,7 +2050,7 @@ const Form: React.FC = () => {
                           prev.filter((_, i) => i !== index)
                         );
                       }}
-                      className="text-red-500 hover:text-red-700 text-sm md:text-base"
+                      className="text-danger hover:text-red-700 text-sm md:text-base"
                     >
                       - Remove
                     </button>
@@ -2166,7 +2100,7 @@ const Form: React.FC = () => {
                       />
                     )}
                     {errors[`${name}_${index}`] && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors[`${name}_${index}`]}
                       </p>
                     )}
@@ -2235,7 +2169,7 @@ const Form: React.FC = () => {
                     ))}
                   </select>
                   {errors[`currentwirelesscarrier_${index}`] && (
-                    <p className="text-red-500 text-sm">
+                    <p className="text-danger text-sm">
                       {errors[`currentwirelesscarrier_${index}`]}
                     </p>
                   )}
@@ -2269,7 +2203,7 @@ const Form: React.FC = () => {
                       className="border-b focus:outline-none border-gray-300 py-2 w-full"
                     />
                     {errors[`${name}_${index}`] && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors[`${name}_${index}`]}
                       </p>
                     )}
@@ -2320,7 +2254,7 @@ const Form: React.FC = () => {
                             - Remove
                           </button>
                           {errors[`phonenumber_${index}_${phoneIndex}`] && (
-                            <p className="text-red-500 text-sm">
+                            <p className="text-danger text-sm">
                               {errors[`phonenumber_${index}_${phoneIndex}`]}
                             </p>
                           )}
@@ -2438,8 +2372,13 @@ const Form: React.FC = () => {
                         AT&T Internet Air
                       </option>
                     </select>
+                    {errors.ratePlan && (
+                  <p className="text-danger text-sm">{errors.ratePlan}</p>
+                )}
                   </div>
+                  
                 </div>
+                
 
                 {/* Smartphone Purchase Options */}
 
@@ -2465,7 +2404,7 @@ const Form: React.FC = () => {
                       </option>
                     </select>
                     {errors.buyNewPhone && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors.buyNewPhone}
                       </p>
                     )}
@@ -2555,7 +2494,7 @@ const Form: React.FC = () => {
                       <option value="google">Google</option>
                     </select>
                     {errors.phonemodel && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors.phonemodel}
                       </p>
                     )}
@@ -2591,7 +2530,7 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.imeistatus && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors.imeistatus}
                       </p>
                     )}
@@ -2627,7 +2566,7 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.noCracks && (
-                      <p className="text-red-500 text-sm">{errors.noCracks}</p>
+                      <p className="text-danger text-sm">{errors.noCracks}</p>
                     )}
                   </div>
 
@@ -2661,7 +2600,7 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.screenDefects && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors.screenDefects}
                       </p>
                     )}
@@ -2697,7 +2636,7 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.factoryReset && (
-                      <p className="text-red-500 text-sm">
+                      <p className="text-danger text-sm">
                         {errors.factoryReset}
                       </p>
                     )}
