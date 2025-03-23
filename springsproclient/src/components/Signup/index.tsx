@@ -3,10 +3,38 @@ import { useForm, ValidationError } from "@formspree/react";
 import { Link, useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 import Swal from "sweetalert2";
-
 const Signup: React.FC = () => {
+  const [errors, setErrors] = useState<any>({});
+  const [successMessage, setSuccessMessage] = useState("");
+  const [state, handleSubmit] = useForm("xanykyav");
+  const [professions, setProfessions] = useState<Profession[]>([]);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  interface FormData {
+    email: string;
+    password: string;
+    confirmPassword: string;
+    fname: string;
+    lname: string;
+    phone: string;
+    companyname: string;
+    occupation: string;
+    dob: string;
+    role: string;
+    attuid: string;
+    spid: string;
+    resume: File | null; // Explicitly define the type
+  }
+
+
+  interface Profession {
+    name: string;
+    category: string;
+  }
+
   const token = localStorage.getItem("jwt_token");
-  const navigate = useNavigate(); // Initialize useNavigate
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (token) {
@@ -16,10 +44,11 @@ const Signup: React.FC = () => {
         icon: "info",
       });
 
-      navigate("/"); // Redirect to homepage if user is already logged in
+      navigate("/");
     }
-  }, [navigate]);
-  const [formData, setFormData] = useState({
+  }, [navigate, token]);
+
+  const [formData, setFormData] = useState<FormData>({
     email: "",
     password: "",
     confirmPassword: "",
@@ -27,14 +56,46 @@ const Signup: React.FC = () => {
     lname: "",
     phone: "",
     companyname: "",
-    government_identification: "",
-    tax_id: "",
-    ssn: "",
+    occupation: "",
     dob: "",
-    role: "user", // Default role
+    role: "user",
     attuid: "",
     spid: "",
+    resume: null, // Initialize as null
   });
+  
+
+  const fetchProfessions = async () => {
+    try {
+      const response = await axios.get(
+        "https://springairnsbackend-production.up.railway.app/api/order/get-professions"
+      );
+
+      // Ensure the response data is an array
+      if (Array.isArray(response.data.professions)) {
+        return response.data.professions;
+      } else {
+        console.error("API response is not an array:", response.data);
+        return [];
+      }
+    } catch (error) {
+      console.error("Error fetching professions:", error);
+      return [];
+    }
+  };
+
+  const addProfessionToBackend = async (newProfession) => {
+    try {
+      const response = await axios.post(
+        "https://springairnsbackend-production.up.railway.app/api/order/add-profession", // Replace with your API endpoint
+        newProfession
+      );
+      return response.data; // Return the newly added profession
+    } catch (error) {
+      console.error("Error adding profession:", error);
+      throw error;
+    }
+  };
 
   const handleRoleToggle = () => {
     setFormData((prev) => ({
@@ -43,9 +104,14 @@ const Signup: React.FC = () => {
     }));
   };
 
-  const [errors, setErrors] = useState<any>({});
-  const [successMessage, setSuccessMessage] = useState("");
-  const [state, handleSubmit] = useForm("xanykyav");
+  // Fetch professions on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      const data = await fetchProfessions();
+      setProfessions(data);
+    };
+    fetchData();
+  }, []);
 
   const handleChange = (
     e: React.ChangeEvent<
@@ -54,7 +120,48 @@ const Signup: React.FC = () => {
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+
+    if (name === "occupation") {
+      // Filter professions based on user input
+      const filteredSuggestions = professions
+        .map((prof) => prof.name)
+        .filter((prof) => prof.toLowerCase().includes(value.toLowerCase()));
+      setSuggestions(filteredSuggestions);
+      setShowSuggestions(true);
+    }
+
     setErrors([]); // Clear errors on change
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setFormData((prev) => ({ ...prev, occupation: suggestion }));
+    setShowSuggestions(false);
+  };
+
+  const handleAddNewProfession = async () => {
+    const newProfession = formData.occupation.trim();
+    if (
+      newProfession &&
+      !professions.some((prof) => prof.name === newProfession)
+    ) {
+      try {
+        const newProfessionEntry = { name: newProfession, category: "Other" };
+        const addedProfession = await addProfessionToBackend(
+          newProfessionEntry
+        );
+
+        // Update the professions state with the new profession
+        setProfessions((prev) => [...prev, addedProfession]);
+
+        // Set the input value to the new profession
+        setFormData((prev) => ({ ...prev, occupation: newProfession }));
+
+        // Hide suggestions
+        setShowSuggestions(false);
+      } catch (error) {
+        console.error("Error adding new profession:", error);
+      }
+    }
   };
 
   const newErrors: any = {};
@@ -65,15 +172,6 @@ const Signup: React.FC = () => {
     if (!formData.phone) newErrors.phone = "Phone Number is required";
     if (!formData.companyname)
       newErrors.companyname = "Company Name is required";
-
-    if (formData.role === "user") {
-      if (!formData.government_identification)
-        newErrors.government_identification =
-          "Government Identification is required";
-      if (!formData.ssn) newErrors.ssn = "SSN is required";
-      if (!formData.tax_id) newErrors.tax_id = "EIN/TAX ID is required";
-    }
-
     if (!formData.dob) newErrors.dob = "Date of Birth is required";
     if (!formData.email) newErrors.email = "Email is required";
     if (!formData.password) newErrors.password = "Password is required";
@@ -89,6 +187,7 @@ const Signup: React.FC = () => {
       setErrors(["Passwords do not match"]);
       return false;
     }
+    if (!formData.occupation) newErrors.occupation = "Occupation is required";
     setErrors((prev) => ({ ...prev, ...newErrors }));
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
@@ -104,15 +203,22 @@ const Signup: React.FC = () => {
             lname: formData.lname,
             phone: formData.phone,
             companyname: formData.companyname,
-            government_identification: formData.government_identification,
+            // government_identification: formData.government_identification,
             dob: formData.dob,
-            ssn: formData.ssn,
-            tax_id: formData.tax_id,
+            // ssn: formData.ssn,
+            // tax_id: formData.tax_id,
             email: formData.email,
             password: formData.password,
             role: formData.role,
             attuid: formData.attuid,
             spid: formData.spid,
+            occupation: formData.occupation,
+            resume: formData.resume,
+          },
+          {
+            headers: {
+              "Content-Type": "multipart/form-data", // Required for file uploads
+            },
           }
         );
 
@@ -131,13 +237,15 @@ const Signup: React.FC = () => {
             lname: "",
             phone: "",
             companyname: "",
-            government_identification: "",
-            tax_id: "",
-            ssn: "",
+            // government_identification: "",
+            // tax_id: "",
+            // ssn: "",
             dob: "",
             role: "user",
             attuid: "",
             spid: "",
+            occupation: "",
+            resume: null,
           });
 
           // Delay redirection to show success message
@@ -280,66 +388,6 @@ const Signup: React.FC = () => {
                 </div>
               </div>
 
-              {formData.role !== "admin" && (
-                <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
-                  <div className="w-full">
-                    <h6 className="text-black text-start md:text-md text-sm">
-                      Government Identification
-                    </h6>
-                    <input
-                      type="text"
-                      name="government_identification"
-                      placeholder="Enter your government identification"
-                      value={formData.government_identification}
-                      onChange={handleChange}
-                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                    />
-                    {errors.government_identification && (
-                      <p className="text-start text-danger text-sm">
-                        {errors.government_identification}
-                      </p>
-                    )}
-                  </div>
-                  <div className="w-full">
-                    <h6 className="text-black text-start md:text-md text-sm">
-                      EIN/TAX ID
-                    </h6>
-                    <input
-                      type="text"
-                      name="tax_id"
-                      placeholder="Enter your tax id"
-                      value={formData.tax_id}
-                      onChange={handleChange}
-                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                    />
-                    {errors.tax_id && (
-                      <p className="text-start text-danger text-sm">
-                        {errors.tax_id}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="w-full">
-                    <h6 className="text-black text-start md:text-md text-sm">
-                      SSN
-                    </h6>
-                    <input
-                      type="text"
-                      name="ssn"
-                      placeholder="Enter your SSN"
-                      value={formData.ssn}
-                      onChange={handleChange}
-                      className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
-                    />
-                    {errors.ssn && (
-                      <p className="text-start text-danger text-sm">
-                        {errors.ssn}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              )}
-
               <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div>
                   <h6 className="text-black text-start md:text-md text-sm">
@@ -451,6 +499,77 @@ const Signup: React.FC = () => {
                   </div>
                 </div>
               )}
+
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
+                <div className="w-full relative">
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    What is your occupation?
+                  </h6>
+                  <input
+                    type="text"
+                    name="occupation"
+                    placeholder="Enter your occupation"
+                    value={formData.occupation}
+                    onChange={handleChange}
+                    onFocus={() => setShowSuggestions(true)}
+                    onBlur={() =>
+                      setTimeout(() => setShowSuggestions(false), 200)
+                    } // Delay hiding to allow click on suggestions
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                  {showSuggestions && formData.occupation && (
+                    <div className="absolute bg-white suggestion-box mt-1 w-full max-h-40 overflow-y-auto z-10">
+                      {suggestions.length > 0 ? (
+                        suggestions.map((suggestion, index) => (
+                          <div
+                            key={index}
+                            onClick={() => handleSuggestionClick(suggestion)}
+                            className="p-2 suggestion-item cursor-pointer"
+                          >
+                            {suggestion}
+                          </div>
+                        ))
+                      ) : (
+                        <div
+                          onClick={handleAddNewProfession}
+                          className="p-2 suggestion-item cursor-pointer text-blue-500"
+                        >
+                          Add "{formData.occupation}" as a new profession
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {errors.occupation && (
+                    <p className="text-start text-danger text-sm">
+                      {errors.occupation}
+                    </p>
+                  )}
+                </div>
+                <div className="w-full">
+                  <h6 className="text-black text-start md:text-md text-sm">
+                    Upload Your Resume (PDF or DOCX)
+                  </h6>
+                  <input
+                    type="file"
+                    name="resume"
+                    accept=".pdf,.doc,.docx" // Restrict file types
+                    onChange={(e) => {
+                      if (e.target.files && e.target.files[0]) {
+                        setFormData((prevState) => ({
+                          ...prevState,
+                          resume: e.target.files[0],
+                        }));
+                      }
+                    }}
+                    className="border p-2 mt-1 rounded-lg focus:outline-none border-black py-2 w-full"
+                  />
+                  {errors.resume && (
+                    <p className="text-start text-danger text-sm">
+                      {errors.resume}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             <ValidationError

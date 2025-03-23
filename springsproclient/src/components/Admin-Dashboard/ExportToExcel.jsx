@@ -251,14 +251,16 @@ const ExportToExcel = ({ order, adminData }) => {
   const handleNewActivationData = (order) => {
     console.log("Activation order data", order);
     const sheetName = "New Activation";
-  
+
     let data = [];
-  
+
+   
+
     // Loop through each account and create a row for each IMEI
     order.accounts?.forEach((account, index) => {
       const shippingInfo = account.shippingAddress || {};
       const carrierInfo = order.carrierInfos?.[index] || {}; // Get carrier info for the current account
-  
+
       data.push(
         // Row Number
         cellInfo(sheetName, `B${27 + index}`, index + 1),
@@ -327,12 +329,12 @@ const ExportToExcel = ({ order, adminData }) => {
         cellInfo(sheetName, `BC${27 + index}`, order.customerId?.contactphone || "N/A")
       );
     });
-  
+
     const excelSheetTemplate = require(`../../utils/excelSheetGenerator/newActivation/newActivation.json`);
     return [...data, ...excelSheetTemplate];
   };
 
-  
+
   // const handleNewActivationData = (order) => {
   //   console.log("Activation order data", order);
   //   const sheetName = "New Activation";
@@ -406,7 +408,7 @@ const ExportToExcel = ({ order, adminData }) => {
   //       cellInfo(sheetName, `BB${27 + index}`, order.customerId?.contactname || "N/A"),
   //       cellInfo(sheetName, `BC${27 + index}`, order.customerId?.contactphone || "N/A"),
 
-        
+
 
 
 
@@ -421,6 +423,14 @@ const ExportToExcel = ({ order, adminData }) => {
 
 
   const handleNewActivationMergedCellData = (order) => {
+
+     // Check if any account has purchaseSmartphone set to true
+     const hasPurchaseSmartphone = order.accounts?.some(account => account.purchaseSmartphone);
+
+     // Determine the contract length based on the condition
+     const contractLength = hasPurchaseSmartphone
+       ? "36 months"
+       : "0 months";
     /////// Apply to mergedCellData if cell on the template needs to be merged with given content //////
     const mergedCellData = [
       // Company Name
@@ -446,8 +456,7 @@ const ExportToExcel = ({ order, adminData }) => {
       // Purchase Order # (if SEI, if applicable)
       mergedCellInfo("E15", "F15", "N/A"),
       // Contract Length
-      mergedCellInfo("E16", "F16", `BYOD - 0 months or installment plan - 36 months
-If any of the lines indicate non-BYOD, then 36 months`),
+      mergedCellInfo("E16", "F16", contractLength),
       // Bulk Shipping? (Y/N)
       mergedCellInfo("E17", "F17", `All lines go to the same shipping address: ${allSameShippingAddress}`),
       // Mobile Share? (Y/N)

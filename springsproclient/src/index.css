@@ -10,3 +10,34 @@
   @apply md:flex-row md:justify-start justify-center flex-col;
 }
 
+.suggestion-box {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+
+.suggestion-item {
+  transition: background-color 0.2s ease;
+}
+
+.suggestion-item:hover {
+  background-color: #f7fafc;
+}
+
+.suggestion-box::-webkit-scrollbar {
+  width: 8px;
+}
+
+.suggestion-box::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.suggestion-box::-webkit-scrollbar-thumb {
+  background: #cbd5e0;
+  border-radius: 4px;
+}
+
+.suggestion-box::-webkit-scrollbar-thumb:hover {
+  background: #a0aec0;
+}
