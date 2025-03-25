@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import "bootstrap/dist/css/bootstrap.min.css"; // Keep the Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Link } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -15,20 +16,9 @@ function Navbar() {
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container">
-        <a className="navbar-brand" href="#">
+        <Link className="navbar-brand" to="/">
           Springairns
-        </a>
-        {/* <button
-          className="navbar-toggler"
-          type="button"
-          onClick={toggleNavbar}
-          aria-controls="navbarNav"
-          aria-expanded={isOpen ? "true" : "false"}
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button> */}
-        {/* Empty navbar (no items inside) */}
+        </Link>
         <div
           className={`navbar-collapse ${isOpen ? "show" : ""}`} // Toggle the "show" class based on isOpen state
           id="navbarNav"

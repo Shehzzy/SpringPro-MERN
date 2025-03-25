@@ -30,8 +30,25 @@ function Sidebar() {
         onClick={(e) => e.stopPropagation()} // Prevent clicks inside the sidebar from closing it
       >
         <div className="sb-sidenav-menu">
-          <div className="nav">
+          <div className="nav my-10 ml-2">
             {/* Sidebar content */}
+            <Link
+              to="/"
+              className="nav-link text-white"
+              onClick={handleSidebarLinkClick}
+            >
+              Back To Home
+            </Link>
+
+            <Link
+              to="/order-form"
+              className="nav-link text-white"
+              onClick={handleSidebarLinkClick}
+            >
+              Order Form
+            </Link>
+
+
             <Link
               to="/admin-all-users"
               className="nav-link text-white"

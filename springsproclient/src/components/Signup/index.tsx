@@ -22,7 +22,7 @@ const Signup: React.FC = () => {
     occupation: string;
     dob: string;
     role: string;
-    attuid: string;
+    // attuid: string;
     spid: string;
     resume: File | null; // Explicitly define the type
   }
@@ -59,7 +59,7 @@ const Signup: React.FC = () => {
     occupation: "",
     dob: "",
     role: "user",
-    attuid: "",
+    // attuid: "",
     spid: "",
     resume: null, // Initialize as null
   });
@@ -179,7 +179,7 @@ const Signup: React.FC = () => {
       newErrors.confirmPassword = "Confirm Password is required";
 
     if (formData.role === "admin") {
-      if (!formData.attuid) newErrors.attuid = "ATTUID is required";
+      // if (!formData.attuid) newErrors.attuid = "ATTUID is required";
       if (!formData.spid) newErrors.spid = "SPID is required";
     }
 
@@ -210,7 +210,7 @@ const Signup: React.FC = () => {
             email: formData.email,
             password: formData.password,
             role: formData.role,
-            attuid: formData.attuid,
+            // attuid: formData.attuid,
             spid: formData.spid,
             occupation: formData.occupation,
             resume: formData.resume,
@@ -242,7 +242,7 @@ const Signup: React.FC = () => {
             // ssn: "",
             dob: "",
             role: "user",
-            attuid: "",
+            // attuid: "",
             spid: "",
             occupation: "",
             resume: null,
@@ -458,10 +458,14 @@ const Signup: React.FC = () => {
                   </div>
                 </div>
               </div>
-              {/* Conditionally render ATTUID and SPID fields for Admin */}
+            
+
+              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
+                  {/* Conditionally render ATTUID and SPID fields for Admin */}
               {formData.role === "admin" && (
-                <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
-                  <div>
+                <div>
+
+                  {/* <div>
                     <h6 className="text-black text-start md:text-md text-sm">
                       ATTUID
                     </h6>
@@ -478,7 +482,7 @@ const Signup: React.FC = () => {
                         {errors.attuid}
                       </p>
                     )}
-                  </div>
+                  </div> */}
                   <div>
                     <h6 className="text-black text-start md:text-md text-sm">
                       SPID
@@ -497,10 +501,8 @@ const Signup: React.FC = () => {
                       </p>
                     )}
                   </div>
-                </div>
+                  </div>
               )}
-
-              <div className="grid grid-cols-1 md:mt-2 md:grid-cols-3 gap-6">
                 <div className="w-full relative">
                   <h6 className="text-black text-start md:text-md text-sm">
                     What is your occupation?
