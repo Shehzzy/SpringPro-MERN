@@ -196,6 +196,7 @@ const Signup: React.FC = () => {
     e.preventDefault();
     if (validateForm()) {
       try {
+        console.log("form data", formData);
         const response = await axios.post(
           "https://springairnsbackend-production.up.railway.app/api/auth/register",
           {
