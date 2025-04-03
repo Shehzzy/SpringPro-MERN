@@ -12,6 +12,8 @@ import TimezoneSelect from "react-timezone-select";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
+import { validateAddress } from "./addressValidation.tsx";
+
 import {
   faCcVisa,
   faCcMastercard,
@@ -40,6 +42,17 @@ const Form: React.FC = () => {
   const [cardType, setCardType] = useState("");
 
   const [linesData, setLinesData] = useState([]);
+
+  // Update your validateShippingAddress function:
+  const validateShippingAddress = (
+    address: string,
+    city: string,
+    state: string,
+    zip: string
+  ): boolean => {
+    debugger;
+    return validateAddress(address, city, state, zip);
+  };
 
   // Callback function to receive updated accountFields data
   const handleAccountFieldsChange = (updatedAccountFields) => {
@@ -743,7 +756,7 @@ const Form: React.FC = () => {
     >
   ) => {
     const { name, value } = e.target;
-    console.log("field changes", value, name)
+    console.log("field changes", value, name);
     setFormData((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: "" })); // Clear specific error on change
 
@@ -794,105 +807,104 @@ const Form: React.FC = () => {
       newErrors.eip = "EIP Limit is required.";
     if (!formData.atntaccount)
       newErrors.atntaccount = "Mobility Account (BAN) is required.";
-      // Validate Tax Exempt fields
-      if(!formData.isTaxExempt)
-        newErrors.isTaxExempt = "Tax Exempt is required.";
-      if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
-        newErrors.taxExemptNumber = "Tax Exempt Number is required.";
-        newErrors.issuingState = "Issuing State is required.";
-      } else if (
-        formData.isTaxExempt === "yes" &&
-        (formData.taxExemptNumber.length < 6 ||
-          formData.taxExemptNumber.length > 9)
-      ) {
-        newErrors.taxExemptNumber =
-          "Tax Exempt Number must be 6-9 digits long.";
+    // Validate Tax Exempt fields
+    if (!formData.isTaxExempt)
+      newErrors.isTaxExempt = "Tax Exempt is required.";
+    if (formData.isTaxExempt === "yes" && !formData.taxExemptNumber) {
+      newErrors.taxExemptNumber = "Tax Exempt Number is required.";
+      newErrors.issuingState = "Issuing State is required.";
+    } else if (
+      formData.isTaxExempt === "yes" &&
+      (formData.taxExemptNumber.length < 6 ||
+        formData.taxExemptNumber.length > 9)
+    ) {
+      newErrors.taxExemptNumber = "Tax Exempt Number must be 6-9 digits long.";
+    }
+
+    if (!formData.specialinstruction)
+      newErrors.specialinstruction = "Special Instruction is required";
+
+    if (formData.atntaccount === "declined") {
+      newErrors.existingBAN = "Existing BAN is required";
+    }
+
+    // Business details -- i think this is not needed
+    if (!formData.businesslegalname)
+      newErrors.businesslegalname = "Business Legal Name is required.";
+    if (!formData.businessaddress)
+      newErrors.businessaddress = "Business Address is required.";
+    if (!formData.businesscity)
+      newErrors.businesscity = "Business City is required.";
+    if (!formData.businessstate)
+      newErrors.businessstate = "Business State is required.";
+    if (!formData.businesszip)
+      newErrors.businesszip = "Business Zip is required.";
+    if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
+    if (!formData.contactname)
+      newErrors.contactname = "Contact Name is required.";
+    if (!formData.contactphone)
+      newErrors.contactphone = "Contact Phone is required.";
+    if (!formData.contactemail)
+      newErrors.contactemail = "Contact Email is required.";
+
+    // Shipping Info
+
+    shippingInfos.forEach((info, index) => {
+      if (!info.attentionname) {
+        newErrors[`attentionname_${index}`] = "Attention Name is required.";
+      }
+      if (!info.shippingaddress) {
+        newErrors[`shippingaddress_${index}`] = "Shipping Address is required.";
+      }
+      if (!info.shippingcity) {
+        newErrors[`shippingcity_${index}`] = "Shipping City is required.";
+      }
+      if (!info.shippingstate) {
+        newErrors[`shippingstate_${index}`] = "Shipping State is required.";
+      }
+      if (!info.shippingzip) {
+        newErrors[`shippingzip_${index}`] = "Shipping Zip is required.";
+      }
+    });
+
+    //  Carrier Info
+    carrierInfos.forEach((info, index) => {
+      if (!info.currentwirelesscarrier) {
+        newErrors[`currentwirelesscarrier_${index}`] =
+          "Current Wireless Carrier is required.";
+      }
+      if (!info.accountnumber) {
+        newErrors[`accountnumber_${index}`] = "Account Number is required.";
+      }
+      if (!info.pinorpassword) {
+        newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
+      }
+      if (!info.ssnortaxid) {
+        newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
+      }
+      if (!info.billingname) {
+        newErrors[`billingname_${index}`] = "Billing Name is required.";
+      }
+      if (!info.billingaddress) {
+        newErrors[`billingaddress_${index}`] = "Billing Address is required.";
+      }
+      if (!info.billingcity) {
+        newErrors[`billingcity_${index}`] = "Billing City is required.";
+      }
+      if (!info.billingstate) {
+        newErrors[`billingstate_${index}`] = "Billing State is required.";
+      }
+      if (!info.billingzip) {
+        newErrors[`billingzip_${index}`] = "Billing Zip is required.";
+      }
+      if (!info.authorizedname) {
+        newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
       }
 
-      if(!formData.specialinstruction)
-        newErrors.specialinstruction = "Special Instruction is required";
-
-      if(formData.atntaccount === "declined"){
-        newErrors.existingBAN = "Existing BAN is required";
-      }
-
-      // Business details -- i think this is not needed
-      if (!formData.businesslegalname)
-        newErrors.businesslegalname = "Business Legal Name is required.";
-      if (!formData.businessaddress)
-        newErrors.businessaddress = "Business Address is required.";
-      if (!formData.businesscity)
-        newErrors.businesscity = "Business City is required.";
-      if (!formData.businessstate)
-        newErrors.businessstate = "Business State is required.";
-      if (!formData.businesszip)
-        newErrors.businesszip = "Business Zip is required.";
-      if (!formData.taxid) newErrors.taxid = "Tax ID is required.";
-      if (!formData.contactname)
-        newErrors.contactname = "Contact Name is required.";
-      if (!formData.contactphone)
-        newErrors.contactphone = "Contact Phone is required.";
-      if (!formData.contactemail)
-        newErrors.contactemail = "Contact Email is required.";
-
-      // Shipping Info
-
-      shippingInfos.forEach((info, index) => {
-        if (!info.attentionname) {
-          newErrors[`attentionname_${index}`] = "Attention Name is required.";
-        }
-        if (!info.shippingaddress) {
-          newErrors[`shippingaddress_${index}`] = "Shipping Address is required.";
-        }
-        if (!info.shippingcity) {
-          newErrors[`shippingcity_${index}`] = "Shipping City is required.";
-        }
-        if (!info.shippingstate) {
-          newErrors[`shippingstate_${index}`] = "Shipping State is required.";
-        }
-        if (!info.shippingzip) {
-          newErrors[`shippingzip_${index}`] = "Shipping Zip is required.";
-        }
-      });
-
-
-      //  Carrier Info 
-      carrierInfos.forEach((info, index) => {
-        if (!info.currentwirelesscarrier) {
-          newErrors[`currentwirelesscarrier_${index}`] =
-            "Current Wireless Carrier is required.";
-        }
-        if (!info.accountnumber) {
-          newErrors[`accountnumber_${index}`] = "Account Number is required.";
-        }
-        if (!info.pinorpassword) {
-          newErrors[`pinorpassword_${index}`] = "Pin or Password is required.";
-        }
-        if (!info.ssnortaxid) {
-          newErrors[`ssnortaxid_${index}`] = "SSN or Tax ID is required.";
-        }
-        if (!info.billingname) {
-          newErrors[`billingname_${index}`] = "Billing Name is required.";
-        }
-        if (!info.billingaddress) {
-          newErrors[`billingaddress_${index}`] = "Billing Address is required.";
-        }
-        if (!info.billingcity) {
-          newErrors[`billingcity_${index}`] = "Billing City is required.";
-        }
-        if (!info.billingstate) {
-          newErrors[`billingstate_${index}`] = "Billing State is required.";
-        }
-        if (!info.billingzip) {
-          newErrors[`billingzip_${index}`] = "Billing Zip is required.";
-        }
-        if (!info.authorizedname) {
-          newErrors[`authorizedname_${index}`] = "Authorized Name is required.";
-        }
-  
-         // Validate Phone Numbers
+      // Validate Phone Numbers
       if (!info.phonenumbers || info.phonenumbers.length === 0) {
-        newErrors[`phonenumbers_${index}`] = "At least one phone number is required.";
+        newErrors[`phonenumbers_${index}`] =
+          "At least one phone number is required.";
       } else {
         info.phonenumbers.forEach((phoneNumber, phoneIndex) => {
           if (!phoneNumber || phoneNumber.trim() === "") {
@@ -904,19 +916,17 @@ const Form: React.FC = () => {
           }
         });
       }
-  
-      
-      });
+    });
 
+    if (!formData.ratePlan)
+      newErrors.ratePlan = "Rate Plan Selection is required.";
 
-      if(!formData.ratePlan)
-        newErrors.ratePlan = "Rate Plan Selection is required.";
-  
-       // Validate Smartphone Purchase/Trade Options
+    // Validate Smartphone Purchase/Trade Options
     if (!buyNewPhone) {
-      newErrors.buyNewPhone = "Please select an option for smartphone purchase/trade.";
+      newErrors.buyNewPhone =
+        "Please select an option for smartphone purchase/trade.";
     }
-  
+
     // Validate Phone Model (if buyNewPhone is "yes" or "accepted")
     if (buyNewPhone === "yes" || buyNewPhone === "accepted") {
       if (!formData.phonemodel) {
@@ -932,11 +942,10 @@ const Form: React.FC = () => {
         newErrors.screenDefects = "Please specify if the screen has defects.";
       }
       if (!formData.factoryReset) {
-        newErrors.factoryReset = "Please specify if the phone has been factory reset.";
+        newErrors.factoryReset =
+          "Please specify if the phone has been factory reset.";
       }
     }
-
-
 
     if (!formData.paperless)
       newErrors.paperless = "Paperless Billing is required.";
@@ -945,7 +954,6 @@ const Form: React.FC = () => {
       newErrors.billtomobile = "Bill to Mobile is required.";
     }
 
-    
     if (!formData.creditcardpayment)
       newErrors.creditcardpayment = "Please select an autopay option";
 
@@ -976,21 +984,15 @@ const Form: React.FC = () => {
           newErrors.cardBillingAddress = "Billing Address is required.";
       }
     }
- 
-   
 
-   
+    // Validate Best Time to Call and Timezone
+    if (!formData.bestTimeToCall) {
+      newErrors.bestTimeToCall = "Best Time to Call is required.";
+    }
+    if (!formData.timezone) {
+      newErrors.timezone = "Timezone is required.";
+    }
 
-
-      // Validate Best Time to Call and Timezone
-      if (!formData.bestTimeToCall) {
-        newErrors.bestTimeToCall = "Best Time to Call is required.";
-      }
-      if (!formData.timezone) {
-        newErrors.timezone = "Timezone is required.";
-      }
-
-     
     // Object.keys(newErrors).forEach((key) => {
     //   toast.error(newErrors[key], {
     //     position: "bottom-right",
@@ -1003,35 +1005,32 @@ const Form: React.FC = () => {
     // });
 
     // Aggregate all errors into a single message
-  // const errorMessages = Object.values(newErrors).join('\n');
-  
-  // if (errorMessages) {
-  //   toast.error(errorMessages, {
-  //     position: "bottom-right",
-  //     autoClose: 5000,
-  //     hideProgressBar: false,
-  //     closeOnClick: true,
-  //     pauseOnHover: true,
-  //     draggable: true,
-  //   });
-  // }
+    // const errorMessages = Object.values(newErrors).join('\n');
 
-  Object.keys(newErrors).forEach((key, index) => {
-    setTimeout(() => {
-      toast.error(newErrors[key], {
-        position: "bottom-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    }, index * 500); // Delay each toast by 500ms
-  });
-  
+    // if (errorMessages) {
+    //   toast.error(errorMessages, {
+    //     position: "bottom-right",
+    //     autoClose: 5000,
+    //     hideProgressBar: false,
+    //     closeOnClick: true,
+    //     pauseOnHover: true,
+    //     draggable: true,
+    //   });
+    // }
 
-  
-  
+    Object.keys(newErrors).forEach((key, index) => {
+      setTimeout(() => {
+        toast.error(newErrors[key], {
+          position: "bottom-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
+      }, index * 500); // Delay each toast by 500ms
+    });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0; // Return true if no errors
   };
@@ -1042,7 +1041,6 @@ const Form: React.FC = () => {
     console.log("Errors", newErrors);
 
     if (isFormBlocked) {
-
       toast.error("Form submission is blocked due to security check failure.", {
         position: "bottom-right",
         autoClose: 5000,
@@ -1052,7 +1050,6 @@ const Form: React.FC = () => {
         draggable: true,
       });
       return;
-
 
       // Swal.fire({
       //   icon: "error",
@@ -1082,7 +1079,6 @@ const Form: React.FC = () => {
             draggable: true,
           });
           return;
-
         }
 
         const response = await axios.post(
@@ -1107,16 +1103,15 @@ const Form: React.FC = () => {
         if (response.status === 201) {
           console.log("Order created successfully!");
           setIsSubmitted(true);
-           // Display success toast
-        toast.success("Order created successfully!", {
-          position: "bottom-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-
+          // Display success toast
+          toast.success("Order created successfully!", {
+            position: "bottom-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+          });
         }
       } catch (error) {
         console.error("There was an error creating the order:", error.message);
@@ -1266,7 +1261,7 @@ const Form: React.FC = () => {
                   </select>
                   {errors.atntaccount && (
                     <p className="text-danger text-sm">{errors.atntaccount}</p>
-                  )} 
+                  )}
                 </div>
               </div>
 
@@ -1384,36 +1379,37 @@ const Form: React.FC = () => {
                   )}
                 </div>
               )}
-{formData.atntaccount === "declined" && (
-  <div>
-    {[
-      {
-        name: "existingBAN",
-        label: "Existing BAN",
-        placeholder: "Enter Existing BAN",
-      },
-    ].map((field, index) => (
-      <div key={index} className="mb-4">
-        <h6 className="text-sm font-medium text-gray-700">
-          {field.label}
-        </h6>
-        <input
-          type="text"
-          name={field.name}
-          placeholder={field.placeholder}
-          value={formData[field.name]}
-          onChange={handleChange}
-          className="w-full border-b border-gray-300 py-2"
-        />
-        {/* Display error message for the field */}
-        {errors[field.name] && (
-          <p className="text-danger text-sm">{errors[field.name]}</p>
-        )}
-      </div>
-    ))}
-  </div>
-)}
-
+              {formData.atntaccount === "declined" && (
+                <div>
+                  {[
+                    {
+                      name: "existingBAN",
+                      label: "Existing BAN",
+                      placeholder: "Enter Existing BAN",
+                    },
+                  ].map((field, index) => (
+                    <div key={index} className="mb-4">
+                      <h6 className="text-sm font-medium text-gray-700">
+                        {field.label}
+                      </h6>
+                      <input
+                        type="text"
+                        name={field.name}
+                        placeholder={field.placeholder}
+                        value={formData[field.name]}
+                        onChange={handleChange}
+                        className="w-full border-b border-gray-300 py-2"
+                      />
+                      {/* Display error message for the field */}
+                      {errors[field.name] && (
+                        <p className="text-danger text-sm">
+                          {errors[field.name]}
+                        </p>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             {/* Order Assignment */}
@@ -1868,9 +1864,7 @@ const Form: React.FC = () => {
                   className="border-b focus:outline-none border-gray-300 py-2 w-full"
                 />
                 {errors.bestTimeToCall && (
-                  <p className="text-danger text-sm">
-                    {errors.bestTimeToCall}
-                  </p>
+                  <p className="text-danger text-sm">{errors.bestTimeToCall}</p>
                 )}
               </div>
 
@@ -1910,136 +1904,19 @@ const Form: React.FC = () => {
       case "shippingInfo":
         return (
           <div className="bg-white max-w-4xl mx-auto p-8 shadow-lg rounded-lg border text-left">
-            {/* Order Shipping Information */}
-            {/* <h2 className="text-2xl text-gray-800 font-semibold my-8 text-left">
-              Order Shipping Information
-            </h2>
-            <div className="grid grid-cols-1 mt-10 md:grid-cols-3 gap-4">
-              <div className="w-full">
-                <h6 className="text-smfont-medium text-gray-700">
-                  Select Shipment Mode
-                </h6>
-                <select
-                  name="singleormultiaddresshipment"
-                  value={formData.singleormultiaddresshipment}
-                  onChange={handleChange}
-                  className="border-b mb-4 border-gray-300 py-2 w-full"
-                >
-                  <option value="yes">Single Shipment Address</option>
-                  <option value="no">Multiple Shipment Address</option>
-                </select>
-                {errors.singleormultiaddresshipment && (
-                  <p className="text-danger text-sm">
-                    {errors.singleormultiaddresshipment}
-                  </p>
-                )}
-              </div>
-              <div className="mb-4 w-full">
-                <h6 className="text-sm text-left font-medium text-gray-700">
-                  Attention Name
-                </h6>
-                <input
-                  type="text"
-                  name="attentionname"
-                  placeholder="Enter Attention Name"
-                  value={formData.attentionname}
-                  onChange={handleChange}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.attentionname && (
-                  <p className="text-danger text-sm">{errors.attentionname}</p>
-                )}
-              </div>
-              <div className="mb-4 w-full">
-                <h6 className="text-sm text-left font-medium text-gray-700">
-                  Shipping Address
-                </h6>
-                <input
-                  type="text"
-                  name="shippingaddress"
-                  placeholder="Enter Shipping Address"
-                  value={formData.shippingaddress}
-                  onChange={handleChange}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.shippingaddress && (
-                  <p className="text-danger text-sm">{errors.shippingaddress}</p>
-                )}
-              </div>
-              <div className="mb-4 w-full">
-                <h6 className="text-sm text-left font-medium text-gray-700">
-                  Shipping City
-                </h6>
-                <input
-                  type="text"
-                  name="shippingcity"
-                  placeholder="Enter Shipping City"
-                  value={formData.shippingcity}
-                  onChange={handleChange}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.shippingcity && (
-                  <p className="text-danger text-sm">{errors.shippingcity}</p>
-                )}
-              </div>
-              <div className="mb-4 w-full">
-                <h6 className="text-sm text-left font-medium text-gray-700">
-                  Shipping State
-                </h6>
-                <input
-                  type="text"
-                  name="shippingstate"
-                  placeholder="Enter Shipping State"
-                  value={formData.shippingstate}
-                  onChange={handleChange}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.shippingstate && (
-                  <p className="text-danger text-sm">{errors.shippingstate}</p>
-                )}
-              </div>
-              <div className="mb-4 w-full">
-                <h6 className="text-sm text-left font-medium text-gray-700">
-                  Shipping Zip
-                </h6>
-                <input
-                  type="text"
-                  name="shippingzip"
-                  placeholder="Enter Shipping Zip"
-                  value={formData.shippingzip}
-                  onChange={handleChange}
-                  className="border-b focus:outline-none border-gray-300 py-2 w-full"
-                />
-                {errors.shippingzip && (
-                  <p className="text-danger text-sm">{errors.shippingzip}</p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={addShippingInfo}
-                style={{
-                  background:
-                    "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
-                }}
-                className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
-              >
-                + Add Another Shipping Information
-              </button>
-            </div> */}
-
             <h3 className="text-xl md:text-2xl text-gray-800 font-semibold mt-6">
               Order Shipping Information
             </h3>
             {shippingInfos.map((info, index) => (
               <div
                 key={index}
-                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 pb-6"
+                className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-2 pb-6 border-b border-gray-200"
               >
                 {/* Header with Remove Button */}
                 <div className="col-span-1 md:col-span-2 flex justify-between items-center">
                   {index > 0 && (
                     <h4 className="text-lg font-semibold">
-                      Order Shipping Information {index + 1}
+                      Shipping Information {index + 1}
                     </h4>
                   )}
                   {index > 0 && (
@@ -2050,14 +1927,14 @@ const Form: React.FC = () => {
                           prev.filter((_, i) => i !== index)
                         );
                       }}
-                      className="text-danger hover:text-red-700 text-sm md:text-base"
+                      className="text-red-500 hover:text-red-700 text-sm md:text-base"
                     >
                       - Remove
                     </button>
                   )}
                 </div>
 
-                {/* Repeated Fields */}
+                {/* Shipping Information Fields */}
                 {[
                   { name: "attentionname", label: "Attention Name" },
                   { name: "shippingaddress", label: "Shipping Address" },
@@ -2100,12 +1977,54 @@ const Form: React.FC = () => {
                       />
                     )}
                     {errors[`${name}_${index}`] && (
-                      <p className="text-danger text-sm">
+                      <p className="text-red-500 text-sm">
                         {errors[`${name}_${index}`]}
                       </p>
                     )}
                   </div>
                 ))}
+
+                {/* Address Verification Button */}
+                <div className="col-span-full">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const currentInfo = shippingInfos[index];
+                      const isValid = validateShippingAddress(
+                        currentInfo.shippingaddress,
+                        currentInfo.shippingcity,
+                        currentInfo.shippingstate,
+                        currentInfo.shippingzip
+                      );
+
+                      if (isValid) {
+                        toast.success("Address verified successfully!", {
+                          position: "bottom-right",
+                          autoClose: 3000,
+                          hideProgressBar: false,
+                          closeOnClick: true,
+                          pauseOnHover: true,
+                          draggable: true,
+                        });
+                      } else {
+                        toast.error(
+                          "Address could not be verified. Please check your details.",
+                          {
+                            position: "bottom-right",
+                            autoClose: 5000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                          }
+                        );
+                      }
+                    }}
+                    className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+                  >
+                    Verify Address
+                  </button>
+                </div>
 
                 {/* Unique Code (Read-Only Field) */}
                 <div className="mb-4">
@@ -2129,7 +2048,7 @@ const Form: React.FC = () => {
               onClick={addShippingInfo}
               style={{
                 background:
-                  "linear-gradient(90deg, rgba(65 ,253 ,254) 0%, rgba(0,210,255,1) 100%)",
+                  "linear-gradient(90deg, rgba(65,253,254) 0%, rgba(0,210,255,1) 100%)",
               }}
               className="mt-4 w-full md:w-auto text-white px-6 py-2 rounded"
             >
@@ -2373,12 +2292,10 @@ const Form: React.FC = () => {
                       </option>
                     </select>
                     {errors.ratePlan && (
-                  <p className="text-danger text-sm">{errors.ratePlan}</p>
-                )}
+                      <p className="text-danger text-sm">{errors.ratePlan}</p>
+                    )}
                   </div>
-                  
                 </div>
-                
 
                 {/* Smartphone Purchase Options */}
 
@@ -2494,9 +2411,7 @@ const Form: React.FC = () => {
                       <option value="google">Google</option>
                     </select>
                     {errors.phonemodel && (
-                      <p className="text-danger text-sm">
-                        {errors.phonemodel}
-                      </p>
+                      <p className="text-danger text-sm">{errors.phonemodel}</p>
                     )}
                   </div>
 
@@ -2530,9 +2445,7 @@ const Form: React.FC = () => {
                       </label>
                     </div>
                     {errors.imeistatus && (
-                      <p className="text-danger text-sm">
-                        {errors.imeistatus}
-                      </p>
+                      <p className="text-danger text-sm">{errors.imeistatus}</p>
                     )}
                   </div>
 
